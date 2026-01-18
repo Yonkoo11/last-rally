@@ -16,15 +16,15 @@
    ============================================ */
 
 .btn-primary {
-  background: var(--color-primary);
-  color: var(--bg-base);
-  box-shadow: 0 4px 20px rgba(0, 255, 170, 0.3);
+  background: linear-gradient(135deg, #FFD700 0%, #FF9500 100%);
+  color: #1a1a1a;
+  box-shadow: 0 4px 20px rgba(255, 170, 0, 0.4);
 }
 
 @media (hover: hover) {
   .btn-primary:hover {
-    background: var(--color-primary-hover);
-    box-shadow: var(--glow-primary);
+    background: linear-gradient(135deg, #FFE44D 0%, #FFAA00 100%);
+    box-shadow: 0 6px 30px rgba(255, 170, 0, 0.5);
   }
 
   .btn-secondary:hover {
