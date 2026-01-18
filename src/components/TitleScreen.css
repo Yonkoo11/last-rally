@@ -1,0 +1,359 @@
+.title-screen {
+  display: flex;
+  min-height: 100vh;
+  background: #08080C;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Left Side - Branding */
+.title-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 60px;
+  padding-left: 80px;
+}
+
+.logo-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.logo-icon {
+  width: 64px;
+  height: 64px;
+  margin-bottom: 12px;
+  margin-left: 8px;
+}
+
+.logo-icon svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 0 15px rgba(255, 107, 53, 0.6));
+}
+
+.game-title {
+  font-family: var(--font-display, "Space Grotesk", sans-serif);
+  font-size: 72px;
+  font-weight: 800;
+  letter-spacing: 8px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1.0;
+}
+
+.title-last {
+  color: rgba(255, 255, 255, 0.15);
+  text-shadow:
+    0 0 40px rgba(255, 255, 255, 0.1),
+    0 0 80px rgba(255, 255, 255, 0.05);
+  letter-spacing: 12px;
+}
+
+.title-rally {
+  background: linear-gradient(90deg, #00FFAA 0%, #00FFAA 40%, #00E6CC 70%, #00D4FF 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 30px rgba(0, 255, 170, 0.5));
+  letter-spacing: 10px;
+}
+
+.title-tagline {
+  font-family: var(--font-ui, "Inter", sans-serif);
+  font-size: 13px;
+  font-weight: 500;
+  color: #4B5563;
+  letter-spacing: 6px;
+  margin: 16px 0 32px 4px;
+  text-transform: uppercase;
+}
+
+.btn-play {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: #00FFAA;
+  color: #000000;
+  font-family: var(--font-ui, "Inter", sans-serif);
+  font-size: 16px;
+  font-weight: 700;
+  padding: 16px 40px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  box-shadow: 0 4px 24px rgba(0, 255, 170, 0.25);
+}
+
+.btn-play:hover {
+  background: #33FFBB;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 32px rgba(0, 255, 170, 0.35);
+}
+
+.btn-play:active {
+  transform: translateY(0);
+}
+
+.play-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.btn-text {
+  background: transparent;
+  border: none;
+  color: #4B5563;
+  font-family: var(--font-ui, "Inter", sans-serif);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  cursor: pointer;
+  margin-top: 16px;
+  padding: 8px 4px;
+  transition: color 0.2s ease;
+}
+
+.btn-text:hover {
+  color: #6B7280;
+}
+
+/* Right Side - Controls */
+.title-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 60px;
+}
+
+.controls-panel {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 28px 36px;
+  width: 100%;
+  max-width: 380px;
+  margin-bottom: 20px;
+}
+
+.controls-title {
+  font-family: var(--font-display, "Space Grotesk", sans-serif);
+  font-size: 28px;
+  font-weight: 700;
+  color: #00FFAA;
+  margin: 0 0 6px 0;
+  text-align: center;
+}
+
+.controls-subtitle {
+  font-family: var(--font-ui, "Inter", sans-serif);
+  font-size: 14px;
+  color: #6B7280;
+  margin: 0 0 24px 0;
+  text-align: center;
+}
+
+.controls-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.control-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.control-label {
+  font-family: var(--font-ui, "Inter", sans-serif);
+  font-size: 15px;
+  color: #9CA3AF;
+}
+
+.control-keys {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 42px;
+  height: 42px;
+  padding: 0 14px;
+  background: #1a1a24;
+  border: 1px solid #2a2a3a;
+  border-radius: 8px;
+  font-family: var(--font-ui, "Inter", sans-serif);
+  font-size: 14px;
+  font-weight: 600;
+  color: #FFFFFF;
+}
+
+.kbd-wide {
+  min-width: 56px;
+}
+
+.or {
+  font-size: 12px;
+  color: #4B5563;
+}
+
+.control-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.06);
+  margin: 6px 0;
+}
+
+/* Tips Panel */
+.tips-panel {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 16px 24px;
+  width: 100%;
+  max-width: 380px;
+  margin-bottom: 20px;
+}
+
+.tip-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  font-family: var(--font-ui, "Inter", sans-serif);
+  font-size: 14px;
+  color: #9CA3AF;
+}
+
+.tip-item strong {
+  color: #00FFAA;
+}
+
+.tip-emoji {
+  font-size: 16px;
+  width: 20px;
+  text-align: center;
+}
+
+/* Customize Button */
+.btn-customize {
+  background: transparent;
+  border: none;
+  color: #6B7280;
+  font-family: var(--font-ui, "Inter", sans-serif);
+  font-size: 14px;
+  cursor: pointer;
+  margin-bottom: 20px;
+  padding: 8px 16px;
+  transition: color 0.2s ease;
+}
+
+.btn-customize:hover {
+  color: #9CA3AF;
+}
+
+/* Start Button */
+.btn-start {
+  background: #00FFAA;
+  color: #000000;
+  font-family: var(--font-ui, "Inter", sans-serif);
+  font-size: 15px;
+  font-weight: 600;
+  padding: 14px 48px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+  max-width: 380px;
+  margin-bottom: 14px;
+}
+
+.btn-start:hover {
+  background: #33FFBB;
+  transform: translateY(-2px);
+}
+
+.btn-start:active {
+  transform: translateY(0);
+}
+
+/* Start Hint */
+.start-hint {
+  font-family: var(--font-ui, "Inter", sans-serif);
+  font-size: 13px;
+  color: #4B5563;
+  margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 1000px) {
+  .title-screen {
+    flex-direction: column;
+  }
+
+  .title-left {
+    align-items: center;
+    padding: 60px 20px 30px;
+  }
+
+  .logo-container {
+    align-items: center;
+  }
+
+  .logo-icon {
+    margin-left: 0;
+  }
+
+  .game-title {
+    align-items: center;
+    font-size: 64px;
+  }
+
+  .title-tagline {
+    margin-left: 0;
+    text-align: center;
+  }
+
+  .title-right {
+    padding: 20px 20px 60px;
+  }
+}
+
+@media (max-width: 480px) {
+  .game-title {
+    font-size: 48px;
+  }
+
+  .title-left {
+    padding: 40px 20px 20px;
+  }
+
+  .controls-panel,
+  .tips-panel {
+    padding: 20px;
+  }
+
+  .btn-play {
+    padding: 14px 32px;
+    font-size: 14px;
+  }
+}
