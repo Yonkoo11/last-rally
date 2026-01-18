@@ -10,9 +10,7 @@ import {
 import { ToastProvider, useToast } from './hooks/useToast';
 import { ToastContainer } from './components/ToastContainer';
 import { TitleScreen } from './components/TitleScreen';
-import { HowToPlay } from './components/HowToPlay';
 import { ModeSelect } from './components/ModeSelect';
-import { PlayerSetup } from './components/PlayerSetup';
 import { PongArena } from './components/PongArena';
 import { CosmeticSelect } from './components/CosmeticSelect';
 import { processMatchResult } from './lib/stats';
@@ -24,15 +22,11 @@ import './App.css';
 function AppContent() {
   const [view, setView] = useState<ViewState>('title');
   const [gameConfig, setGameConfig] = useState<GameConfig | null>(null);
-  const [pendingMode, setPendingMode] = useState<{
-    mode: GameMode;
-    difficulty?: Difficulty;
-    quest?: Quest;
-  } | null>(null);
+  const [showSettings, setShowSettings] = useState(false);
 
-  const { showAchievement, showQuestComplete, showInfo } = useToast();
+  const { showAchievement, showQuestComplete } = useToast();
 
-  // Quick Play handler
+  // Quick Play handler - Direct to easy AI game
   const handleQuickPlay = useCallback(() => {
     const cosmetics = loadCosmetics();
     const playerName = loadPlayerName();
@@ -40,45 +34,34 @@ function AppContent() {
     setGameConfig({
       mode: 'ai',
       difficulty: 'easy',
-      player1Name: playerName,
+      player1Name: playerName || 'PLAYER 1',
       player2Name: 'EASY AI',
       arenaTheme: cosmetics.selectedArenaTheme,
     });
     setView('pong');
   }, []);
 
-  // Mode selection handler
-  const handleModeSelect = useCallback(
-    (mode: GameMode, difficulty?: Difficulty, quest?: Quest) => {
-      setPendingMode({ mode, difficulty, quest });
-      setView('playerSetup');
-    },
-    []
-  );
-
-  // Start game handler
+  // Start game handler - Called directly from ModeSelect
   const handleStartGame = useCallback(
-    (player1Name: string, player2Name: string) => {
-      if (!pendingMode) return;
-
+    (player1Name: string, player2Name: string, mode: GameMode, difficulty?: Difficulty, quest?: Quest) => {
       const cosmetics = loadCosmetics();
       const config: GameConfig = {
-        mode: pendingMode.mode,
-        difficulty: pendingMode.difficulty,
+        mode,
+        difficulty,
         player1Name,
         player2Name,
         arenaTheme: cosmetics.selectedArenaTheme,
       };
 
-      if (pendingMode.quest) {
-        config.questId = pendingMode.quest.id;
-        config.modifiers = pendingMode.quest.modifiers;
+      if (quest) {
+        config.questId = quest.id;
+        config.modifiers = quest.modifiers;
       }
 
       setGameConfig(config);
       setView('pong');
     },
-    [pendingMode]
+    []
   );
 
   // Match end handler
@@ -121,11 +104,6 @@ function AppContent() {
     setView('title');
   }, []);
 
-  const handleBackToModeSelect = useCallback(() => {
-    setPendingMode(null);
-    setView('modeSelect');
-  }, []);
-
   // Render current view
   const renderView = () => {
     switch (view) {
@@ -133,37 +111,17 @@ function AppContent() {
         return (
           <TitleScreen
             onQuickPlay={handleQuickPlay}
-            onPlayNow={() => setView('howToPlay')}
-          />
-        );
-
-      case 'howToPlay':
-        return (
-          <HowToPlay
-            onStart={() => setView('modeSelect')}
-            onBack={() => setView('title')}
-            onCustomize={() => setView('cosmetics')}
+            onPlayNow={() => setView('modeSelect')}
+            onSettings={() => setShowSettings(true)}
           />
         );
 
       case 'modeSelect':
         return (
           <ModeSelect
-            onSelectMode={handleModeSelect}
-            onCustomize={() => setView('cosmetics')}
+            onSelectMode={() => {}} // Not used in new flow
             onBack={handleBackToTitle}
-          />
-        );
-
-      case 'playerSetup':
-        if (!pendingMode) return null;
-        return (
-          <PlayerSetup
-            mode={pendingMode.mode}
-            difficulty={pendingMode.difficulty}
-            quest={pendingMode.quest}
-            onStart={handleStartGame}
-            onBack={handleBackToModeSelect}
+            onStartGame={handleStartGame}
           />
         );
 
@@ -177,9 +135,6 @@ function AppContent() {
           />
         );
 
-      case 'cosmetics':
-        return <CosmeticSelect onBack={handleBackToModeSelect} />;
-
       default:
         return null;
     }
@@ -189,6 +144,14 @@ function AppContent() {
     <div className="app">
       <ToastContainer />
       {renderView()}
+
+      {/* Settings Overlay - Available on any screen */}
+      {showSettings && (
+        <CosmeticSelect
+          onClose={() => setShowSettings(false)}
+          isOverlay={true}
+        />
+      )}
     </div>
   );
 }

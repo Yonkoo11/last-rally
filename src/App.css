@@ -1,3 +1,7 @@
+/* ============================================
+   App Root Styles - Uses Design System
+   ============================================ */
+
 .app {
   width: 100%;
   min-height: 100vh;
@@ -5,80 +9,38 @@
   flex-direction: column;
 }
 
-/* Shared button styles (imported in component CSS files too) */
-.btn {
-  font-family: inherit;
-  font-size: 16px;
-  font-weight: 600;
-  padding: 14px 28px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: transform 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+/* ============================================
+   Legacy Button Overrides
+   These ensure backward compatibility while
+   the design system .btn class takes precedence
+   ============================================ */
+
+.btn-primary {
+  background: var(--color-primary);
+  color: var(--bg-base);
+  box-shadow: 0 4px 20px rgba(0, 255, 170, 0.3);
 }
 
 @media (hover: hover) {
-  .btn:hover {
-    transform: translateY(-2px);
-  }
-
   .btn-primary:hover {
-    background: #34D399;
-    box-shadow: 0 6px 25px rgba(16, 185, 129, 0.4);
+    background: var(--color-primary-hover);
+    box-shadow: var(--glow-primary);
   }
 
   .btn-secondary:hover {
-    background: #374151;
-    border-color: #4B5563;
+    background: var(--bg-subtle);
+    border-color: var(--border-strong);
   }
-
-  .btn-back:hover {
-    color: #FFFFFF;
-    background: #1F2937;
-  }
-}
-
-.btn:active {
-  transform: translateY(0);
-}
-
-.btn-primary {
-  background: #10B981;
-  color: #000000;
-  box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
 }
 
 .btn-secondary {
-  background: #1F2937;
-  color: #FFFFFF;
-  border: 1px solid #374151;
-}
-
-.btn-large {
-  padding: 16px 32px;
-  font-size: 18px;
-}
-
-.btn-small {
-  padding: 10px 18px;
-  font-size: 14px;
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  border: 1px solid var(--border-default);
 }
 
 .btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
   transform: none;
-}
-
-.btn-back {
-  background: none;
-  border: none;
-  color: #6B7280;
-  font-size: 14px;
-  cursor: pointer;
-  padding: 8px 12px;
-  border-radius: 6px;
-  transition: color 0.15s ease, background-color 0.15s ease;
 }

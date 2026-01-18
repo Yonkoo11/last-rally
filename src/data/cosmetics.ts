@@ -201,28 +201,28 @@ export const THEME_COLORS: Record<
   }
 > = {
   classic: {
-    background: '#000000',
+    background: '#08080C',  // Deep dark with subtle blue tint
     lines: '#FFFFFF',
     ball: '#FFFFFF',
     text: '#FFFFFF',
     accent: '#FFFFFF',
   },
   neon: {
-    background: '#0D0D1A',
+    background: '#0A0A14',  // Dark purple-ish
     lines: '#00FFFF',
     ball: '#FF00FF',
     text: '#00FFFF',
     accent: '#FF00FF',
   },
   'minimal-dark': {
-    background: '#111111',
+    background: '#0C0C0C',  // Near black
     lines: '#333333',
     ball: '#FFFFFF',
     text: '#AAAAAA',
     accent: '#666666',
   },
   retro: {
-    background: '#001100',
+    background: '#020806',  // Very dark green
     lines: '#00FF00',
     ball: '#00FF00',
     text: '#00FF00',

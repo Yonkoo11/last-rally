@@ -19,13 +19,15 @@ import { playMenuSelect } from '../audio/sounds';
 import './CosmeticSelect.css';
 
 interface CosmeticSelectProps {
-  onBack: () => void;
+  onClose: () => void;
+  isOverlay?: boolean;
 }
 
 type Tab = 'paddles' | 'trails' | 'themes';
 
-export function CosmeticSelect({ onBack }: CosmeticSelectProps) {
+export function CosmeticSelect({ onClose, isOverlay = false }: CosmeticSelectProps) {
   const [activeTab, setActiveTab] = useState<Tab>('paddles');
+  const [, forceUpdate] = useState({});
   const cosmetics = loadCosmetics();
   const stats = loadStats();
   const questProgress = loadQuestProgress();
@@ -45,8 +47,7 @@ export function CosmeticSelect({ onBack }: CosmeticSelectProps) {
   const handleSelect = (type: 'paddle' | 'trail' | 'theme', id: string) => {
     playMenuSelect();
     selectCosmetic(type, id);
-    // Force re-render by updating component state
-    setActiveTab(activeTab);
+    forceUpdate({});
   };
 
   const handleTabChange = (tab: Tab) => {
@@ -54,13 +55,15 @@ export function CosmeticSelect({ onBack }: CosmeticSelectProps) {
     setActiveTab(tab);
   };
 
-  return (
-    <div className="cosmetic-select">
+  const content = (
+    <>
       <div className="cosmetic-header">
-        <button className="btn-back" onClick={onBack}>
-          ← Back
+        <h2 className="modal-title">Settings</h2>
+        <button className="modal-close" onClick={onClose} aria-label="Close">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20">
+            <path d="M18 6L6 18M6 6l12 12" />
+          </svg>
         </button>
-        <h2>Customize</h2>
       </div>
 
       <div className="cosmetic-tabs">
@@ -114,8 +117,20 @@ export function CosmeticSelect({ onBack }: CosmeticSelectProps) {
                     {item.unlockCondition.description}
                   </span>
                 )}
-                {selected && <span className="cosmetic-check">✓</span>}
-                {!unlocked && <span className="cosmetic-lock">🔒</span>}
+                {selected && (
+                  <span className="cosmetic-check">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" width="16" height="16">
+                      <path d="M20 6L9 17l-5-5" />
+                    </svg>
+                  </span>
+                )}
+                {!unlocked && (
+                  <span className="cosmetic-lock">
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
+                      <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zM9 8V6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9z" />
+                    </svg>
+                  </span>
+                )}
               </button>
             );
           })}
@@ -143,8 +158,20 @@ export function CosmeticSelect({ onBack }: CosmeticSelectProps) {
                     {item.unlockCondition.description}
                   </span>
                 )}
-                {selected && <span className="cosmetic-check">✓</span>}
-                {!unlocked && <span className="cosmetic-lock">🔒</span>}
+                {selected && (
+                  <span className="cosmetic-check">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" width="16" height="16">
+                      <path d="M20 6L9 17l-5-5" />
+                    </svg>
+                  </span>
+                )}
+                {!unlocked && (
+                  <span className="cosmetic-lock">
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
+                      <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zM9 8V6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9z" />
+                    </svg>
+                  </span>
+                )}
               </button>
             );
           })}
@@ -183,12 +210,40 @@ export function CosmeticSelect({ onBack }: CosmeticSelectProps) {
                     {item.unlockCondition.description}
                   </span>
                 )}
-                {selected && <span className="cosmetic-check">✓</span>}
-                {!unlocked && <span className="cosmetic-lock">🔒</span>}
+                {selected && (
+                  <span className="cosmetic-check">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" width="16" height="16">
+                      <path d="M20 6L9 17l-5-5" />
+                    </svg>
+                  </span>
+                )}
+                {!unlocked && (
+                  <span className="cosmetic-lock">
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
+                      <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zM9 8V6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9z" />
+                    </svg>
+                  </span>
+                )}
               </button>
             );
           })}
       </div>
+    </>
+  );
+
+  if (isOverlay) {
+    return (
+      <div className="overlay" onClick={onClose}>
+        <div className="cosmetic-modal" onClick={e => e.stopPropagation()}>
+          {content}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="cosmetic-select">
+      {content}
     </div>
   );
 }

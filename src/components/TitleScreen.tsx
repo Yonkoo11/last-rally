@@ -4,38 +4,36 @@ import './TitleScreen.css';
 interface TitleScreenProps {
   onQuickPlay: () => void;
   onPlayNow: () => void;
+  onSettings?: () => void;
 }
 
-export function TitleScreen({ onQuickPlay, onPlayNow }: TitleScreenProps) {
+export function TitleScreen({ onQuickPlay, onPlayNow, onSettings }: TitleScreenProps) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    // Trigger entrance animations
     setMounted(true);
   }, []);
 
+  // Handle keyboard shortcut
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        onPlayNow();
+      }
+    };
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [onPlayNow]);
+
   return (
     <div className={`title-screen ${mounted ? 'mounted' : ''}`}>
-      {/* Atmospheric background elements */}
+      {/* Simple atmospheric background */}
       <div className="bg-gradient" />
-      <div className="bg-glow" />
       <div className="bg-vignette" />
 
-      {/* Floating particles */}
-      <div className="particles">
-        {[...Array(20)].map((_, i) => (
-          <div key={i} className="particle" style={{
-            left: `${Math.random() * 100}%`,
-            animationDelay: `${Math.random() * 5}s`,
-            animationDuration: `${3 + Math.random() * 4}s`
-          }} />
-        ))}
-      </div>
-
       <div className="title-content">
-        {/* Fire Logo - Large and dramatic */}
+        {/* Fire Logo - Proportional */}
         <div className="logo-container">
-          <div className="logo-glow" />
           <div className="logo-icon">
             <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path
@@ -71,7 +69,7 @@ export function TitleScreen({ onQuickPlay, onPlayNow }: TitleScreenProps) {
           </div>
         </div>
 
-        {/* Title - MASSIVE and impactful */}
+        {/* Title - Reduced scale */}
         <h1 className="game-title">
           <span className="title-last">LAST</span>
           <span className="title-rally">RALLY</span>
@@ -82,13 +80,10 @@ export function TitleScreen({ onQuickPlay, onPlayNow }: TitleScreenProps) {
         {/* CTA Buttons */}
         <div className="cta-container">
           <button className="btn-play" onClick={onPlayNow}>
-            <span className="btn-play-bg" />
-            <span className="btn-play-content">
-              <svg className="play-icon" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M8 5v14l11-7z" />
-              </svg>
-              PLAY NOW
-            </span>
+            <svg className="play-icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M8 5v14l11-7z" />
+            </svg>
+            PLAY
           </button>
 
           <button className="btn-quick" onClick={onQuickPlay}>
@@ -96,11 +91,20 @@ export function TitleScreen({ onQuickPlay, onPlayNow }: TitleScreenProps) {
           </button>
         </div>
 
-        {/* Subtle hint */}
-        <p className="press-hint">Press any key to start</p>
+        <p className="press-hint">Press Enter to start</p>
       </div>
 
-      {/* Bottom accent line */}
+      {/* Settings button */}
+      {onSettings && (
+        <button className="btn-settings" onClick={onSettings} aria-label="Settings">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <circle cx="12" cy="12" r="3" />
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+          </svg>
+        </button>
+      )}
+
+      {/* Bottom accent line - static */}
       <div className="bottom-accent" />
     </div>
   );

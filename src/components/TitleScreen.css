@@ -1,15 +1,21 @@
+/* ============================================
+   TitleScreen - World-Class Design
+   Inspired by Linear, Vercel, Stripe
+   ============================================ */
+
 .title-screen {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  background: #030305;
+  background: var(--bg-base);
   overflow: hidden;
 }
 
 /* ============================================
    ATMOSPHERIC BACKGROUND
+   Subtle, living gradients
    ============================================ */
 
 .bg-gradient {
@@ -17,21 +23,20 @@
   inset: 0;
   background:
     radial-gradient(ellipse 80% 50% at 50% 120%, rgba(0, 255, 170, 0.08) 0%, transparent 50%),
-    radial-gradient(ellipse 60% 40% at 50% -10%, rgba(255, 107, 53, 0.12) 0%, transparent 50%),
-    linear-gradient(180deg, #030305 0%, #080810 50%, #050508 100%);
+    radial-gradient(ellipse 60% 40% at 50% -10%, rgba(255, 107, 53, 0.1) 0%, transparent 50%),
+    linear-gradient(180deg, var(--bg-base) 0%, var(--bg-dark) 50%, var(--bg-void) 100%);
+  animation: ambientShift 20s ease-in-out infinite;
 }
 
-.bg-glow {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -60%);
-  width: 600px;
-  height: 600px;
-  background: radial-gradient(circle, rgba(255, 107, 53, 0.15) 0%, transparent 60%);
-  filter: blur(60px);
-  pointer-events: none;
-  animation: breathe 4s ease-in-out infinite;
+@keyframes ambientShift {
+  0%, 100% {
+    opacity: 1;
+    filter: hue-rotate(0deg);
+  }
+  50% {
+    opacity: 0.9;
+    filter: hue-rotate(5deg);
+  }
 }
 
 .bg-vignette {
@@ -41,183 +46,188 @@
   pointer-events: none;
 }
 
-/* ============================================
-   FLOATING PARTICLES
-   ============================================ */
-
-.particles {
+/* Subtle ambient glow behind logo */
+.title-screen::before {
+  content: '';
   position: absolute;
-  inset: 0;
-  pointer-events: none;
-  overflow: hidden;
-}
-
-.particle {
-  position: absolute;
-  bottom: -10px;
-  width: 3px;
-  height: 3px;
-  background: rgba(255, 170, 100, 0.6);
-  border-radius: 50%;
-  animation: float-up 5s ease-in infinite;
-  box-shadow: 0 0 6px rgba(255, 150, 50, 0.8);
-}
-
-@keyframes float-up {
-  0% {
-    transform: translateY(0) scale(1);
-    opacity: 0;
-  }
-  10% {
-    opacity: 1;
-  }
-  90% {
-    opacity: 1;
-  }
-  100% {
-    transform: translateY(-100vh) scale(0.5);
-    opacity: 0;
-  }
-}
-
-@keyframes breathe {
-  0%, 100% {
-    opacity: 0.8;
-    transform: translate(-50%, -60%) scale(1);
-  }
-  50% {
-    opacity: 1;
-    transform: translate(-50%, -60%) scale(1.1);
-  }
-}
-
-/* ============================================
-   MAIN CONTENT
-   ============================================ */
-
-.title-content {
-  position: relative;
-  z-index: 10;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.8s ease, transform 0.8s ease;
-}
-
-.title-screen.mounted .title-content {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* ============================================
-   FIRE LOGO - LARGE & DRAMATIC
-   ============================================ */
-
-.logo-container {
-  position: relative;
-  margin-bottom: 16px;
-}
-
-.logo-glow {
-  position: absolute;
-  top: 50%;
+  top: 35%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 200px;
-  height: 200px;
-  background: radial-gradient(circle, rgba(255, 150, 50, 0.4) 0%, transparent 60%);
-  filter: blur(30px);
-  animation: logo-pulse 2s ease-in-out infinite;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(255, 107, 53, 0.12) 0%, transparent 60%);
+  filter: blur(60px);
+  animation: glowBreathe 6s ease-in-out infinite;
+  pointer-events: none;
 }
 
-@keyframes logo-pulse {
+@keyframes glowBreathe {
   0%, 100% {
     opacity: 0.6;
     transform: translate(-50%, -50%) scale(1);
   }
   50% {
+    opacity: 0.8;
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+}
+
+/* ============================================
+   MAIN CONTENT - Staggered Entrance
+   ============================================ */
+
+.title-content {
+  position: relative;
+  z-index: var(--z-elevated);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.title-screen.mounted .title-content {
+  animation: contentEntrance 1s var(--ease-out) forwards;
+}
+
+@keyframes contentEntrance {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
     opacity: 1;
-    transform: translate(-50%, -50%) scale(1.15);
+    transform: translateY(0);
+  }
+}
+
+/* ============================================
+   FIRE LOGO - Subtle Living Glow
+   ============================================ */
+
+.logo-container {
+  position: relative;
+  margin-bottom: var(--space-4);
+  animation: logoEntrance 0.8s var(--ease-out-back) 0.1s both;
+}
+
+@keyframes logoEntrance {
+  from {
+    opacity: 0;
+    transform: scale(0.8) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
   }
 }
 
 .logo-icon {
   position: relative;
-  width: 120px;
-  height: 120px;
+  width: 72px;
+  height: 72px;
 }
 
 .logo-icon svg {
   width: 100%;
   height: 100%;
-  filter: drop-shadow(0 0 20px rgba(255, 107, 53, 0.8))
-          drop-shadow(0 0 40px rgba(255, 150, 50, 0.5))
-          drop-shadow(0 0 60px rgba(255, 107, 53, 0.3));
-  animation: fire-flicker 0.15s ease-in-out infinite alternate;
+  filter: drop-shadow(0 0 20px rgba(255, 107, 53, 0.7))
+          drop-shadow(0 0 40px rgba(255, 150, 50, 0.4));
+  animation: logoGlow 3s ease-in-out infinite;
 }
 
-@keyframes fire-flicker {
-  0% {
-    filter: drop-shadow(0 0 20px rgba(255, 107, 53, 0.8))
-            drop-shadow(0 0 40px rgba(255, 150, 50, 0.5))
-            drop-shadow(0 0 60px rgba(255, 107, 53, 0.3));
+@keyframes logoGlow {
+  0%, 100% {
+    filter: drop-shadow(0 0 20px rgba(255, 107, 53, 0.7))
+            drop-shadow(0 0 40px rgba(255, 150, 50, 0.4));
   }
-  100% {
-    filter: drop-shadow(0 0 25px rgba(255, 107, 53, 0.9))
-            drop-shadow(0 0 45px rgba(255, 150, 50, 0.6))
-            drop-shadow(0 0 70px rgba(255, 107, 53, 0.4));
+  50% {
+    filter: drop-shadow(0 0 28px rgba(255, 107, 53, 0.9))
+            drop-shadow(0 0 50px rgba(255, 150, 50, 0.5));
   }
 }
 
 /* ============================================
-   TITLE - MASSIVE & IMPACTFUL
+   TITLE - Epic Typography
    ============================================ */
 
 .game-title {
-  font-family: var(--font-display, "Space Grotesk", sans-serif);
+  font-family: var(--font-display);
   font-weight: 800;
   margin: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   line-height: 0.85;
+  animation: titleEntrance 0.9s var(--ease-out) 0.2s both;
+}
+
+@keyframes titleEntrance {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+    letter-spacing: 0.5em;
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    letter-spacing: inherit;
+  }
 }
 
 .title-last {
-  font-size: clamp(72px, 15vw, 140px);
+  font-size: clamp(2.5rem, 8vw, 3.5rem);
   letter-spacing: 0.3em;
-  color: rgba(255, 255, 255, 0.12);
-  text-shadow:
-    0 0 60px rgba(255, 255, 255, 0.08),
-    0 0 120px rgba(255, 255, 255, 0.04);
-  margin-right: -0.3em; /* Compensate for letter-spacing */
+  color: rgba(255, 255, 255, 0.08);
+  text-shadow: 0 0 60px rgba(255, 255, 255, 0.06);
+  margin-right: -0.3em;
+  animation: lastFadeIn 1.2s var(--ease-out) 0.3s both;
+}
+
+@keyframes lastFadeIn {
+  from {
+    opacity: 0;
+    letter-spacing: 0.5em;
+  }
+  to {
+    opacity: 1;
+    letter-spacing: 0.3em;
+  }
 }
 
 .title-rally {
-  font-size: clamp(80px, 18vw, 160px);
-  letter-spacing: 0.25em;
+  font-size: clamp(3rem, 10vw, 4.5rem);
+  letter-spacing: 0.2em;
   background: linear-gradient(
-    90deg,
-    #00FFAA 0%,
-    #00FFCC 25%,
-    #00E6FF 50%,
-    #00CCFF 75%,
-    #00FFAA 100%
+    135deg,
+    var(--color-primary) 0%,
+    #00FFCC 30%,
+    #00E6FF 60%,
+    var(--color-primary) 100%
   );
-  background-size: 200% 100%;
+  background-size: 200% 200%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  animation: gradient-shift 8s ease-in-out infinite;
-  filter: drop-shadow(0 0 40px rgba(0, 255, 170, 0.5))
-          drop-shadow(0 0 80px rgba(0, 255, 200, 0.3));
-  margin-right: -0.25em; /* Compensate for letter-spacing */
+  animation: rallyEntrance 1s var(--ease-out) 0.4s both,
+             gradientFlow 8s ease-in-out infinite 1.4s;
+  filter: drop-shadow(0 0 30px rgba(0, 255, 170, 0.5));
+  margin-right: -0.2em;
 }
 
-@keyframes gradient-shift {
+@keyframes rallyEntrance {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+    filter: drop-shadow(0 0 0 rgba(0, 255, 170, 0));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: drop-shadow(0 0 30px rgba(0, 255, 170, 0.5));
+  }
+}
+
+@keyframes gradientFlow {
   0%, 100% {
     background-position: 0% 50%;
   }
@@ -231,25 +241,49 @@
    ============================================ */
 
 .title-tagline {
-  font-family: var(--font-ui, "Inter", sans-serif);
-  font-size: clamp(12px, 2vw, 16px);
-  font-weight: 500;
-  color: #6B7280;
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--text-muted);
   letter-spacing: 0.5em;
-  margin: 24px 0 48px 0;
+  margin: var(--space-6) 0 var(--space-12) 0;
   text-transform: uppercase;
-  margin-right: -0.5em; /* Compensate for letter-spacing */
+  margin-right: -0.5em;
+  animation: taglineEntrance 0.8s var(--ease-out) 0.6s both;
+}
+
+@keyframes taglineEntrance {
+  from {
+    opacity: 0;
+    letter-spacing: 0.8em;
+  }
+  to {
+    opacity: 1;
+    letter-spacing: 0.5em;
+  }
 }
 
 /* ============================================
-   CTA BUTTONS
+   CTA BUTTONS - Premium Feel
    ============================================ */
 
 .cta-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
+  gap: var(--space-4);
+  animation: ctaEntrance 0.8s var(--ease-out) 0.7s both;
+}
+
+@keyframes ctaEntrance {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .btn-play {
@@ -257,102 +291,201 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: var(--space-3);
   min-width: 220px;
-  padding: 0;
+  padding: var(--space-5) var(--space-12);
+  background: linear-gradient(135deg, var(--color-primary) 0%, #00E6CC 100%);
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-xl);
   cursor: pointer;
+  font-family: var(--font-ui);
+  font-size: var(--text-base);
+  font-weight: var(--font-bold);
+  color: var(--bg-base);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  transition: transform 0.2s var(--ease-out),
+              box-shadow 0.3s var(--ease-out);
+  box-shadow: 0 4px 24px rgba(0, 255, 170, 0.3),
+              0 0 0 0 rgba(0, 255, 170, 0);
   overflow: hidden;
-  background: transparent;
 }
 
-.btn-play-bg {
+/* Shine effect */
+.btn-play::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+.btn-play::after {
+  content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, #00FFAA 0%, #00E6CC 50%, #00D4FF 100%);
-  transition: transform 0.3s ease;
-}
-
-.btn-play-content {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  padding: 18px 40px;
-  font-family: var(--font-ui, "Inter", sans-serif);
-  font-size: 18px;
-  font-weight: 700;
-  color: #000000;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  background: linear-gradient(135deg, transparent 0%, rgba(255, 255, 255, 0.1) 100%);
+  pointer-events: none;
 }
 
 .play-icon {
   width: 20px;
   height: 20px;
+  transition: transform 0.2s var(--ease-out);
 }
 
 @media (hover: hover) {
-  .btn-play:hover .btn-play-bg {
-    transform: scale(1.05);
+  .btn-play:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 8px 32px rgba(0, 255, 170, 0.4),
+                0 0 0 2px rgba(0, 255, 170, 0.2);
   }
 
-  .btn-play:hover {
-    box-shadow:
-      0 0 30px rgba(0, 255, 170, 0.4),
-      0 0 60px rgba(0, 255, 170, 0.2);
+  .btn-play:hover::before {
+    left: 100%;
+  }
+
+  .btn-play:hover .play-icon {
+    transform: scale(1.1);
   }
 }
 
-.btn-play:active .btn-play-bg {
-  transform: scale(0.98);
+.btn-play:active {
+  transform: translateY(0) scale(0.98);
 }
 
 .btn-quick {
   background: transparent;
   border: none;
-  color: #4B5563;
-  font-family: var(--font-ui, "Inter", sans-serif);
-  font-size: 14px;
-  font-weight: 600;
+  color: var(--text-disabled);
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
   letter-spacing: 0.2em;
   text-transform: uppercase;
   cursor: pointer;
-  padding: 12px 24px;
-  transition: color 0.2s ease;
+  padding: var(--space-3) var(--space-6);
+  position: relative;
+  transition: color 0.2s var(--ease-out);
+}
+
+.btn-quick::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 1px;
+  background: var(--text-secondary);
+  transition: width 0.3s var(--ease-out), left 0.3s var(--ease-out);
 }
 
 @media (hover: hover) {
   .btn-quick:hover {
-    color: #9CA3AF;
+    color: var(--text-secondary);
+  }
+
+  .btn-quick:hover::after {
+    width: 100%;
+    left: 0;
   }
 }
 
 /* ============================================
-   PRESS HINT
+   PRESS HINT - Subtle Pulse
    ============================================ */
 
 .press-hint {
-  margin-top: 48px;
-  font-family: var(--font-ui, "Inter", sans-serif);
-  font-size: 13px;
-  color: #374151;
-  letter-spacing: 0.1em;
-  animation: pulse-opacity 2s ease-in-out infinite;
+  margin-top: var(--space-12);
+  font-family: var(--font-ui);
+  font-size: var(--text-xs);
+  color: var(--text-disabled);
+  letter-spacing: 0.15em;
+  animation: hintEntrance 0.6s var(--ease-out) 0.9s both,
+             hintPulse 3s ease-in-out infinite 1.5s;
 }
 
-@keyframes pulse-opacity {
-  0%, 100% {
-    opacity: 0.5;
+@keyframes hintEntrance {
+  from {
+    opacity: 0;
   }
-  50% {
+  to {
     opacity: 1;
   }
 }
 
+@keyframes hintPulse {
+  0%, 100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
 /* ============================================
-   BOTTOM ACCENT
+   SETTINGS BUTTON - Premium
+   ============================================ */
+
+.btn-settings {
+  position: fixed;
+  bottom: var(--space-6);
+  right: var(--space-6);
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-full);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s var(--ease-out);
+  z-index: var(--z-elevated);
+  animation: settingsEntrance 0.5s var(--ease-out) 1s both;
+}
+
+@keyframes settingsEntrance {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.btn-settings svg {
+  width: 20px;
+  height: 20px;
+  transition: transform 0.4s var(--ease-out);
+}
+
+@media (hover: hover) {
+  .btn-settings:hover {
+    background: var(--bg-subtle);
+    border-color: var(--border-default);
+    color: var(--text-primary);
+    transform: rotate(45deg);
+  }
+
+  .btn-settings:hover svg {
+    transform: rotate(-45deg);
+  }
+}
+
+/* ============================================
+   BOTTOM ACCENT - Animated Line
    ============================================ */
 
 .bottom-accent {
@@ -364,11 +497,21 @@
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(0, 255, 170, 0.3) 20%,
-    rgba(0, 255, 170, 0.6) 50%,
-    rgba(0, 255, 170, 0.3) 80%,
+    rgba(0, 255, 170, 0.2) 20%,
+    rgba(0, 255, 170, 0.5) 50%,
+    rgba(0, 255, 170, 0.2) 80%,
     transparent 100%
   );
+  animation: accentPulse 4s ease-in-out infinite;
+}
+
+@keyframes accentPulse {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
 /* ============================================
@@ -377,13 +520,16 @@
 
 @media (max-width: 768px) {
   .logo-icon {
-    width: 80px;
-    height: 80px;
+    width: 60px;
+    height: 60px;
   }
 
-  .logo-glow {
-    width: 140px;
-    height: 140px;
+  .title-last {
+    font-size: clamp(2rem, 8vw, 2.5rem);
+  }
+
+  .title-rally {
+    font-size: clamp(2.5rem, 10vw, 3.5rem);
   }
 
   .title-tagline {
@@ -391,30 +537,21 @@
     margin-right: -0.3em;
   }
 
-  .btn-play-content {
-    padding: 16px 32px;
-    font-size: 16px;
-  }
-
-  .press-hint {
-    margin-top: 32px;
+  .title-screen::before {
+    width: 300px;
+    height: 300px;
   }
 }
 
 @media (max-width: 480px) {
   .logo-icon {
-    width: 64px;
-    height: 64px;
+    width: 52px;
+    height: 52px;
   }
 
-  .title-tagline {
-    letter-spacing: 0.2em;
-    margin-right: -0.2em;
-  }
-
-  .btn-play-content {
-    padding: 14px 28px;
-    font-size: 15px;
+  .btn-play {
+    min-width: 200px;
+    padding: var(--space-4) var(--space-10);
   }
 }
 
@@ -423,18 +560,28 @@
    ============================================ */
 
 @media (prefers-reduced-motion: reduce) {
-  .particle,
-  .bg-glow,
-  .logo-glow,
+  .bg-gradient,
+  .title-screen::before,
   .logo-icon svg,
   .title-rally,
-  .press-hint {
+  .press-hint,
+  .bottom-accent {
     animation: none;
   }
 
-  .title-content {
+  .title-content,
+  .logo-container,
+  .game-title,
+  .title-last,
+  .title-tagline,
+  .cta-container,
+  .btn-settings {
+    animation: none;
     opacity: 1;
     transform: none;
-    transition: none;
+  }
+
+  .btn-play::before {
+    display: none;
   }
 }
