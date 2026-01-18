@@ -60,13 +60,15 @@ interface KeyState {
   s: boolean;
   i: boolean;
   k: boolean;
+  arrowup: boolean;
+  arrowdown: boolean;
 }
 
 export function PongArena({ config, onMatchEnd, onQuit }: PongArenaProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const gameLoopRef = useRef<number | undefined>(undefined);
   const lastTimeRef = useRef<number>(0);
-  const keysRef = useRef<KeyState>({ w: false, s: false, i: false, k: false });
+  const keysRef = useRef<KeyState>({ w: false, s: false, i: false, k: false, arrowup: false, arrowdown: false });
 
   const [phase, setPhase] = useState<GamePhase>('countdown');
   const [countdown, setCountdown] = useState(COUNTDOWN_SECONDS);
@@ -108,6 +110,10 @@ export function PongArena({ config, onMatchEnd, onQuit }: PongArenaProps) {
       const key = e.key.toLowerCase();
       if (key in keysRef.current) {
         keysRef.current[key as keyof KeyState] = true;
+        // Prevent arrow keys from scrolling the page
+        if (key === 'arrowup' || key === 'arrowdown') {
+          e.preventDefault();
+        }
       }
 
       // Pause toggle
@@ -236,10 +242,10 @@ export function PongArena({ config, onMatchEnd, onQuit }: PongArenaProps) {
       updateParticles(deltaTime);
 
       if (phaseRef.current === 'playing') {
-        // Update left paddle (player 1)
-        const leftDir = keysRef.current.w
+        // Update left paddle (player 1) - W/S or Arrow keys
+        const leftDir = (keysRef.current.w || keysRef.current.arrowup)
           ? 'up'
-          : keysRef.current.s
+          : (keysRef.current.s || keysRef.current.arrowdown)
           ? 'down'
           : 'none';
         leftPaddleRef.current = movePaddle(

@@ -9,9 +9,15 @@ interface TitleScreenProps {
 
 export function TitleScreen({ onQuickPlay, onPlayNow, onSettings }: TitleScreenProps) {
   const [mounted, setMounted] = useState(false);
+  const [taglineVisible, setTaglineVisible] = useState(false);
 
   useEffect(() => {
+    // Staggered entrance - mount triggers the sequence
     setMounted(true);
+
+    // Tagline typewriter starts after title animations
+    const taglineTimer = setTimeout(() => setTaglineVisible(true), 1300);
+    return () => clearTimeout(taglineTimer);
   }, []);
 
   // Handle keyboard shortcut
@@ -27,13 +33,47 @@ export function TitleScreen({ onQuickPlay, onPlayNow, onSettings }: TitleScreenP
 
   return (
     <div className={`title-screen ${mounted ? 'mounted' : ''}`}>
-      {/* Simple atmospheric background */}
+      {/* ====== LAYER 1: ATMOSPHERIC BACKGROUND ====== */}
+
+      {/* Base gradient - intensified */}
       <div className="bg-gradient" />
+
+      {/* Scan lines overlay - sweeping effect */}
+      <div className="scan-lines" />
+
+      {/* Noise/grain texture - film feel */}
+      <div className="noise-overlay" />
+
+      {/* Vignette - draw eyes to center */}
       <div className="bg-vignette" />
 
+      {/* Central fire glow - pulsing */}
+      <div className="fire-glow" />
+
+      {/* ====== LAYER 2: FLOATING EMBERS ====== */}
+      <div className="ember-container">
+        {[...Array(12)].map((_, i) => (
+          <div
+            key={i}
+            className="ember"
+            style={{
+              '--delay': `${i * 0.7}s`,
+              '--x-offset': `${(Math.random() - 0.5) * 200}px`,
+              '--duration': `${3 + Math.random() * 2}s`,
+            } as React.CSSProperties}
+          />
+        ))}
+      </div>
+
+      {/* ====== MAIN CONTENT ====== */}
       <div className="title-content">
-        {/* Fire Logo - Proportional */}
+        {/* ====== LAYER 3: FIRE LOGO - COMMANDING ====== */}
         <div className="logo-container">
+          {/* Outer glow layer */}
+          <div className="logo-glow-outer" />
+          {/* Inner glow layer */}
+          <div className="logo-glow-inner" />
+          {/* The actual logo */}
           <div className="logo-icon">
             <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path
@@ -69,15 +109,18 @@ export function TitleScreen({ onQuickPlay, onPlayNow, onSettings }: TitleScreenP
           </div>
         </div>
 
-        {/* Title - Reduced scale */}
+        {/* ====== LAYER 4: TITLE - DRAMATIC ====== */}
         <h1 className="game-title">
           <span className="title-last">LAST</span>
           <span className="title-rally">RALLY</span>
         </h1>
 
-        <p className="title-tagline">FAST. FIERCE. FINAL.</p>
+        {/* ====== LAYER 5: TAGLINE - TYPEWRITER ====== */}
+        <p className={`title-tagline ${taglineVisible ? 'visible' : ''}`}>
+          <span className="tagline-text">FAST. FIERCE. FINAL.</span>
+        </p>
 
-        {/* CTA Buttons */}
+        {/* ====== LAYER 6: CTA BUTTONS ====== */}
         <div className="cta-container">
           <button className="btn-play" onClick={onPlayNow}>
             <svg className="play-icon" viewBox="0 0 24 24" fill="currentColor">
@@ -104,7 +147,7 @@ export function TitleScreen({ onQuickPlay, onPlayNow, onSettings }: TitleScreenP
         </button>
       )}
 
-      {/* Bottom accent line - static */}
+      {/* Bottom accent line - draws across */}
       <div className="bottom-accent" />
     </div>
   );
