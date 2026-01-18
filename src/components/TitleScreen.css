@@ -90,16 +90,31 @@
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
   text-transform: uppercase;
   letter-spacing: 2px;
   box-shadow: 0 4px 24px rgba(0, 255, 170, 0.25);
 }
 
-.btn-play:hover {
-  background: #33FFBB;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 32px rgba(0, 255, 170, 0.35);
+@media (hover: hover) {
+  .btn-play:hover {
+    background: #33FFBB;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 32px rgba(0, 255, 170, 0.35);
+  }
+
+  .btn-text:hover {
+    color: #6B7280;
+  }
+
+  .btn-customize:hover {
+    color: #9CA3AF;
+  }
+
+  .btn-start:hover {
+    background: #33FFBB;
+    transform: translateY(-2px);
+  }
 }
 
 .btn-play:active {
@@ -124,10 +139,6 @@
   margin-top: 16px;
   padding: 8px 4px;
   transition: color 0.2s ease;
-}
-
-.btn-text:hover {
-  color: #6B7280;
 }
 
 /* Right Side - Controls */
@@ -266,10 +277,6 @@ kbd {
   transition: color 0.2s ease;
 }
 
-.btn-customize:hover {
-  color: #9CA3AF;
-}
-
 /* Start Button */
 .btn-start {
   background: #00FFAA;
@@ -281,15 +288,10 @@ kbd {
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: transform 0.2s ease, background-color 0.2s ease;
   width: 100%;
   max-width: 380px;
   margin-bottom: 14px;
-}
-
-.btn-start:hover {
-  background: #33FFBB;
-  transform: translateY(-2px);
 }
 
 .btn-start:active {

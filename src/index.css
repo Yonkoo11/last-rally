@@ -40,8 +40,10 @@ a {
   text-decoration: none;
 }
 
-a:hover {
-  color: #34D399;
+@media (hover: hover) {
+  a:hover {
+    color: #34D399;
+  }
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -74,6 +76,8 @@ button {
   border-radius: 4px;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: #4B5563;
+@media (hover: hover) {
+  ::-webkit-scrollbar-thumb:hover {
+    background: #4B5563;
+  }
 }

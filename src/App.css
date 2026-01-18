@@ -14,13 +14,30 @@
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: transform 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
   text-transform: uppercase;
   letter-spacing: 1px;
 }
 
-.btn:hover {
-  transform: translateY(-2px);
+@media (hover: hover) {
+  .btn:hover {
+    transform: translateY(-2px);
+  }
+
+  .btn-primary:hover {
+    background: #34D399;
+    box-shadow: 0 6px 25px rgba(16, 185, 129, 0.4);
+  }
+
+  .btn-secondary:hover {
+    background: #374151;
+    border-color: #4B5563;
+  }
+
+  .btn-back:hover {
+    color: #FFFFFF;
+    background: #1F2937;
+  }
 }
 
 .btn:active {
@@ -33,20 +50,10 @@
   box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
 }
 
-.btn-primary:hover {
-  background: #34D399;
-  box-shadow: 0 6px 25px rgba(16, 185, 129, 0.4);
-}
-
 .btn-secondary {
   background: #1F2937;
   color: #FFFFFF;
   border: 1px solid #374151;
-}
-
-.btn-secondary:hover {
-  background: #374151;
-  border-color: #4B5563;
 }
 
 .btn-large {
@@ -73,10 +80,5 @@
   cursor: pointer;
   padding: 8px 12px;
   border-radius: 6px;
-  transition: all 0.15s ease;
-}
-
-.btn-back:hover {
-  color: #FFFFFF;
-  background: #1F2937;
+  transition: color 0.15s ease, background-color 0.15s ease;
 }

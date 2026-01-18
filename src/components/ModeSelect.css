@@ -29,12 +29,37 @@
   cursor: pointer;
   padding: 8px 12px;
   border-radius: 6px;
-  transition: all 0.15s ease;
+  transition: color 0.15s ease, background-color 0.15s ease;
 }
 
-.btn-back:hover {
-  color: #FFFFFF;
-  background: #1F2937;
+@media (hover: hover) {
+  .btn-back:hover {
+    color: #FFFFFF;
+    background: #1F2937;
+  }
+
+  .mode-card:hover {
+    background: #1A1A24;
+    border-color: #374151;
+    transform: translateY(-4px);
+  }
+
+  .mode-solo:hover { border-color: #10B981; }
+  .mode-pvp:hover { border-color: #3B82F6; }
+  .mode-quest:hover { border-color: #F59E0B; }
+  .mode-customize:hover { border-color: #8B5CF6; }
+
+  .difficulty-card:hover {
+    background: #1A1A24;
+    border-color: #374151;
+    transform: translateX(8px);
+  }
+
+  .quest-card:hover:not(.locked) {
+    background: #1A1A24;
+    border-color: #374151;
+    transform: scale(1.05);
+  }
 }
 
 .quest-progress {
@@ -62,14 +87,8 @@
   border: 1px solid #1F2937;
   border-radius: 12px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
   text-align: center;
-}
-
-.mode-card:hover {
-  background: #1A1A24;
-  border-color: #374151;
-  transform: translateY(-4px);
 }
 
 .mode-icon {
@@ -86,11 +105,6 @@
   font-size: 13px;
   color: #6B7280;
 }
-
-.mode-solo:hover { border-color: #10B981; }
-.mode-pvp:hover { border-color: #3B82F6; }
-.mode-quest:hover { border-color: #F59E0B; }
-.mode-customize:hover { border-color: #8B5CF6; }
 
 /* Difficulty Grid */
 .difficulty-grid {
@@ -110,16 +124,10 @@
   padding: 20px 24px;
   background: #111118;
   border: 1px solid #1F2937;
-  border-radius: 10px;
+  border-radius: 12px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
   text-align: left;
-}
-
-.difficulty-card:hover {
-  background: #1A1A24;
-  border-color: #374151;
-  transform: translateX(8px);
 }
 
 .difficulty-card.suggested {
@@ -169,16 +177,10 @@
   padding: 20px 16px;
   background: #111118;
   border: 1px solid #1F2937;
-  border-radius: 10px;
+  border-radius: 12px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: transform 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
   position: relative;
-}
-
-.quest-card:hover:not(.locked) {
-  background: #1A1A24;
-  border-color: #374151;
-  transform: scale(1.05);
 }
 
 .quest-card.completed {

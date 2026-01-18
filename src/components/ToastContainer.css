@@ -24,8 +24,10 @@
   max-width: 320px;
 }
 
-.toast:hover {
-  transform: translateX(-4px);
+@media (hover: hover) {
+  .toast:hover {
+    transform: translateX(-4px);
+  }
 }
 
 @keyframes toastSlideIn {

@@ -36,18 +36,20 @@
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.tab:hover {
-  background: #1A1A24;
-  color: #FFFFFF;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
 }
 
 .tab.active {
   background: #10B981;
   border-color: #10B981;
   color: #000000;
+}
+
+@media (hover: hover) {
+  .tab:hover {
+    background: #1A1A24;
+    color: #FFFFFF;
+  }
 }
 
 .cosmetic-grid {
@@ -67,15 +69,17 @@
   border: 1px solid #1F2937;
   border-radius: 12px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
   position: relative;
   min-height: 140px;
 }
 
-.cosmetic-card:hover:not(.locked) {
-  background: #1A1A24;
-  border-color: #374151;
-  transform: translateY(-4px);
+@media (hover: hover) {
+  .cosmetic-card:hover:not(.locked) {
+    background: #1A1A24;
+    border-color: #374151;
+    transform: translateY(-4px);
+  }
 }
 
 .cosmetic-card.selected {
