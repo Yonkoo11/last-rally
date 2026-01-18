@@ -8,6 +8,7 @@ export type GameMode = 'ai' | 'pvp' | 'quest' | 'online';
 export type Difficulty = 'easy' | 'medium' | 'hard' | 'impossible';
 export type ViewState =
   | 'title'
+  | 'howToPlay'
   | 'modeSelect'
   | 'difficultySelect'
   | 'questGrid'

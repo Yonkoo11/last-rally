@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import './TitleScreen.css';
 
 interface TitleScreenProps {
@@ -7,22 +7,9 @@ interface TitleScreenProps {
 }
 
 export function TitleScreen({ onQuickPlay, onPlayNow }: TitleScreenProps) {
-  // Handle "press any key" to start
-  useEffect(() => {
-    const handleKeyPress = (e: KeyboardEvent) => {
-      // Ignore modifier keys
-      if (e.key === 'Shift' || e.key === 'Control' || e.key === 'Alt' || e.key === 'Meta') return;
-      onPlayNow();
-    };
-
-    window.addEventListener('keydown', handleKeyPress);
-    return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [onPlayNow]);
-
   return (
     <div className="title-screen">
-      {/* Left Side - Branding */}
-      <div className="title-left">
+      <div className="title-content">
         <div className="logo-container">
           <div className="logo-icon">
             <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -65,70 +52,6 @@ export function TitleScreen({ onQuickPlay, onPlayNow }: TitleScreenProps) {
         <button className="btn-text" onClick={onQuickPlay}>
           QUICK PLAY
         </button>
-      </div>
-
-      {/* Right Side - Controls Panel */}
-      <div className="title-right">
-        <div className="controls-panel">
-          <h2 className="controls-title">Controls</h2>
-          <p className="controls-subtitle">Move your paddle to hit the ball</p>
-
-          <div className="controls-grid">
-            <div className="control-row">
-              <span className="control-label">Move Up</span>
-              <div className="control-keys">
-                <kbd>W</kbd>
-                <span className="or">or</span>
-                <kbd>↑</kbd>
-              </div>
-            </div>
-
-            <div className="control-row">
-              <span className="control-label">Move Down</span>
-              <div className="control-keys">
-                <kbd>S</kbd>
-                <span className="or">or</span>
-                <kbd>↓</kbd>
-              </div>
-            </div>
-
-            <div className="control-divider"></div>
-
-            <div className="control-row">
-              <span className="control-label">Pause</span>
-              <div className="control-keys">
-                <kbd className="kbd-wide">ESC</kbd>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="tips-panel">
-          <div className="tip-item">
-            <span className="tip-emoji">🎯</span>
-            <span>First to <strong>5 points</strong> wins</span>
-          </div>
-          <div className="tip-item">
-            <span className="tip-emoji">📈</span>
-            <span>Hit with paddle edge for sharper angles</span>
-          </div>
-          <div className="tip-item">
-            <span className="tip-emoji">⚡</span>
-            <span>Ball speeds up with each rally</span>
-          </div>
-          <div className="tip-item">
-            <span className="tip-emoji">👆</span>
-            <span>On mobile, touch and drag to move</span>
-          </div>
-        </div>
-
-        <button className="btn-customize">Customize Controls</button>
-
-        <button className="btn btn-start" onClick={onPlayNow}>
-          Let's Play
-        </button>
-
-        <p className="start-hint">Press any key or click to start</p>
       </div>
     </div>
   );

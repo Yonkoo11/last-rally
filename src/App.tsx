@@ -10,6 +10,7 @@ import {
 import { ToastProvider, useToast } from './hooks/useToast';
 import { ToastContainer } from './components/ToastContainer';
 import { TitleScreen } from './components/TitleScreen';
+import { HowToPlay } from './components/HowToPlay';
 import { ModeSelect } from './components/ModeSelect';
 import { PlayerSetup } from './components/PlayerSetup';
 import { PongArena } from './components/PongArena';
@@ -132,7 +133,16 @@ function AppContent() {
         return (
           <TitleScreen
             onQuickPlay={handleQuickPlay}
-            onPlayNow={() => setView('modeSelect')}
+            onPlayNow={() => setView('howToPlay')}
+          />
+        );
+
+      case 'howToPlay':
+        return (
+          <HowToPlay
+            onStart={() => setView('modeSelect')}
+            onBack={() => setView('title')}
+            onCustomize={() => setView('cosmetics')}
           />
         );
 
