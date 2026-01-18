@@ -73,39 +73,84 @@ export function TitleScreen({ onQuickPlay, onPlayNow, onSettings }: TitleScreenP
           <div className="logo-glow-outer" />
           {/* Inner glow layer */}
           <div className="logo-glow-inner" />
-          {/* The actual logo */}
+          {/* Heat distortion effect */}
+          <div className="logo-heat-distort" />
+          {/* The actual logo with layered flames */}
           <div className="logo-icon">
             <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path
-                d="M32 2C32 2 16 18 16 36C16 46 22 54 32 62C42 54 48 46 48 36C48 18 32 2 32 2Z"
-                fill="url(#fireGradient)"
-              />
-              <path
-                d="M32 14C32 14 24 26 24 36C24 44 27 50 32 56C37 50 40 44 40 36C40 26 32 14 32 14Z"
-                fill="url(#fireInnerGradient)"
-              />
-              <path
-                d="M32 24C32 24 28 32 28 38C28 42 29 46 32 50C35 46 36 42 36 38C36 32 32 24 32 24Z"
-                fill="url(#fireCoreGradient)"
-              />
+              {/* SVG Filter for flame distortion */}
               <defs>
+                <filter id="flameDistort" x="-20%" y="-20%" width="140%" height="140%">
+                  <feTurbulence type="fractalNoise" baseFrequency="0.015" numOctaves="2" result="noise" seed="1">
+                    <animate attributeName="baseFrequency" values="0.015;0.02;0.015" dur="3s" repeatCount="indefinite" />
+                  </feTurbulence>
+                  <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" xChannelSelector="R" yChannelSelector="G" />
+                </filter>
+                <filter id="flameGlow" x="-50%" y="-50%" width="200%" height="200%">
+                  <feGaussianBlur stdDeviation="2" result="blur" />
+                  <feMerge>
+                    <feMergeNode in="blur" />
+                    <feMergeNode in="SourceGraphic" />
+                  </feMerge>
+                </filter>
                 <linearGradient id="fireGradient" x1="32" y1="2" x2="32" y2="62" gradientUnits="userSpaceOnUse">
-                  <stop stopColor="#FF6B35" />
-                  <stop offset="0.5" stopColor="#F7931E" />
-                  <stop offset="1" stopColor="#FF4500" />
+                  <stop stopColor="#FF6B35">
+                    <animate attributeName="stop-color" values="#FF6B35;#FF8C42;#FF6B35" dur="2s" repeatCount="indefinite" />
+                  </stop>
+                  <stop offset="0.5" stopColor="#F7931E">
+                    <animate attributeName="stop-color" values="#F7931E;#FFAB40;#F7931E" dur="1.5s" repeatCount="indefinite" />
+                  </stop>
+                  <stop offset="1" stopColor="#FF4500">
+                    <animate attributeName="stop-color" values="#FF4500;#FF5722;#FF4500" dur="2.5s" repeatCount="indefinite" />
+                  </stop>
                 </linearGradient>
                 <linearGradient id="fireInnerGradient" x1="32" y1="14" x2="32" y2="56" gradientUnits="userSpaceOnUse">
-                  <stop stopColor="#FFD93D" />
-                  <stop offset="0.6" stopColor="#FF6B35" />
+                  <stop stopColor="#FFD93D">
+                    <animate attributeName="stop-color" values="#FFD93D;#FFEB3B;#FFD93D" dur="1.2s" repeatCount="indefinite" />
+                  </stop>
+                  <stop offset="0.6" stopColor="#FF6B35">
+                    <animate attributeName="stop-color" values="#FF6B35;#FF8A50;#FF6B35" dur="1.8s" repeatCount="indefinite" />
+                  </stop>
                   <stop offset="1" stopColor="#FF4500" />
                 </linearGradient>
                 <linearGradient id="fireCoreGradient" x1="32" y1="24" x2="32" y2="50" gradientUnits="userSpaceOnUse">
-                  <stop stopColor="#FFFFFF" />
-                  <stop offset="0.3" stopColor="#FFE566" />
+                  <stop stopColor="#FFFFFF">
+                    <animate attributeName="stop-color" values="#FFFFFF;#FFFDE7;#FFFFFF" dur="0.8s" repeatCount="indefinite" />
+                  </stop>
+                  <stop offset="0.3" stopColor="#FFE566">
+                    <animate attributeName="stop-color" values="#FFE566;#FFF59D;#FFE566" dur="1s" repeatCount="indefinite" />
+                  </stop>
                   <stop offset="1" stopColor="#FFD93D" />
                 </linearGradient>
               </defs>
+              {/* Outer flame - with distortion */}
+              <g filter="url(#flameDistort)">
+                <path
+                  className="flame-outer"
+                  d="M32 2C32 2 16 18 16 36C16 46 22 54 32 62C42 54 48 46 48 36C48 18 32 2 32 2Z"
+                  fill="url(#fireGradient)"
+                />
+              </g>
+              {/* Middle flame */}
+              <path
+                className="flame-middle"
+                d="M32 14C32 14 24 26 24 36C24 44 27 50 32 56C37 50 40 44 40 36C40 26 32 14 32 14Z"
+                fill="url(#fireInnerGradient)"
+                filter="url(#flameGlow)"
+              />
+              {/* Inner core - hottest part */}
+              <path
+                className="flame-core"
+                d="M32 24C32 24 28 32 28 38C28 42 29 46 32 50C35 46 36 42 36 38C36 32 32 24 32 24Z"
+                fill="url(#fireCoreGradient)"
+              />
             </svg>
+          </div>
+          {/* Secondary floating flames */}
+          <div className="flame-wisps">
+            <div className="wisp wisp-1" />
+            <div className="wisp wisp-2" />
+            <div className="wisp wisp-3" />
           </div>
         </div>
 
