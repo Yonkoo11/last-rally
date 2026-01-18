@@ -1,0 +1,183 @@
+/* ============================================
+   CHAIN PONG DESIGN SYSTEM v3.0
+   Premium Arcade Experience
+   Inspired by: Celeste, Hollow Knight, Geometry Wars
+   ============================================ */
+
+:root {
+  /* ========== BACKGROUNDS ========== */
+  --bg-void: #050508;           /* Deep void - darker than default */
+  --bg-dark: #080810;           /* Slightly lighter */
+  --bg-surface: #0D0D12;        /* Cards - very dark */
+  --bg-elevated: #15151D;       /* Hover state */
+  --bg-muted: #1E1E28;          /* Muted backgrounds */
+
+  /* ========== PRIMARY BRAND ========== */
+  --color-primary: #00FFAA;     /* Electric cyan-green - arcade neon */
+  --color-primary-light: #33FFBB;
+  --color-primary-dark: #00CC88;
+  --color-primary-muted: rgba(0, 255, 170, 0.15);
+
+  /* ========== ACCENT - GOLD ========== */
+  --color-gold: #FFD700;        /* Pure gold - for highlights */
+  --color-gold-light: #FFE44D;
+  --color-gold-muted: rgba(255, 215, 0, 0.15);
+
+  /* ========== NEUTRALS ========== */
+  --color-white: #FAFAFA;       /* Zinc 50 */
+  --color-gray-100: #F4F4F5;    /* Zinc 100 */
+  --color-gray-200: #E4E4E7;    /* Zinc 200 */
+  --color-gray-300: #D4D4D8;    /* Zinc 300 */
+  --color-gray-400: #A1A1AA;    /* Zinc 400 */
+  --color-gray-500: #71717A;    /* Zinc 500 */
+  --color-gray-600: #52525B;    /* Zinc 600 */
+  --color-gray-700: #3F3F46;    /* Zinc 700 */
+  --color-gray-800: #27272A;    /* Zinc 800 */
+  --color-gray-900: #18181B;    /* Zinc 900 */
+
+  /* ========== SEMANTIC COLORS ========== */
+  --color-success: #22C55E;     /* Green 500 */
+  --color-warning: #F59E0B;     /* Amber 500 */
+  --color-error: #EF4444;       /* Red 500 */
+  --color-info: #3B82F6;        /* Blue 500 */
+
+  /* ========== PLAYER COLORS ========== */
+  --color-player1: #00D4FF;     /* Ice blue - Player 1 */
+  --color-player1-light: #33DDFF;
+  --color-player2: #FF3366;     /* Hot pink-red - Player 2 / Rival */
+  --color-player2-light: #FF5580;
+
+  /* ========== TEXT ========== */
+  --text-primary: var(--color-white);
+  --text-secondary: var(--color-gray-400);
+  --text-muted: var(--color-gray-500);
+  --text-disabled: var(--color-gray-600);
+
+  /* ========== BORDERS ========== */
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-default: rgba(255, 255, 255, 0.1);
+  --border-strong: rgba(255, 255, 255, 0.15);
+  --border-focus: var(--color-primary);
+
+  /* ========== TYPOGRAPHY ========== */
+  /* Display: Space Grotesk for titles - geometric, arcade feel */
+  /* Body: Inter for UI text - clean and readable */
+  --font-display: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-ui: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+
+  /* Font Sizes - 1:1.5:2 Premium Scale */
+  --text-xs: 0.75rem;     /* 12px - Captions, badges */
+  --text-sm: 0.875rem;    /* 14px - Secondary text */
+  --text-base: 1rem;      /* 16px - Body text */
+  --text-lg: 1.25rem;     /* 20px - Emphasized (1.25x) */
+  --text-xl: 1.5rem;      /* 24px - Small headings (1.5x) */
+  --text-2xl: 2rem;       /* 32px - Section headings (2x) */
+  --text-3xl: 2.5rem;     /* 40px - Page headings */
+  --text-4xl: 3rem;       /* 48px - Hero headings */
+  --text-5xl: 4rem;       /* 64px - Display (2x of 2xl) */
+  --text-6xl: 5rem;       /* 80px - Title screen */
+
+  /* Font Weights */
+  --font-normal: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+
+  /* Letter Spacing */
+  --tracking-tighter: -0.02em;  /* For large display text */
+  --tracking-tight: -0.025em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.025em;
+  --tracking-wider: 0.05em;
+  --tracking-extra-wide: 0.1em; /* For labels, uppercase text */
+
+  /* Line Heights */
+  --leading-none: 1;
+  --leading-tight: 1.25;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.75;
+
+  /* ========== SPACING (4px base) ========== */
+  --space-0: 0;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+
+  /* ========== BORDER RADIUS ========== */
+  --radius-none: 0;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
+  --radius-full: 9999px;
+
+  /* ========== SHADOWS ========== */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.4);
+  --shadow-xl: 0 16px 32px rgba(0, 0, 0, 0.5);
+
+  /* Layered Card Shadows - Premium Depth */
+  --shadow-card:
+    0 1px 2px rgba(0, 0, 0, 0.3),
+    0 4px 8px rgba(0, 0, 0, 0.25),
+    0 8px 16px rgba(0, 0, 0, 0.2);
+
+  --shadow-card-hover:
+    0 2px 4px rgba(0, 0, 0, 0.35),
+    0 8px 16px rgba(0, 0, 0, 0.3),
+    0 16px 32px rgba(0, 0, 0, 0.25);
+
+  --shadow-elevated:
+    0 4px 8px rgba(0, 0, 0, 0.4),
+    0 12px 24px rgba(0, 0, 0, 0.35),
+    0 24px 48px rgba(0, 0, 0, 0.3);
+
+  /* Inset shadows for depth */
+  --shadow-inset-subtle: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  --shadow-inset-strong: inset 0 2px 0 rgba(255, 255, 255, 0.06);
+
+  /* Focus ring */
+  --ring-focus: 0 0 0 2px var(--bg-void), 0 0 0 4px var(--color-primary);
+
+  /* ========== TRANSITIONS ========== */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.45, 0, 0.55, 1);
+
+  --duration-fast: 100ms;
+  --duration-normal: 200ms;
+  --duration-slow: 300ms;
+
+  /* ========== Z-INDEX ========== */
+  --z-base: 0;
+  --z-elevated: 10;
+  --z-dropdown: 100;
+  --z-modal: 1000;
+  --z-tooltip: 2000;
+
+  /* ========== NEON GLOW VARIANTS ========== */
+  --neon-primary: var(--color-primary);
+  --neon-gold: var(--color-gold);
+  --neon-blue: var(--color-player1);
+  --neon-red: var(--color-player2);
+  --neon-purple: #A855F7;       /* Purple accent */
+
+  /* ========== GLOW SHADOWS ========== */
+  --glow-primary: 0 0 20px rgba(0, 255, 170, 0.4), 0 0 40px rgba(0, 255, 170, 0.2);
+  --glow-gold: 0 0 20px rgba(255, 215, 0, 0.4), 0 0 40px rgba(255, 215, 0, 0.2);
+  --glow-blue: 0 0 20px rgba(0, 212, 255, 0.4), 0 0 40px rgba(0, 212, 255, 0.2);
+  --glow-red: 0 0 20px rgba(255, 51, 102, 0.4), 0 0 40px rgba(255, 51, 102, 0.2);
+}
