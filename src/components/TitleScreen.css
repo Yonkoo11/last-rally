@@ -26,7 +26,7 @@
   background:
     radial-gradient(ellipse 100% 60% at 50% 120%, rgba(255, 107, 53, 0.35) 0%, transparent 60%),
     radial-gradient(ellipse 80% 50% at 50% 110%, rgba(255, 70, 0, 0.25) 0%, transparent 50%),
-    radial-gradient(ellipse 60% 40% at 50% -10%, rgba(0, 255, 170, 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse 60% 40% at 50% -10%, rgba(255, 200, 100, 0.1) 0%, transparent 50%),
     linear-gradient(180deg, var(--bg-base) 0%, var(--bg-dark) 40%, #0A0508 100%);
   animation: ambientShift 15s ease-in-out infinite;
 }
@@ -67,7 +67,7 @@
   background: linear-gradient(
     180deg,
     transparent 0%,
-    rgba(0, 255, 170, 0.03) 50%,
+    rgba(255, 170, 0, 0.03) 50%,
     transparent 100%
   );
   animation: scanSweep 4s linear infinite;
@@ -538,18 +538,18 @@
   letter-spacing: 0.25em;
   background: linear-gradient(
     135deg,
-    var(--color-primary) 0%,
-    #00FFCC 20%,
-    #00E6FF 40%,
-    #00FFAA 60%,
-    #33FFBB 80%,
-    var(--color-primary) 100%
+    #FFD700 0%,
+    #FFAA00 20%,
+    #FF8C00 40%,
+    #FFB347 60%,
+    #FFD700 80%,
+    #FFC107 100%
   );
   background-size: 300% 300%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  filter: drop-shadow(0 0 40px rgba(0, 255, 170, 0.6));
+  filter: drop-shadow(0 0 40px rgba(255, 170, 0, 0.6));
   margin-right: -0.25em;
   position: relative;
   /* Start visible - animation will handle entrance if supported */
@@ -573,12 +573,12 @@
   0% {
     opacity: 0;
     transform: translateY(30px) scale(0.95);
-    filter: drop-shadow(0 0 0 rgba(0, 255, 170, 0));
+    filter: drop-shadow(0 0 0 rgba(255, 170, 0, 0));
   }
   100% {
     opacity: 1;
     transform: translateY(0) scale(1);
-    filter: drop-shadow(0 0 40px rgba(0, 255, 170, 0.6));
+    filter: drop-shadow(0 0 40px rgba(255, 170, 0, 0.6));
   }
 }
 
@@ -593,10 +593,10 @@
 
 @keyframes titleGlowPulse {
   0%, 100% {
-    filter: drop-shadow(0 0 40px rgba(0, 255, 170, 0.6));
+    filter: drop-shadow(0 0 40px rgba(255, 170, 0, 0.6));
   }
   50% {
-    filter: drop-shadow(0 0 60px rgba(0, 255, 170, 0.8));
+    filter: drop-shadow(0 0 60px rgba(255, 170, 0, 0.8));
   }
 }
 
@@ -668,7 +668,7 @@
   animation: typewriter 1s steps(18) forwards;
   overflow: hidden;
   white-space: nowrap;
-  border-right: 2px solid var(--color-primary);
+  border-right: 2px solid #FFD700;
   animation: typewriterText 1s steps(18) forwards, blinkCursor 0.6s step-end infinite;
 }
 
@@ -739,7 +739,7 @@
   gap: var(--space-3);
   min-width: 240px;
   padding: var(--space-6) var(--space-14);
-  background: linear-gradient(135deg, var(--color-primary) 0%, #00E6CC 100%);
+  background: linear-gradient(135deg, #FFD700 0%, #FF9500 100%);
   border: none;
   border-radius: var(--radius-xl);
   cursor: pointer;
@@ -752,8 +752,8 @@
   transition: transform 0.2s var(--ease-out),
               box-shadow 0.3s var(--ease-out);
   box-shadow:
-    0 4px 30px rgba(0, 255, 170, 0.5),
-    0 0 0 0 rgba(0, 255, 170, 0);
+    0 4px 30px rgba(255, 170, 0, 0.5),
+    0 0 0 0 rgba(255, 170, 0, 0);
   overflow: hidden;
   animation: buttonPulse 3s ease-in-out infinite 2s;
 }
@@ -761,13 +761,13 @@
 @keyframes buttonPulse {
   0%, 100% {
     box-shadow:
-      0 4px 30px rgba(0, 255, 170, 0.5),
-      0 0 0 0 rgba(0, 255, 170, 0);
+      0 4px 30px rgba(255, 170, 0, 0.5),
+      0 0 0 0 rgba(255, 170, 0, 0);
   }
   50% {
     box-shadow:
-      0 6px 40px rgba(0, 255, 170, 0.7),
-      0 0 0 4px rgba(0, 255, 170, 0.1);
+      0 6px 40px rgba(255, 170, 0, 0.7),
+      0 0 0 4px rgba(255, 170, 0, 0.1);
   }
 }
 
@@ -810,8 +810,8 @@
   .btn-play:hover {
     transform: translateY(-3px) scale(1.03);
     box-shadow:
-      0 8px 40px rgba(0, 255, 170, 0.6),
-      0 0 0 3px rgba(0, 255, 170, 0.2);
+      0 8px 40px rgba(255, 170, 0, 0.6),
+      0 0 0 3px rgba(255, 170, 0, 0.2);
   }
 
   .btn-play:hover::before {
@@ -840,7 +840,7 @@
   }
 
   .title-screen:has(.btn-play:hover) .title-rally {
-    filter: drop-shadow(0 0 50px rgba(0, 255, 170, 0.9));
+    filter: drop-shadow(0 0 50px rgba(255, 170, 0, 0.9));
   }
 }
 
@@ -994,9 +994,9 @@
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(0, 255, 170, 0.3) 20%,
-    rgba(0, 255, 170, 0.7) 50%,
-    rgba(0, 255, 170, 0.3) 80%,
+    rgba(255, 170, 0, 0.3) 20%,
+    rgba(255, 170, 0, 0.7) 50%,
+    rgba(255, 170, 0, 0.3) 80%,
     transparent 100%
   );
   transform: scaleX(0);
