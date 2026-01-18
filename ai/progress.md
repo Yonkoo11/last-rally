@@ -9,24 +9,36 @@
   - Pushed to GitHub: https://github.com/Yonkoo11/last-rally
   - Created auto-commit deploy script: `scripts/deploy.sh`
   - Verified localhost matches Vercel deployment
+  - **Connected Vercel to GitHub** - auto-deploys on push
+  - Added `last-rally.vercel.app` domain to new project
+  - Deployed to production successfully
 
 - **What's next:**
-  - Connect Vercel to GitHub repo for automatic deployments
-  - Implement any planned UI improvements
-  - Consider adding CI/CD pipeline
+  - Implement UI improvements (Senior Designer plan was deferred)
+  - Clean up old folders (`/epoch/`, `/last-rally/`)
+  - Consider adding CI/CD tests
 
 - **Blockers/Issues:** None
 
 ## Handover Notes
-The v4.0 code is now properly version controlled. The old `/Users/yonko/Projects/last-rally` folder contains an older v1.0 version - consider deleting or archiving it to avoid confusion.
+The v4.0 code is now properly version controlled and connected to Vercel.
 
-**Key locations:**
-- v4.0 (current): `/Users/yonko/Projects/last-rally-v4/`
-- v1.0 (old): `/Users/yonko/Projects/last-rally/`
-- Original location: `/Users/yonko/epoch/` (can be deleted now)
+**Infrastructure complete:**
+- GitHub: https://github.com/Yonkoo11/last-rally
+- Vercel project: `last-rally-v4`
+- Production URL: https://last-rally.vercel.app
+- Auto-deploy: Every `git push` triggers Vercel build
 
-## Deploy Command
+**Cleanup needed:**
+- `/Users/yonko/epoch/` - original location (can delete)
+- `/Users/yonko/Projects/last-rally/` - old v1.0 (can delete)
+
+## Deploy Workflow
 ```bash
-./scripts/deploy.sh
+# Option 1: Manual
+git add -A && git commit -m "message" && git push
+# Vercel auto-deploys
+
+# Option 2: Script
+./scripts/deploy.sh  # Auto-commits + deploys
 ```
-This auto-commits any changes before deploying to Vercel.
