@@ -540,6 +540,12 @@ export function PongArena({ config, onMatchEnd, onQuit }: PongArenaProps) {
           )}
         </div>
 
+        {/* Player name labels below pitch */}
+        <div className="player-labels">
+          <span className="player-label player-label-left">{config.player1Name}</span>
+          <span className="player-label player-label-right">{config.player2Name}</span>
+        </div>
+
         {/* Rally Counter & Pitch Indicator */}
         <div className="game-footer">
           <div className="rally-counter">RALLY: {rallyCount}</div>

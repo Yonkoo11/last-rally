@@ -4,7 +4,7 @@
 // ============================================
 
 import { useState, useEffect } from 'react';
-import { GameMode } from './PongArena';
+import { GameMode } from '../types';
 import { AIDifficulty, DIFFICULTY_INFO } from '../lib/ai';
 import { Quest } from '../lib/quests';
 import {

@@ -158,6 +158,34 @@
   height: auto;
 }
 
+/* Player Labels Below Pitch */
+.player-labels {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 800px;
+  padding: 0 var(--space-4, 16px);
+  margin-top: var(--space-3, 12px);
+}
+
+.player-label {
+  font-family: var(--font-display, "Space Grotesk", sans-serif);
+  font-size: var(--text-xs, 12px);
+  font-weight: var(--font-medium, 500);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.player-label-left {
+  color: var(--color-player1, #00D4FF);
+  text-shadow: 0 0 10px rgba(0, 212, 255, 0.4);
+}
+
+.player-label-right {
+  color: var(--color-player2, #FF3366);
+  text-shadow: 0 0 10px rgba(255, 51, 102, 0.4);
+}
+
 /* Game Footer */
 .game-footer {
   display: flex;

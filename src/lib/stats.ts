@@ -6,7 +6,7 @@ import {
   GameMode,
 } from '../types';
 import {
-  loadStats,
+  loadStats as loadStatsFromStorage,
   saveStats,
   loadAchievements,
   unlockAchievement,
@@ -14,6 +14,9 @@ import {
   completeQuest as saveQuestCompletion,
   updateDailyProgress,
 } from './storage';
+
+// Re-export for external use
+export const loadStats = loadStatsFromStorage;
 import { ACHIEVEMENTS } from '../data/achievements';
 
 // ============================================
@@ -27,7 +30,7 @@ export interface ProcessedResult {
 }
 
 export function processMatchResult(result: MatchResult): ProcessedResult {
-  const stats = loadStats();
+  const stats = loadStatsFromStorage();
   const now = new Date().toISOString();
 
   const isPlayerWin = result.winner === 'left';
