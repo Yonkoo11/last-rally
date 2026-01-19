@@ -21,7 +21,7 @@ import {
   IconLock,
   IconSparkles,
   IconShare,
-  IconSwords,
+  IconBlockchain,
 } from './ui';
 import { generateStatsShareText, copyToClipboard, shareNative, canShareNative } from '../lib/share';
 
@@ -233,8 +233,8 @@ export function ModeSelect({ onSelectPvP, onSelectAI, onSelectQuest, onSelectOnl
           {/* Mode Cards with stagger animation */}
           <div className="stagger-entrance" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
             <ModeCard
-              icon={<IconSwords size={26} />}
-              iconBg="rgba(0, 255, 170, 0.2)"
+              icon={<IconBlockchain size={26} />}
+              iconBg="#1a3a3a"
               glowColor="primary"
               title="Online Play"
               description="Battle players worldwide in real-time"

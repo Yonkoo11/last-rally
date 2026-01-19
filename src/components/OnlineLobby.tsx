@@ -190,7 +190,7 @@ export function OnlineLobby({ onGameStart, onBack }: OnlineLobbyProps) {
             BACK
           </button>
           <h1 className="screen__title" style={{ marginTop: 'var(--space-4)', textTransform: 'uppercase' }}>
-            Online <span style={{ color: 'var(--color-player1)' }}>Play</span>
+            Online <span style={{ color: 'var(--color-gold)' }}>Play</span>
           </h1>
           <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', marginTop: 'var(--space-2)' }}>
             <div style={{
@@ -213,7 +213,16 @@ export function OnlineLobby({ onGameStart, onBack }: OnlineLobbyProps) {
 
         {/* Error Message */}
         {error && (
-          <div className="badge badge--error" style={{ display: 'block', width: '100%', padding: 'var(--space-4)', marginBottom: 'var(--space-4)', fontSize: 'var(--text-sm)', textAlign: 'left', borderRadius: 'var(--radius-md)' }}>
+          <div style={{
+            width: '100%',
+            padding: 'var(--space-4)',
+            marginBottom: 'var(--space-4)',
+            background: 'rgba(220, 38, 38, 0.15)',
+            borderRadius: 'var(--radius-md)',
+            color: '#ef4444',
+            fontSize: 'var(--text-sm)',
+            fontFamily: 'var(--font-display)',
+          }}>
             {error}
           </div>
         )}
