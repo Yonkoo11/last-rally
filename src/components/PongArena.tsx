@@ -390,15 +390,15 @@ export function PongArena({ config, onMatchEnd, onQuit }: PongArenaProps) {
         </div>
 
         {/* Scoreboard */}
-        <div className="scoreboard">
+        <div className="scoreboard" role="status" aria-live="polite" aria-label="Game score">
           <div className="score-side left">
             <div className="player-name">{config.player1Name}</div>
-            <div className={`score ${justScored === 'left' ? 'just-scored' : ''}`}>{leftScore}</div>
+            <div className={`score ${justScored === 'left' ? 'just-scored' : ''}`} aria-label={`${config.player1Name} score: ${leftScore}`}>{leftScore}</div>
           </div>
-          <div className="score-separator">:</div>
+          <div className="score-separator" aria-hidden="true">:</div>
           <div className="score-side right">
             <div className="player-name">{config.player2Name}</div>
-            <div className={`score ${justScored === 'right' ? 'just-scored' : ''}`}>{rightScore}</div>
+            <div className={`score ${justScored === 'right' ? 'just-scored' : ''}`} aria-label={`${config.player2Name} score: ${rightScore}`}>{rightScore}</div>
           </div>
         </div>
 
@@ -409,6 +409,8 @@ export function PongArena({ config, onMatchEnd, onQuit }: PongArenaProps) {
             width={CANVAS_WIDTH}
             height={CANVAS_HEIGHT}
             className="game-canvas"
+            aria-label={`Pong game arena. ${config.player1Name} vs ${config.player2Name}. Score: ${leftScore} to ${rightScore}`}
+            role="img"
           />
 
           {phase === 'victory' && (

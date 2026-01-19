@@ -202,7 +202,7 @@ export function ModeSelect({ onBack, onStartGame }: ModeSelectProps) {
           <h2 className="page-header">Select Difficulty</h2>
         </div>
 
-        <div className="difficulty-grid">
+        <div className="difficulty-grid" role="radiogroup" aria-label="Select AI difficulty level">
           {(['easy', 'medium', 'hard', 'impossible'] as Difficulty[]).map(diff => {
             const isSuggested = diff === suggestedDifficulty;
             const wins = stats[`ai${diff.charAt(0).toUpperCase()}${diff.slice(1)}Wins` as keyof typeof stats] || 0;
@@ -213,6 +213,9 @@ export function ModeSelect({ onBack, onStartGame }: ModeSelectProps) {
                 onClick={() => handleDifficultySelect(diff)}
                 onMouseEnter={() => setHoveredDifficulty(diff)}
                 onMouseLeave={() => setHoveredDifficulty(null)}
+                role="radio"
+                aria-checked={false}
+                aria-label={`${DIFFICULTY_NAMES[diff]} difficulty${isSuggested ? ' (suggested)' : ''}, ${wins} wins`}
               >
                 <span className="difficulty-name">
                   {DIFFICULTY_NAMES[diff]}
@@ -300,12 +303,13 @@ export function ModeSelect({ onBack, onStartGame }: ModeSelectProps) {
         <h2 className="page-header">Select Mode</h2>
       </div>
 
-      <div className="mode-grid">
+      <div className="mode-grid" role="group" aria-label="Game mode selection">
         <button
           className="mode-card mode-solo"
           onClick={() => handleSubViewChange('difficulty')}
+          aria-label="Solo Play: Challenge the AI"
         >
-          <div className="mode-icon">
+          <div className="mode-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <rect x="6" y="4" width="4" height="16" rx="1" />
               <circle cx="17" cy="12" r="3" />
@@ -316,8 +320,8 @@ export function ModeSelect({ onBack, onStartGame }: ModeSelectProps) {
           <span className="mode-desc">Challenge the AI</span>
         </button>
 
-        <button className="mode-card mode-pvp" onClick={handlePvP}>
-          <div className="mode-icon">
+        <button className="mode-card mode-pvp" onClick={handlePvP} aria-label="Local Multiplayer: Play with a friend">
+          <div className="mode-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <rect x="2" y="4" width="4" height="16" rx="1" />
               <rect x="18" y="4" width="4" height="16" rx="1" />
@@ -332,8 +336,9 @@ export function ModeSelect({ onBack, onStartGame }: ModeSelectProps) {
         <button
           className="mode-card mode-quest"
           onClick={() => handleSubViewChange('quest')}
+          aria-label={`Quest Mode: ${questProgress.completedQuests.length} of ${QUESTS.length} completed`}
         >
-          <div className="mode-icon">
+          <div className="mode-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
               <polyline points="14 2 14 8 20 8" />

@@ -71,6 +71,30 @@ function safeJSONParse<T>(json: string | null, fallback: T): T {
   }
 }
 
+function safeStorageSet(key: string, value: string): boolean {
+  try {
+    localStorage.setItem(key, value);
+    return true;
+  } catch (error) {
+    // Handle QuotaExceededError (storage full) and SecurityError (private browsing)
+    if (error instanceof Error) {
+      console.warn(`Storage write failed for key "${key}":`, error.name);
+    }
+    return false;
+  }
+}
+
+function isStorageAvailable(): boolean {
+  try {
+    const testKey = '__storage_test__';
+    localStorage.setItem(testKey, testKey);
+    localStorage.removeItem(testKey);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 function getToday(): string {
   return new Date().toISOString().split('T')[0];
 }
@@ -126,7 +150,7 @@ export function loadPlayerName(): string {
 }
 
 export function savePlayerName(name: string): void {
-  localStorage.setItem(KEYS.PLAYER_NAME, name.toUpperCase().slice(0, 12));
+  safeStorageSet(KEYS.PLAYER_NAME, name.toUpperCase().slice(0, 12));
 }
 
 // ============================================
@@ -139,7 +163,7 @@ export function loadStats(): PlayerStats {
 }
 
 export function saveStats(stats: PlayerStats): void {
-  localStorage.setItem(KEYS.PLAYER_STATS, JSON.stringify(stats));
+  safeStorageSet(KEYS.PLAYER_STATS, JSON.stringify(stats));
 }
 
 export function updateStats(updates: Partial<PlayerStats>): PlayerStats {
@@ -159,7 +183,7 @@ export function loadQuestProgress(): QuestProgress {
 }
 
 export function saveQuestProgress(progress: QuestProgress): void {
-  localStorage.setItem(KEYS.QUEST_PROGRESS, JSON.stringify(progress));
+  safeStorageSet(KEYS.QUEST_PROGRESS, JSON.stringify(progress));
 }
 
 export function completeQuest(questId: number): QuestProgress {
@@ -183,7 +207,7 @@ export function loadAchievements(): AchievementState {
 }
 
 export function saveAchievements(achievements: AchievementState): void {
-  localStorage.setItem(KEYS.ACHIEVEMENTS, JSON.stringify(achievements));
+  safeStorageSet(KEYS.ACHIEVEMENTS, JSON.stringify(achievements));
 }
 
 export function unlockAchievement(achievementId: string): boolean {
@@ -212,7 +236,7 @@ export function loadCosmetics(): CosmeticState {
 }
 
 export function saveCosmetics(cosmetics: CosmeticState): void {
-  localStorage.setItem(KEYS.COSMETICS, JSON.stringify(cosmetics));
+  safeStorageSet(KEYS.COSMETICS, JSON.stringify(cosmetics));
 }
 
 export function unlockCosmetic(
@@ -292,7 +316,7 @@ export function loadDailyState(): DailyState {
 }
 
 export function saveDailyState(state: DailyState): void {
-  localStorage.setItem(KEYS.DAILY, JSON.stringify(state));
+  safeStorageSet(KEYS.DAILY, JSON.stringify(state));
 }
 
 export function updateDailyProgress(
@@ -357,7 +381,7 @@ export function loadSettings(): GameSettings {
 }
 
 export function saveSettings(settings: GameSettings): void {
-  localStorage.setItem(KEYS.SETTINGS, JSON.stringify(settings));
+  safeStorageSet(KEYS.SETTINGS, JSON.stringify(settings));
 }
 
 export function updateSettings(updates: Partial<GameSettings>): GameSettings {

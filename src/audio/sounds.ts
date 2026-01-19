@@ -6,23 +6,42 @@ let audioContext: AudioContext | null = null;
 let masterGain: GainNode | null = null;
 let volume = 0.7;
 let enabled = true;
+let audioAvailable = true;
 
 // ============================================
 // AUDIO INITIALIZATION
 // ============================================
 
-function initAudio(): AudioContext {
+function initAudio(): AudioContext | null {
+  // If we've already determined audio is unavailable, don't retry
+  if (!audioAvailable) return null;
+
   if (!audioContext) {
-    audioContext = new (window.AudioContext ||
-      (window as any).webkitAudioContext)();
-    masterGain = audioContext.createGain();
-    masterGain.connect(audioContext.destination);
-    masterGain.gain.value = volume;
+    try {
+      const AudioContextClass = window.AudioContext ||
+        (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+
+      if (!AudioContextClass) {
+        audioAvailable = false;
+        return null;
+      }
+
+      audioContext = new AudioContextClass();
+      masterGain = audioContext.createGain();
+      masterGain.connect(audioContext.destination);
+      masterGain.gain.value = volume;
+    } catch (error) {
+      // AudioContext creation failed (e.g., no audio device, browser restrictions)
+      audioAvailable = false;
+      return null;
+    }
   }
 
   // Resume if suspended (for autoplay policies)
   if (audioContext.state === 'suspended') {
-    audioContext.resume();
+    audioContext.resume().catch(() => {
+      // Ignore resume failures - this is expected in some contexts
+    });
   }
 
   return audioContext;
@@ -41,7 +60,9 @@ export function setEnabled(isEnabled: boolean): void {
 
 export function resumeAudio(): void {
   if (audioContext?.state === 'suspended') {
-    audioContext.resume();
+    audioContext.resume().catch(() => {
+      // Ignore resume failures
+    });
   }
 }
 
@@ -59,7 +80,7 @@ function playTone(
   if (!enabled) return;
 
   const ctx = initAudio();
-  if (!masterGain) return;
+  if (!ctx || !masterGain) return;
 
   const oscillator = ctx.createOscillator();
   const gainNode = ctx.createGain();
@@ -84,7 +105,7 @@ function playNoise(duration: number, filterFreq: number = 1000): void {
   if (!enabled) return;
 
   const ctx = initAudio();
-  if (!masterGain) return;
+  if (!ctx || !masterGain) return;
 
   // Create white noise
   const bufferSize = ctx.sampleRate * duration;
@@ -135,7 +156,7 @@ export function playScore(): void {
   if (!enabled) return;
 
   const ctx = initAudio();
-  if (!masterGain) return;
+  if (!ctx || !masterGain) return;
 
   const now = ctx.currentTime;
 
@@ -174,7 +195,7 @@ export function playGameStart(): void {
   if (!enabled) return;
 
   const ctx = initAudio();
-  if (!masterGain) return;
+  if (!ctx || !masterGain) return;
 
   const now = ctx.currentTime;
 
@@ -197,7 +218,7 @@ export function playVictory(): void {
   if (!enabled) return;
 
   const ctx = initAudio();
-  if (!masterGain) return;
+  if (!ctx || !masterGain) return;
 
   const notes = [523.25, 659.25, 783.99, 1046.5]; // C5, E5, G5, C6
   const now = ctx.currentTime;
@@ -224,7 +245,7 @@ export function playDefeat(): void {
   if (!enabled) return;
 
   const ctx = initAudio();
-  if (!masterGain) return;
+  if (!ctx || !masterGain) return;
 
   const notes = [440, 349.23, 293.66, 220]; // A4, F4, D4, A3
   const now = ctx.currentTime;
@@ -251,7 +272,7 @@ export function playAchievement(): void {
   if (!enabled) return;
 
   const ctx = initAudio();
-  if (!masterGain) return;
+  if (!ctx || !masterGain) return;
 
   const now = ctx.currentTime;
 

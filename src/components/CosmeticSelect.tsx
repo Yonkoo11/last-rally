@@ -66,28 +66,45 @@ export function CosmeticSelect({ onClose, isOverlay = false }: CosmeticSelectPro
         </button>
       </div>
 
-      <div className="cosmetic-tabs">
+      <div className="cosmetic-tabs" role="tablist" aria-label="Cosmetic categories">
         <button
           className={`tab ${activeTab === 'paddles' ? 'active' : ''}`}
           onClick={() => handleTabChange('paddles')}
+          role="tab"
+          aria-selected={activeTab === 'paddles'}
+          aria-controls="tabpanel-paddles"
+          id="tab-paddles"
         >
           Paddles
         </button>
         <button
           className={`tab ${activeTab === 'trails' ? 'active' : ''}`}
           onClick={() => handleTabChange('trails')}
+          role="tab"
+          aria-selected={activeTab === 'trails'}
+          aria-controls="tabpanel-trails"
+          id="tab-trails"
         >
           Trails
         </button>
         <button
           className={`tab ${activeTab === 'themes' ? 'active' : ''}`}
           onClick={() => handleTabChange('themes')}
+          role="tab"
+          aria-selected={activeTab === 'themes'}
+          aria-controls="tabpanel-themes"
+          id="tab-themes"
         >
           Themes
         </button>
       </div>
 
-      <div className="cosmetic-grid">
+      <div
+        className="cosmetic-grid"
+        role="tabpanel"
+        id={`tabpanel-${activeTab}`}
+        aria-labelledby={`tab-${activeTab}`}
+      >
         {activeTab === 'paddles' &&
           PADDLE_SKINS.map(item => {
             const unlocked = isUnlocked(item, unlockContext);
