@@ -1620,24 +1620,28 @@ export function PongArena({
         justifyContent: 'space-between',
         width: '100%',
         maxWidth: '900px',
-        padding: '0 var(--space-2)',
-        marginTop: 'var(--space-2)',
+        padding: '0 var(--space-4)',
+        marginTop: 'var(--space-3)',
       }}>
         <div style={{
           fontFamily: 'var(--font-display)',
-          fontSize: '12px',
-          color: '#4169E1',
-          letterSpacing: '0.1em',
+          fontSize: 'var(--text-xs)',
+          fontWeight: 'var(--font-medium)',
+          color: 'var(--color-player1)',
+          letterSpacing: 'var(--tracking-extra-wide)',
           textTransform: 'uppercase',
+          textShadow: '0 0 10px rgba(0, 212, 255, 0.4)',
         }}>
           {playerNames.player1}
         </div>
         <div style={{
           fontFamily: 'var(--font-display)',
-          fontSize: '12px',
-          color: '#DC143C',
-          letterSpacing: '0.1em',
+          fontSize: 'var(--text-xs)',
+          fontWeight: 'var(--font-medium)',
+          color: 'var(--color-player2)',
+          letterSpacing: 'var(--tracking-extra-wide)',
           textTransform: 'uppercase',
+          textShadow: '0 0 10px rgba(255, 51, 102, 0.4)',
         }}>
           {playerNames.player2}
         </div>
