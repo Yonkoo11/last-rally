@@ -1614,6 +1614,35 @@ export function PongArena({
         )}
       </div>
 
+      {/* Player name labels below pitch */}
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        width: '100%',
+        maxWidth: '900px',
+        padding: '0 var(--space-2)',
+        marginTop: 'var(--space-2)',
+      }}>
+        <div style={{
+          fontFamily: 'var(--font-display)',
+          fontSize: '12px',
+          color: '#4169E1',
+          letterSpacing: '0.1em',
+          textTransform: 'uppercase',
+        }}>
+          {playerNames.player1}
+        </div>
+        <div style={{
+          fontFamily: 'var(--font-display)',
+          fontSize: '12px',
+          color: '#DC143C',
+          letterSpacing: '0.1em',
+          textTransform: 'uppercase',
+        }}>
+          {playerNames.player2}
+        </div>
+      </div>
+
       {/* Controls hint */}
       <div style={{
         display: 'flex',
