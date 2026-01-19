@@ -9,7 +9,7 @@ import {
 } from '../lib/storage';
 import { getSuggestedDifficulty, getWinRate } from '../lib/stats';
 import { QUESTS } from '../data/quests';
-import { PADDLE_SKINS, BALL_TRAILS, ARENA_THEMES, isUnlocked } from '../data/cosmetics';
+import { PADDLE_SKINS, BALL_TRAILS, ARENA_THEMES, COURT_STYLES, WEATHER_EFFECTS, isUnlocked } from '../data/cosmetics';
 import { ACHIEVEMENTS } from '../data/achievements';
 import {
   PlayerStats,
@@ -116,6 +116,7 @@ function findNextUnlock(
 ): NextUnlock | null {
   const unlockStats = {
     gamesPlayed: stats.totalGames,
+    totalWins: stats.totalWins,
     completedQuests: questProgress.completedQuests,
     unlockedAchievements: Object.keys(achievements),
     bestStreak: stats.bestWinStreak,
@@ -126,7 +127,7 @@ function findNextUnlock(
   };
 
   // Combine all cosmetics
-  const allCosmetics = [...PADDLE_SKINS, ...BALL_TRAILS, ...ARENA_THEMES];
+  const allCosmetics = [...PADDLE_SKINS, ...BALL_TRAILS, ...ARENA_THEMES, ...COURT_STYLES, ...WEATHER_EFFECTS];
 
   // Find locked cosmetics and calculate progress
   const lockedWithProgress = allCosmetics
@@ -219,6 +220,21 @@ function calculateProgress(
     case 'achievement':
       return {
         progress: 0,
+        target: 1,
+        description: cosmetic.unlockCondition.description,
+      };
+
+    case 'wins':
+      return {
+        progress: stats.totalWins,
+        target: value as number,
+        description: `Win ${value} matches`,
+      };
+
+    case 'court':
+      // Court-based unlocks (e.g., win on hockey rink)
+      return {
+        progress: 0, // Would need per-court win tracking
         target: 1,
         description: cosmetic.unlockCondition.description,
       };

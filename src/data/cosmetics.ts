@@ -1,4 +1,4 @@
-import { Cosmetic, PaddleSkin, TrailType, ArenaTheme } from '../types';
+import { Cosmetic, PaddleSkin, TrailType, ArenaTheme, CourtStyle, WeatherEffect } from '../types';
 
 export const PADDLE_SKINS: Cosmetic[] = [
   {
@@ -165,6 +165,80 @@ export const ARENA_THEMES: Cosmetic[] = [
   },
 ];
 
+export const COURT_STYLES: Cosmetic[] = [
+  {
+    id: 'pong',
+    name: 'Classic Pong',
+    type: 'court',
+    unlockCondition: {
+      type: 'default',
+      description: 'Available from start',
+    },
+  },
+  {
+    id: 'football',
+    name: 'Football Pitch',
+    type: 'court',
+    unlockCondition: {
+      type: 'wins',
+      value: 15,
+      description: 'Win 15 matches',
+    },
+  },
+  {
+    id: 'basketball',
+    name: 'Basketball Court',
+    type: 'court',
+    unlockCondition: {
+      type: 'wins',
+      value: 30,
+      description: 'Win 30 matches',
+    },
+  },
+  {
+    id: 'hockey',
+    name: 'Hockey Rink',
+    type: 'court',
+    unlockCondition: {
+      type: 'difficulty',
+      value: 'hard',
+      description: 'Beat Hard difficulty',
+    },
+  },
+];
+
+export const WEATHER_EFFECTS: Cosmetic[] = [
+  {
+    id: 'none',
+    name: 'None',
+    type: 'weather',
+    unlockCondition: {
+      type: 'default',
+      description: 'Available from start',
+    },
+  },
+  {
+    id: 'snow',
+    name: 'Snow',
+    type: 'weather',
+    unlockCondition: {
+      type: 'court',
+      value: 'hockey',
+      description: 'Win on Hockey rink',
+    },
+  },
+  {
+    id: 'rain',
+    name: 'Rain',
+    type: 'weather',
+    unlockCondition: {
+      type: 'quest',
+      value: 5,
+      description: 'Complete 5 quests',
+    },
+  },
+];
+
 // Color schemes for cosmetics
 export const PADDLE_COLORS: Record<PaddleSkin, string | string[]> = {
   default: '#FFFFFF',
@@ -230,9 +304,47 @@ export const THEME_COLORS: Record<
   },
 };
 
+export const COURT_COLORS: Record<
+  CourtStyle,
+  {
+    background: string;
+    surface: string;
+    lines: string;
+    accent: string;
+    ball?: string;  // Override ball color for visibility on light courts
+  }
+> = {
+  pong: {
+    background: '#08080C',
+    surface: '#08080C',
+    lines: '#FFFFFF',
+    accent: '#FFFFFF',
+  },
+  football: {
+    background: '#1A3D16',  // Dark green for grass
+    surface: '#2D5A27',     // Green grass
+    lines: '#FFFFFF',
+    accent: '#CCCCCC',
+  },
+  basketball: {
+    background: '#8B6914',  // Dark wood
+    surface: '#C4956A',     // Wood floor
+    lines: '#FFFFFF',
+    accent: '#FF4444',      // Red for key/paint
+    ball: '#1a1a1a',        // Dark ball for visibility on wood
+  },
+  hockey: {
+    background: '#B8D4E3',  // Light ice blue
+    surface: '#E8F4F8',     // Ice white
+    lines: '#CC0000',       // Red lines
+    accent: '#0066CC',      // Blue lines
+    ball: '#1a1a2e',        // Dark blue/black ball for visibility on ice
+  },
+};
+
 export const getCosmeticById = (
   id: string,
-  type: 'paddle' | 'trail' | 'theme'
+  type: 'paddle' | 'trail' | 'theme' | 'court' | 'weather'
 ): Cosmetic | undefined => {
   switch (type) {
     case 'paddle':
@@ -241,6 +353,10 @@ export const getCosmeticById = (
       return BALL_TRAILS.find(c => c.id === id);
     case 'theme':
       return ARENA_THEMES.find(c => c.id === id);
+    case 'court':
+      return COURT_STYLES.find(c => c.id === id);
+    case 'weather':
+      return WEATHER_EFFECTS.find(c => c.id === id);
   }
 };
 
@@ -248,6 +364,7 @@ export const isUnlocked = (
   cosmetic: Cosmetic,
   stats: {
     gamesPlayed: number;
+    totalWins: number;
     completedQuests: number[];
     unlockedAchievements: string[];
     bestStreak: number;
@@ -255,6 +372,7 @@ export const isUnlocked = (
     aiMediumWins: number;
     aiHardWins: number;
     aiImpossibleWins: number;
+    courtWins?: Record<string, number>;
   }
 ): boolean => {
   const { type, value } = cosmetic.unlockCondition;
@@ -264,6 +382,8 @@ export const isUnlocked = (
       return true;
     case 'games':
       return stats.gamesPlayed >= (value as number);
+    case 'wins':
+      return stats.totalWins >= (value as number);
     case 'quest':
       return stats.completedQuests.includes(value as number);
     case 'achievement':
@@ -277,12 +397,15 @@ export const isUnlocked = (
         case 'medium':
           return stats.aiMediumWins >= 5;
         case 'hard':
-          return stats.aiHardWins >= 5;
+          return stats.aiHardWins >= 1;
         case 'impossible':
           return stats.aiImpossibleWins >= 1;
         default:
           return false;
       }
+    case 'court':
+      // Check if player has won on specified court
+      return (stats.courtWins?.[value as string] || 0) >= 1;
     default:
       return false;
   }

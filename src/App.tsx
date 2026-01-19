@@ -38,6 +38,8 @@ function AppContent() {
       player1Name: playerName || 'PLAYER 1',
       player2Name: 'ROOKIE',
       arenaTheme: cosmetics.selectedArenaTheme,
+      courtStyle: cosmetics.selectedCourtStyle,
+      weather: cosmetics.selectedWeather,
     });
     setView('pong');
   }, []);
@@ -52,6 +54,8 @@ function AppContent() {
         player1Name,
         player2Name,
         arenaTheme: cosmetics.selectedArenaTheme,
+        courtStyle: cosmetics.selectedCourtStyle,
+        weather: cosmetics.selectedWeather,
       };
 
       if (quest) {

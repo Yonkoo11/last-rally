@@ -22,13 +22,13 @@ import {
   renderGame,
   renderCountdown,
   renderPausedOverlay,
-  renderNames,
   updateTrail,
   clearTrail,
   spawnScoreParticles,
   spawnHitParticles,
   updateParticles,
   clearParticles,
+  clearWeather,
 } from '../game/renderer';
 import {
   CANVAS_WIDTH,
@@ -404,10 +404,13 @@ export function PongArena({ config, onMatchEnd, onQuit }: PongArenaProps) {
         leftScoreRef.current,
         rightScoreRef.current,
         config.arenaTheme,
-        modifiers.paddleSize
+        modifiers.paddleSize,
+        config.courtStyle,
+        config.weather
       );
 
-      renderNames(ctx, config.player1Name, config.player2Name, config.arenaTheme);
+      // Note: Player names are displayed in the HTML scoreboard above the canvas
+      // (not rendered on canvas to avoid overlap with court markings)
 
       if (phaseRef.current === 'countdown') {
         renderCountdown(ctx, countdown, config.arenaTheme);
@@ -428,6 +431,7 @@ export function PongArena({ config, onMatchEnd, onQuit }: PongArenaProps) {
     resetAIState();
     clearTrail();
     clearParticles();
+    clearWeather();
 
     gameLoopRef.current = requestAnimationFrame(gameLoop);
 
@@ -435,6 +439,7 @@ export function PongArena({ config, onMatchEnd, onQuit }: PongArenaProps) {
       if (gameLoopRef.current) {
         cancelAnimationFrame(gameLoopRef.current);
       }
+      clearWeather();
     };
   }, [gameLoop]);
 
@@ -532,6 +537,7 @@ export function PongArena({ config, onMatchEnd, onQuit }: PongArenaProps) {
                 rightPaddleRef.current = createPaddle('right', config.mode === 'pvp' ? loadCosmetics().selectedPaddleSkin : 'default');
                 clearTrail();
                 clearParticles();
+                clearWeather();
                 resetAIState();
                 gameLoopRef.current = requestAnimationFrame(gameLoop);
               }}

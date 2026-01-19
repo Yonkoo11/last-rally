@@ -1,4 +1,4 @@
-import { Ball, Paddle, ArenaTheme, PaddleSkin, TrailType, Vector2D } from '../types';
+import { Ball, Paddle, ArenaTheme, PaddleSkin, TrailType, Vector2D, CourtStyle, WeatherEffect } from '../types';
 import {
   CANVAS_WIDTH,
   CANVAS_HEIGHT,
@@ -6,7 +6,9 @@ import {
   TRAIL_LENGTH,
   TRAIL_FADE_RATE,
 } from './constants';
-import { PADDLE_COLORS, THEME_COLORS, TRAIL_COLORS, PLAYER_COLORS } from '../data/cosmetics';
+import { PADDLE_COLORS, THEME_COLORS, TRAIL_COLORS, PLAYER_COLORS, COURT_COLORS } from '../data/cosmetics';
+import { renderCourtMarkings } from './courts';
+import { updateWeather, renderWeather, clearWeather } from './weather';
 
 // ============================================
 // TRAIL SYSTEM
@@ -148,21 +150,23 @@ export function renderGame(
   leftScore: number,
   rightScore: number,
   theme: ArenaTheme,
-  paddleSizeModifier: number = 1
+  paddleSizeModifier: number = 1,
+  courtStyle: CourtStyle = 'pong',
+  weather: WeatherEffect = 'none'
 ): void {
   const colors = THEME_COLORS[theme];
+  const courtColors = COURT_COLORS[courtStyle];
 
-  // Clear canvas with base color
-  ctx.fillStyle = colors.background;
+  // Clear canvas with court base color (use court color for non-pong courts)
+  if (courtStyle === 'pong') {
+    ctx.fillStyle = colors.background;
+  } else {
+    ctx.fillStyle = courtColors.background;
+  }
   ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
-  // Render premium court elements
-  renderCourtBackground(ctx, colors);
-  renderGoalZones(ctx);
-  renderCourtBorder(ctx, colors);
-  renderCornerBrackets(ctx, colors);
-  renderCenterCircle(ctx, colors);
-  renderCenterLine(ctx, colors.lines);
+  // Render court-specific markings
+  renderCourtMarkings(ctx, courtStyle, theme);
 
   // Draw scores
   renderScores(ctx, leftScore, rightScore, colors.text);
@@ -181,9 +185,17 @@ export function renderGame(
   renderPaddle(ctx, leftPaddle, paddleSizeModifier, 'left');
   renderPaddle(ctx, rightPaddle, paddleSizeModifier, 'right');
 
-  // Draw ball
-  renderBall(ctx, ball, colors.ball);
+  // Draw ball (use court color override for visibility on light courts)
+  const ballColor = courtColors.ball || colors.ball;
+  renderBall(ctx, ball, ballColor);
+
+  // Update and render weather effects (on top of everything)
+  updateWeather(weather);
+  renderWeather(ctx, weather);
 }
+
+// Re-export clearWeather for cleanup
+export { clearWeather };
 
 // ============================================
 // PREMIUM COURT RENDERING

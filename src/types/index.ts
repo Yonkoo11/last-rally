@@ -66,6 +66,8 @@ export interface GameConfig {
   questId?: number;
   modifiers?: QuestModifiers;
   arenaTheme: ArenaTheme;
+  courtStyle: CourtStyle;
+  weather: WeatherEffect;
 }
 
 export interface QuestModifiers {
@@ -129,9 +131,13 @@ export interface CosmeticState {
   selectedPaddleSkin: PaddleSkin;
   selectedBallTrail: TrailType;
   selectedArenaTheme: ArenaTheme;
+  selectedCourtStyle: CourtStyle;
+  selectedWeather: WeatherEffect;
   unlockedPaddleSkins: PaddleSkin[];
   unlockedBallTrails: TrailType[];
   unlockedArenaThemes: ArenaTheme[];
+  unlockedCourtStyles: CourtStyle[];
+  unlockedWeatherEffects: WeatherEffect[];
 }
 
 export interface DailyState {
@@ -176,16 +182,20 @@ export type ArenaTheme =
   | 'minimal-dark'
   | 'retro';
 
+export type CourtStyle = 'pong' | 'football' | 'basketball' | 'hockey';
+
+export type WeatherEffect = 'none' | 'snow' | 'rain';
+
 export interface Cosmetic {
   id: string;
   name: string;
-  type: 'paddle' | 'trail' | 'theme';
+  type: 'paddle' | 'trail' | 'theme' | 'court' | 'weather';
   unlockCondition: UnlockCondition;
   preview?: string;
 }
 
 export interface UnlockCondition {
-  type: 'default' | 'difficulty' | 'quest' | 'achievement' | 'streak' | 'games';
+  type: 'default' | 'difficulty' | 'quest' | 'achievement' | 'streak' | 'games' | 'wins' | 'court';
   value?: string | number;
   description: string;
 }

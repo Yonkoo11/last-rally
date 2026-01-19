@@ -5,6 +5,8 @@ import {
   CosmeticState,
   DailyState,
   DailyChallenge,
+  CourtStyle,
+  WeatherEffect,
 } from '../types';
 
 // Storage keys
@@ -56,9 +58,13 @@ const DEFAULT_COSMETICS: CosmeticState = {
   selectedPaddleSkin: 'default',
   selectedBallTrail: 'classic',
   selectedArenaTheme: 'classic',
+  selectedCourtStyle: 'pong',
+  selectedWeather: 'none',
   unlockedPaddleSkins: ['default'],
   unlockedBallTrails: ['none', 'classic'],
   unlockedArenaThemes: ['classic'],
+  unlockedCourtStyles: ['pong'],
+  unlockedWeatherEffects: ['none'],
 };
 
 // Helper functions
@@ -240,7 +246,7 @@ export function saveCosmetics(cosmetics: CosmeticState): void {
 }
 
 export function unlockCosmetic(
-  type: 'paddle' | 'trail' | 'theme',
+  type: 'paddle' | 'trail' | 'theme' | 'court' | 'weather',
   id: string
 ): void {
   const current = loadCosmetics();
@@ -260,12 +266,22 @@ export function unlockCosmetic(
         current.unlockedArenaThemes.push(id as any);
       }
       break;
+    case 'court':
+      if (!current.unlockedCourtStyles.includes(id as CourtStyle)) {
+        current.unlockedCourtStyles.push(id as CourtStyle);
+      }
+      break;
+    case 'weather':
+      if (!current.unlockedWeatherEffects.includes(id as WeatherEffect)) {
+        current.unlockedWeatherEffects.push(id as WeatherEffect);
+      }
+      break;
   }
   saveCosmetics(current);
 }
 
 export function selectCosmetic(
-  type: 'paddle' | 'trail' | 'theme',
+  type: 'paddle' | 'trail' | 'theme' | 'court' | 'weather',
   id: string
 ): void {
   const current = loadCosmetics();
@@ -278,6 +294,12 @@ export function selectCosmetic(
       break;
     case 'theme':
       current.selectedArenaTheme = id as any;
+      break;
+    case 'court':
+      current.selectedCourtStyle = id as CourtStyle;
+      break;
+    case 'weather':
+      current.selectedWeather = id as WeatherEffect;
       break;
   }
   saveCosmetics(current);

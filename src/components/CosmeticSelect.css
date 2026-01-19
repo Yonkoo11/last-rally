@@ -505,6 +505,193 @@
    REDUCED MOTION
    ============================================ */
 
+/* ============================================
+   COURT PREVIEW
+   ============================================ */
+
+.court-preview {
+  width: 72px;
+  height: 48px;
+  border-radius: var(--radius-sm);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cosmetic-card:hover:not(.locked) .court-preview {
+  transform: scale(1.05);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4),
+              0 0 20px rgba(255, 170, 0, 0.15);
+}
+
+.court-mini {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.court-center-line {
+  position: absolute;
+  left: 50%;
+  top: 10%;
+  bottom: 10%;
+  width: 2px;
+  transform: translateX(-50%);
+  opacity: 0.8;
+}
+
+.court-center-line.hockey {
+  width: 4px;
+}
+
+.court-center-circle {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 20px;
+  height: 20px;
+  border: 2px solid;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0.8;
+}
+
+.court-penalty-left,
+.court-penalty-right {
+  position: absolute;
+  top: 20%;
+  width: 15px;
+  height: 60%;
+  border: 1px solid;
+  opacity: 0.6;
+}
+
+.court-penalty-left {
+  left: 5%;
+}
+
+.court-penalty-right {
+  right: 5%;
+}
+
+.court-key-left,
+.court-key-right {
+  position: absolute;
+  top: 25%;
+  width: 12px;
+  height: 50%;
+  border-radius: 2px;
+}
+
+.court-key-left {
+  left: 5%;
+}
+
+.court-key-right {
+  right: 5%;
+}
+
+.court-blue-line-left,
+.court-blue-line-right {
+  position: absolute;
+  top: 10%;
+  bottom: 10%;
+  width: 3px;
+  opacity: 0.8;
+}
+
+.court-blue-line-left {
+  left: 25%;
+}
+
+.court-blue-line-right {
+  right: 25%;
+}
+
+/* ============================================
+   WEATHER PREVIEW
+   ============================================ */
+
+.weather-preview {
+  width: 72px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.weather-icon {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.weather-none svg {
+  color: #FFD700;
+  filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.5));
+}
+
+.weather-snow {
+  background: linear-gradient(to bottom, #1a2a3a 0%, #2a3a4a 100%);
+  border-radius: var(--radius-sm);
+}
+
+.snowflake {
+  position: absolute;
+  top: -5px;
+  font-size: 16px;
+  color: #FFFFFF;
+  animation: snowfall 1.5s linear infinite;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
+}
+
+@keyframes snowfall {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(50px) rotate(180deg);
+    opacity: 0;
+  }
+}
+
+.weather-rain {
+  background: linear-gradient(to bottom, #1a1a2e 0%, #2a2a3e 100%);
+  border-radius: var(--radius-sm);
+}
+
+.raindrop {
+  position: absolute;
+  top: -10px;
+  width: 2px;
+  height: 10px;
+  background: linear-gradient(to bottom, transparent, #5599ff);
+  border-radius: 0 0 2px 2px;
+  animation: rainfall 0.6s linear infinite;
+}
+
+@keyframes rainfall {
+  0% {
+    transform: translateY(0) rotate(15deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(60px) rotate(15deg);
+    opacity: 0;
+  }
+}
+
+/* ============================================
+   REDUCED MOTION
+   ============================================ */
+
 @media (prefers-reduced-motion: reduce) {
   .overlay,
   .cosmetic-modal,
@@ -520,9 +707,15 @@
   .modal-close:hover,
   .cosmetic-card:hover:not(.locked) .paddle-preview,
   .cosmetic-card:hover:not(.locked) .theme-preview,
+  .cosmetic-card:hover:not(.locked) .court-preview,
   .cosmetic-card:hover:not(.locked) .trail-dot,
   .cosmetic-card:hover:not(.locked) .theme-ball {
     animation: none;
     transform: none;
+  }
+
+  .snowflake,
+  .raindrop {
+    animation: none;
   }
 }
