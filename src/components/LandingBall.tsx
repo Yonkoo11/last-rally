@@ -2,10 +2,12 @@ import React, { useRef, useEffect } from 'react';
 
 // ============================================
 // LANDING BALL - Hypnotic animated canvas
+// "The ball is a time traveler"
 // ============================================
 
 interface LandingBallProps {
   className?: string;
+  isExiting?: boolean;
 }
 
 interface BallState {
@@ -16,10 +18,11 @@ interface BallState {
   trail: { x: number; y: number; age: number }[];
 }
 
-export function LandingBall({ className }: LandingBallProps) {
+export function LandingBall({ className, isExiting = false }: LandingBallProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const ballRef = useRef<BallState | null>(null);
   const animationRef = useRef<number>(0);
+  const exitStartRef = useRef<number | null>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -59,7 +62,7 @@ export function LandingBall({ className }: LandingBallProps) {
     const BALL_COLOR = '#FAFAFA';
     const CYAN_GLOW = '#00D4FF';
     const MAGENTA_GLOW = '#FF3366';
-    const PADDLE_COLOR = 'rgba(255, 255, 255, 0.04)';
+    const WARM_GLOW = '#FFAA00'; // Exit mode warm color
 
     const animate = () => {
       const ball = ballRef.current;
@@ -68,13 +71,36 @@ export function LandingBall({ className }: LandingBallProps) {
       const rect = canvas.getBoundingClientRect();
       const width = rect.width;
       const height = rect.height;
+      const now = Date.now();
+
+      // Track exit start time
+      if (isExiting && !exitStartRef.current) {
+        exitStartRef.current = now;
+      }
+
+      // Exit mode progress (0 to 1 over 400ms)
+      const exitProgress = isExiting && exitStartRef.current
+        ? Math.min(1, (now - exitStartRef.current) / 400)
+        : 0;
 
       // Clear canvas
       ctx.clearRect(0, 0, width, height);
 
+      // Calculate speed multiplier (accelerates during exit)
+      const speedMultiplier = 1 + exitProgress * 2; // Up to 3x speed
+
       // Update ball position
-      ball.x += ball.vx;
-      ball.y += ball.vy;
+      ball.x += ball.vx * speedMultiplier;
+      ball.y += ball.vy * speedMultiplier;
+
+      // During exit, drift toward center
+      if (isExiting) {
+        const centerX = width / 2;
+        const centerY = height / 2;
+        const driftStrength = exitProgress * 0.03;
+        ball.vx += (centerX - ball.x) * driftStrength;
+        ball.vy += (centerY - ball.y) * driftStrength;
+      }
 
       // Bounce off walls (with padding for paddle zones)
       const paddleZone = width * 0.05;
@@ -97,69 +123,83 @@ export function LandingBall({ className }: LandingBallProps) {
         ball.vy *= -1;
       }
 
-      // Add to trail
+      // Add to trail (more frequent during exit)
       ball.trail.push({ x: ball.x, y: ball.y, age: 0 });
 
-      // Age and cull trail
+      // Trail length extends during exit
+      const maxTrailAge = isExiting ? 18 : 12;
       ball.trail = ball.trail
         .map(point => ({ ...point, age: point.age + 1 }))
-        .filter(point => point.age < 12);
+        .filter(point => point.age < maxTrailAge);
 
-      // Draw paddle silhouettes
+      // Draw paddle silhouettes with breathing animation
       const paddleHeight = height * 0.25;
       const paddleWidth = 4;
       const paddleY = (height - paddleHeight) / 2;
+      // Subtle breathing: opacity oscillates between 0.06 and 0.10
+      const paddleOpacity = 0.06 + Math.sin(now / 2000) * 0.02;
+      const paddleColor = `rgba(255, 255, 255, ${paddleOpacity})`;
 
       // Left paddle
-      ctx.fillStyle = PADDLE_COLOR;
+      ctx.fillStyle = paddleColor;
       ctx.fillRect(paddleZone - paddleWidth / 2, paddleY, paddleWidth, paddleHeight);
 
       // Right paddle
       ctx.fillRect(width - paddleZone - paddleWidth / 2, paddleY, paddleWidth, paddleHeight);
 
       // Determine glow color based on ball direction
-      const glowColor = ball.vx > 0 ? CYAN_GLOW : MAGENTA_GLOW;
+      // During exit, blend toward warm gold
+      const baseGlow = ball.vx > 0 ? CYAN_GLOW : MAGENTA_GLOW;
+      const glowColor = isExiting ? WARM_GLOW : baseGlow;
+
+      // Glow intensity increases during exit
+      const glowIntensity = 1 + exitProgress * 0.5;
 
       // Draw trail with glow
       ball.trail.forEach((point, index) => {
-        const alpha = 1 - (point.age / 12);
-        const size = ballRadius * (1 - point.age / 20);
+        const alpha = 1 - (point.age / maxTrailAge);
+        const size = ballRadius * (1 - point.age / 25);
 
         // Trail glow
         ctx.beginPath();
-        ctx.arc(point.x, point.y, size * 2, 0, Math.PI * 2);
+        ctx.arc(point.x, point.y, size * 2 * glowIntensity, 0, Math.PI * 2);
         const gradient = ctx.createRadialGradient(
           point.x, point.y, 0,
-          point.x, point.y, size * 2
+          point.x, point.y, size * 2 * glowIntensity
         );
-        gradient.addColorStop(0, `${glowColor}${Math.round(alpha * 15).toString(16).padStart(2, '0')}`);
+        gradient.addColorStop(0, `${glowColor}${Math.round(alpha * 20).toString(16).padStart(2, '0')}`);
         gradient.addColorStop(1, 'transparent');
         ctx.fillStyle = gradient;
         ctx.fill();
       });
 
       // Draw ball with glow effect
-      // Outer glow
+      // Outer glow - expands during exit
+      const outerGlowRadius = ballRadius * (3 + exitProgress * 2);
       ctx.beginPath();
-      ctx.arc(ball.x, ball.y, ballRadius * 3, 0, Math.PI * 2);
+      ctx.arc(ball.x, ball.y, outerGlowRadius, 0, Math.PI * 2);
       const outerGlow = ctx.createRadialGradient(
         ball.x, ball.y, 0,
-        ball.x, ball.y, ballRadius * 3
+        ball.x, ball.y, outerGlowRadius
       );
-      outerGlow.addColorStop(0, `${glowColor}40`);
-      outerGlow.addColorStop(0.5, `${glowColor}15`);
+      const outerAlpha = Math.round((0.25 + exitProgress * 0.2) * 255).toString(16).padStart(2, '0');
+      const midAlpha = Math.round((0.08 + exitProgress * 0.1) * 255).toString(16).padStart(2, '0');
+      outerGlow.addColorStop(0, `${glowColor}${outerAlpha}`);
+      outerGlow.addColorStop(0.5, `${glowColor}${midAlpha}`);
       outerGlow.addColorStop(1, 'transparent');
       ctx.fillStyle = outerGlow;
       ctx.fill();
 
       // Inner glow
+      const innerGlowRadius = ballRadius * (1.5 + exitProgress * 0.5);
       ctx.beginPath();
-      ctx.arc(ball.x, ball.y, ballRadius * 1.5, 0, Math.PI * 2);
+      ctx.arc(ball.x, ball.y, innerGlowRadius, 0, Math.PI * 2);
       const innerGlow = ctx.createRadialGradient(
         ball.x, ball.y, 0,
-        ball.x, ball.y, ballRadius * 1.5
+        ball.x, ball.y, innerGlowRadius
       );
-      innerGlow.addColorStop(0, `${glowColor}80`);
+      const innerAlpha = Math.round((0.5 + exitProgress * 0.3) * 255).toString(16).padStart(2, '0');
+      innerGlow.addColorStop(0, `${glowColor}${innerAlpha}`);
       innerGlow.addColorStop(1, 'transparent');
       ctx.fillStyle = innerGlow;
       ctx.fill();
@@ -179,7 +219,7 @@ export function LandingBall({ className }: LandingBallProps) {
       window.removeEventListener('resize', resize);
       cancelAnimationFrame(animationRef.current);
     };
-  }, []);
+  }, [isExiting]);
 
   return (
     <canvas

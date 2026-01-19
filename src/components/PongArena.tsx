@@ -45,8 +45,9 @@ import {
   playGameStart,
   resumeAudio,
 } from '../audio/sounds';
-import { loadCosmetics } from '../lib/storage';
+import { loadCosmetics, loadSettings } from '../lib/storage';
 import { getRandomPitch, getPitchInfo } from '../data/pitches';
+import { getTouchController, isTouchDevice } from '../game/touch';
 import './PongArena.css';
 
 interface PongArenaProps {
@@ -93,6 +94,14 @@ export function PongArena({ config, onMatchEnd, onQuit }: PongArenaProps) {
 
   const modifiers: QuestModifiers = config.modifiers || {};
   const winScore = modifiers.winScore || WIN_SCORE;
+
+  // Touch controls
+  const touchControllerRef = useRef(getTouchController());
+  const [touchEnabled] = useState(() => {
+    const settings = loadSettings();
+    return settings.touchControls || isTouchDevice();
+  });
+  const [showTouchHint, setShowTouchHint] = useState(() => isTouchDevice());
 
   // Keep refs in sync with state
   useEffect(() => {
@@ -141,6 +150,52 @@ export function PongArena({ config, onMatchEnd, onQuit }: PongArenaProps) {
       window.removeEventListener('keyup', handleKeyUp);
     };
   }, []);
+
+  // Touch input handling
+  useEffect(() => {
+    if (!touchEnabled) return;
+
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const touchController = touchControllerRef.current;
+
+    // Update canvas rect on resize
+    const updateRect = () => {
+      touchController.setCanvasRect(canvas.getBoundingClientRect());
+    };
+    updateRect();
+
+    const handleTouchStart = (e: TouchEvent) => {
+      updateRect();
+      touchController.handleTouchStart(e);
+      // Hide touch hint on first touch
+      if (showTouchHint) setShowTouchHint(false);
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      touchController.handleTouchMove(e);
+    };
+
+    const handleTouchEnd = (e: TouchEvent) => {
+      touchController.handleTouchEnd(e);
+    };
+
+    canvas.addEventListener('touchstart', handleTouchStart, { passive: false });
+    canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
+    canvas.addEventListener('touchend', handleTouchEnd);
+    canvas.addEventListener('touchcancel', handleTouchEnd);
+    window.addEventListener('resize', updateRect);
+
+    return () => {
+      canvas.removeEventListener('touchstart', handleTouchStart);
+      canvas.removeEventListener('touchmove', handleTouchMove);
+      canvas.removeEventListener('touchend', handleTouchEnd);
+      canvas.removeEventListener('touchcancel', handleTouchEnd);
+      window.removeEventListener('resize', updateRect);
+      touchController.reset();
+    };
+  }, [touchEnabled, showTouchHint]);
 
   // Countdown logic
   useEffect(() => {
@@ -242,30 +297,53 @@ export function PongArena({ config, onMatchEnd, onQuit }: PongArenaProps) {
       updateParticles(deltaTime);
 
       if (phaseRef.current === 'playing') {
-        // Update left paddle (player 1) - W/S or Arrow keys
-        const leftDir = (keysRef.current.w || keysRef.current.arrowup)
-          ? 'up'
-          : (keysRef.current.s || keysRef.current.arrowdown)
-          ? 'down'
-          : 'none';
-        leftPaddleRef.current = movePaddle(
-          leftPaddleRef.current,
-          leftDir,
-          modifiers
-        );
+        // Update left paddle (player 1) - Touch, W/S, or Arrow keys
+        const touchController = touchControllerRef.current;
+        const leftTouchY = touchEnabled ? touchController.getPaddleY('left') : null;
+
+        if (leftTouchY !== null) {
+          // Direct touch control - set paddle Y position directly
+          leftPaddleRef.current = {
+            ...leftPaddleRef.current,
+            y: leftTouchY,
+          };
+        } else {
+          // Keyboard control
+          const leftDir = (keysRef.current.w || keysRef.current.arrowup)
+            ? 'up'
+            : (keysRef.current.s || keysRef.current.arrowdown)
+            ? 'down'
+            : 'none';
+          leftPaddleRef.current = movePaddle(
+            leftPaddleRef.current,
+            leftDir,
+            modifiers
+          );
+        }
 
         // Update right paddle (player 2 or AI)
         if (config.mode === 'pvp') {
-          const rightDir = keysRef.current.i
-            ? 'up'
-            : keysRef.current.k
-            ? 'down'
-            : 'none';
-          rightPaddleRef.current = movePaddle(
-            rightPaddleRef.current,
-            rightDir,
-            modifiers
-          );
+          const rightTouchY = touchEnabled ? touchController.getPaddleY('right') : null;
+
+          if (rightTouchY !== null) {
+            // Direct touch control
+            rightPaddleRef.current = {
+              ...rightPaddleRef.current,
+              y: rightTouchY,
+            };
+          } else {
+            // Keyboard control
+            const rightDir = keysRef.current.i
+              ? 'up'
+              : keysRef.current.k
+              ? 'down'
+              : 'none';
+            rightPaddleRef.current = movePaddle(
+              rightPaddleRef.current,
+              rightDir,
+              modifiers
+            );
+          }
         } else {
           rightPaddleRef.current = updateAI(
             rightPaddleRef.current,
@@ -379,7 +457,7 @@ export function PongArena({ config, onMatchEnd, onQuit }: PongArenaProps) {
   }, [phase, winner, config, matchStartTime, onMatchEnd]);
 
   return (
-    <div className="pong-arena">
+    <div className={`pong-arena ${touchEnabled ? 'touch-enabled' : ''}`}>
       <button className="quit-btn" onClick={onQuit}>QUIT</button>
 
       <div className="game-layout">
@@ -412,6 +490,21 @@ export function PongArena({ config, onMatchEnd, onQuit }: PongArenaProps) {
             aria-label={`Pong game arena. ${config.player1Name} vs ${config.player2Name}. Score: ${leftScore} to ${rightScore}`}
             role="img"
           />
+
+          {/* Touch hint overlay */}
+          {showTouchHint && touchEnabled && phase !== 'victory' && (
+            <div className="touch-hint-overlay" onClick={() => setShowTouchHint(false)}>
+              <div className="touch-hint-content">
+                <div className="touch-hint-icon">
+                  <svg viewBox="0 0 24 24" fill="currentColor" width="48" height="48">
+                    <path d="M9 11.24V7.5C9 6.12 10.12 5 11.5 5S14 6.12 14 7.5v3.74c1.21-.81 2-2.18 2-3.74C16 5.01 13.99 3 11.5 3S7 5.01 7 7.5c0 1.56.79 2.93 2 3.74zm9.84 4.63l-4.54-2.26c-.17-.07-.35-.11-.54-.11H13v-6c0-.83-.67-1.5-1.5-1.5S10 6.67 10 7.5v10.74l-3.43-.72c-.08-.01-.15-.03-.24-.03-.31 0-.59.13-.79.33l-.79.8 4.94 4.94c.27.27.65.44 1.06.44h6.79c.75 0 1.33-.55 1.44-1.28l.75-5.27c.01-.07.02-.14.02-.21 0-.59-.34-1.11-.84-1.35z"/>
+                  </svg>
+                </div>
+                <p className="touch-hint-text">Touch {config.mode === 'pvp' ? 'your side' : 'left side'} to control paddle</p>
+                <p className="touch-hint-subtext">Drag up/down to move</p>
+              </div>
+            </div>
+          )}
 
           {phase === 'victory' && (
             <VictoryOverlay

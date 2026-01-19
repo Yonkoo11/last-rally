@@ -336,3 +336,109 @@
     font-size: var(--text-2xl, 2rem);
   }
 }
+
+/* ============================================
+   TOUCH CONTROLS
+   ============================================ */
+
+/* Touch hint overlay */
+.touch-hint-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(5, 5, 8, 0.85);
+  backdrop-filter: blur(4px);
+  z-index: 100;
+  cursor: pointer;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.touch-hint-content {
+  text-align: center;
+  padding: var(--space-6, 24px);
+  animation: scaleIn 0.3s var(--ease-out-back);
+}
+
+.touch-hint-icon {
+  color: var(--color-gold, #FFAA00);
+  margin-bottom: var(--space-4, 16px);
+  animation: touchPulse 2s ease-in-out infinite;
+}
+
+.touch-hint-icon svg {
+  width: 64px;
+  height: 64px;
+}
+
+.touch-hint-text {
+  font-family: var(--font-display, "Space Grotesk", sans-serif);
+  font-size: var(--text-xl, 1.5rem);
+  font-weight: var(--font-semibold, 600);
+  color: var(--text-primary, #FAFAFA);
+  margin: 0 0 var(--space-2, 8px) 0;
+}
+
+.touch-hint-subtext {
+  font-family: var(--font-ui, "Inter", sans-serif);
+  font-size: var(--text-sm, 14px);
+  color: var(--text-secondary, #A1A1AA);
+  margin: 0;
+}
+
+/* Touch pulse animation */
+@keyframes touchPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+}
+
+/* Hide keyboard hints on touch devices */
+.touch-enabled .keyboard-hint {
+  display: none;
+}
+
+/* Show touch-specific hints on touch devices */
+.touch-hint {
+  display: none;
+}
+
+.touch-enabled .touch-hint {
+  display: block;
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  /* Larger touch targets */
+  .quit-btn {
+    padding: var(--space-3, 12px) var(--space-5, 20px);
+    font-size: var(--text-sm, 14px);
+  }
+
+  .victory-buttons .btn {
+    min-width: 120px;
+    padding: var(--space-4, 16px) var(--space-6, 24px);
+  }
+
+  /* Disable hover effects */
+  .quit-btn:hover,
+  .victory-buttons .btn:hover {
+    transform: none;
+  }
+
+  /* Make canvas more responsive to touch */
+  .game-canvas {
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+}

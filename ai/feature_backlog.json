@@ -1,0 +1,50 @@
+{
+  "features": [
+    {
+      "id": "mobile-touch-controls",
+      "title": "Mobile Touch Controls",
+      "priority": "critical",
+      "status": "in_progress",
+      "description": "Implement touch controls for mobile gameplay. touchControls setting exists but is not wired up.",
+      "files": [
+        "src/game/touch.ts (NEW)",
+        "src/components/PongArena.tsx",
+        "src/components/PongArena.css",
+        "src/lib/storage.ts"
+      ],
+      "notes": "Left half = P1 paddle, Right half = P2 paddle (PvP). Touch Y maps to paddle Y."
+    },
+    {
+      "id": "transition-sounds",
+      "title": "Page Transition Sound Effects",
+      "priority": "low",
+      "status": "pending",
+      "description": "Add subtle whoosh/arrival sounds for page transitions.",
+      "files": [
+        "src/audio/sounds.ts",
+        "src/components/LandingPage.tsx",
+        "src/components/TitleScreen.tsx"
+      ],
+      "notes": "playTransitionOut: rising filtered noise sweep. playTransitionIn: descending sine."
+    },
+    {
+      "id": "online-multiplayer",
+      "title": "Online Multiplayer",
+      "priority": "future",
+      "status": "backlog",
+      "description": "Add real-time online multiplayer using WebSockets.",
+      "files": [],
+      "notes": "Would need a backend (WebSocket server). Consider Supabase Realtime or custom."
+    },
+    {
+      "id": "leaderboards",
+      "title": "Global Leaderboards",
+      "priority": "future",
+      "status": "backlog",
+      "description": "Track and display global high scores.",
+      "files": [],
+      "notes": "Requires backend. Could use Supabase."
+    }
+  ],
+  "lastUpdated": "2026-01-19"
+}

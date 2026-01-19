@@ -305,3 +305,76 @@ export function playMenuBack(): void {
 export function playError(): void {
   playNoise(0.15, 500);
 }
+
+// ============================================
+// TRANSITION SOUNDS
+// ============================================
+
+export function playTransitionOut(): void {
+  // Subtle rising whoosh for screen exit
+  if (!enabled) return;
+
+  const ctx = initAudio();
+  if (!ctx || !masterGain) return;
+
+  const now = ctx.currentTime;
+  const duration = 0.2;
+
+  // Create filtered noise for whoosh effect
+  const bufferSize = ctx.sampleRate * duration;
+  const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+  const data = buffer.getChannelData(0);
+
+  for (let i = 0; i < bufferSize; i++) {
+    data[i] = Math.random() * 2 - 1;
+  }
+
+  const noiseNode = ctx.createBufferSource();
+  noiseNode.buffer = buffer;
+
+  // Rising filter sweep
+  const filter = ctx.createBiquadFilter();
+  filter.type = 'bandpass';
+  filter.frequency.setValueAtTime(200, now);
+  filter.frequency.exponentialRampToValueAtTime(800, now + duration);
+  filter.Q.value = 2;
+
+  const gainNode = ctx.createGain();
+  gainNode.gain.setValueAtTime(0, now);
+  gainNode.gain.linearRampToValueAtTime(0.15, now + 0.05);
+  gainNode.gain.linearRampToValueAtTime(0, now + duration);
+
+  noiseNode.connect(filter);
+  filter.connect(gainNode);
+  gainNode.connect(masterGain);
+
+  noiseNode.start(now);
+  noiseNode.stop(now + duration);
+}
+
+export function playTransitionIn(): void {
+  // Soft descending arrival tone
+  if (!enabled) return;
+
+  const ctx = initAudio();
+  if (!ctx || !masterGain) return;
+
+  const now = ctx.currentTime;
+
+  const osc = ctx.createOscillator();
+  const gainNode = ctx.createGain();
+
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(600, now);
+  osc.frequency.exponentialRampToValueAtTime(400, now + 0.15);
+
+  gainNode.gain.setValueAtTime(0, now);
+  gainNode.gain.linearRampToValueAtTime(0.1, now + 0.02);
+  gainNode.gain.linearRampToValueAtTime(0, now + 0.15);
+
+  osc.connect(gainNode);
+  gainNode.connect(masterGain);
+
+  osc.start(now);
+  osc.stop(now + 0.15);
+}

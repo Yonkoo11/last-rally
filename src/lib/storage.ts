@@ -367,12 +367,18 @@ export interface GameSettings {
   touchControls: boolean;
 }
 
+// Auto-detect touch device for default setting
+function detectTouchDevice(): boolean {
+  if (typeof window === 'undefined') return false;
+  return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+}
+
 const DEFAULT_SETTINGS: GameSettings = {
   soundEnabled: true,
   musicEnabled: true,
   soundVolume: 0.7,
   showTutorial: true,
-  touchControls: false,
+  touchControls: detectTouchDevice(),
 };
 
 export function loadSettings(): GameSettings {

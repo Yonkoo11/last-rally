@@ -1,6 +1,7 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { usePlayerData } from '../hooks/usePlayerData';
 import { LandingBall } from './LandingBall';
+import { playTransitionOut, resumeAudio } from '../audio/sounds';
 import './LandingPage.css';
 
 // ============================================
@@ -12,18 +13,31 @@ interface LandingPageProps {
   onEnter: () => void;
 }
 
+// Transition duration in ms
+const EXIT_DURATION = 400;
+
 export function LandingPage({ onEnter }: LandingPageProps) {
+  const [isExiting, setIsExiting] = useState(false);
   const { isNewPlayer, stats } = usePlayerData();
+
+  // Handle enter with transition
+  const handleEnter = useCallback(() => {
+    if (isExiting) return; // Prevent double-trigger
+    resumeAudio();
+    playTransitionOut();
+    setIsExiting(true);
+    setTimeout(onEnter, EXIT_DURATION);
+  }, [isExiting, onEnter]);
 
   // Keyboard handler - Enter or Space to proceed
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
-        onEnter();
+        handleEnter();
       }
     },
-    [onEnter]
+    [handleEnter]
   );
 
   useEffect(() => {
@@ -34,15 +48,15 @@ export function LandingPage({ onEnter }: LandingPageProps) {
   const showStreak = !isNewPlayer && stats.bestWinStreak > 0;
 
   return (
-    <div className="landing">
+    <div className={`landing ${isExiting ? 'exiting' : ''}`}>
       {/* Animated ball background */}
-      <LandingBall className="landing-ball-canvas" />
+      <LandingBall className="landing-ball-canvas" isExiting={isExiting} />
 
       {/* Main content */}
       <div className="landing-content">
         <h1 className="landing-title">LAST RALLY</h1>
 
-        <button className="landing-cta" onClick={onEnter}>
+        <button className="landing-cta" onClick={handleEnter}>
           PLAY
         </button>
 

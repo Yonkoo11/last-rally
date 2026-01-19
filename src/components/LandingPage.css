@@ -14,6 +14,34 @@
   overflow: hidden;
 }
 
+/* Warm bleed effect - subtle warmth from bottom */
+.landing::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% 120%, rgba(255, 170, 0, 0.04) 0%, transparent 60%);
+  animation: warmBleed 8s ease-in-out infinite;
+  opacity: 0.6;
+  pointer-events: none;
+  transition: opacity 0.4s var(--ease-out);
+}
+
+/* Intensify warm bleed on CTA hover - anticipation */
+.landing:has(.landing-cta:hover)::before {
+  opacity: 1;
+  animation: warmBleedIntense 3s ease-in-out infinite;
+}
+
+@keyframes warmBleed {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes warmBleedIntense {
+  0%, 100% { opacity: 0.9; }
+  50% { opacity: 1; }
+}
+
 /* Ball canvas - full viewport background */
 .landing-ball-canvas {
   z-index: 0;
@@ -118,6 +146,52 @@
 }
 
 /* ============================================
+   Exit Animations - Transition to Dashboard
+   ============================================ */
+
+.landing.exiting .landing-content {
+  animation: landingContentExit 0.3s var(--ease-out) forwards;
+}
+
+.landing.exiting .landing-hook {
+  animation: landingHookExit 0.2s var(--ease-out) forwards;
+}
+
+.landing.exiting::before {
+  animation: warmBleedExit 0.4s var(--ease-out) forwards;
+}
+
+@keyframes landingContentExit {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes landingHookExit {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes warmBleedExit {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 1.5;
+    background: radial-gradient(ellipse 100% 80% at 50% 100%, rgba(255, 170, 0, 0.12) 0%, transparent 70%);
+  }
+}
+
+/* ============================================
    Responsive
    ============================================ */
 
@@ -144,6 +218,11 @@
    ============================================ */
 
 @media (prefers-reduced-motion: reduce) {
+  .landing::before {
+    animation: none;
+    opacity: 0.6;
+  }
+
   .landing-content,
   .landing-hook {
     animation: none;
@@ -152,5 +231,12 @@
 
   .landing-cta {
     animation: none;
+  }
+
+  .landing.exiting .landing-content,
+  .landing.exiting .landing-hook,
+  .landing.exiting::before {
+    animation: none;
+    opacity: 0;
   }
 }
