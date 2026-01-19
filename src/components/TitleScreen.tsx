@@ -1,140 +1,180 @@
-// ============================================
-// LAST RALLY - TITLE SCREEN v4.0
-// Premium Arcade Experience - CSS Class-based
-// Inspired by: Celeste, Hollow Knight, Hades
-// ============================================
-
-import { useEffect, useState } from 'react';
-import { IconPlay } from './ui';
+import React, { useEffect, useState } from 'react';
+import { usePlayerData } from '../hooks/usePlayerData';
+import { GamePreviewCanvas } from './GamePreviewCanvas';
+import {
+  DailyChallengeCard,
+  WinStreakBadge,
+  QuestProgressCard,
+  NextUnlockCard,
+} from './home';
+import { playTransitionIn } from '../audio/sounds';
+import './TitleScreen.css';
 
 interface TitleScreenProps {
-  onStart: () => void;
   onQuickPlay: () => void;
+  onPlayNow: () => void;
+  onSettings?: () => void;
 }
 
-export function TitleScreen({ onStart, onQuickPlay }: TitleScreenProps) {
-  const [ready, setReady] = useState(false);
+export function TitleScreen({ onQuickPlay, onPlayNow, onSettings }: TitleScreenProps) {
+  const [mounted, setMounted] = useState(false);
+  const [entering, setEntering] = useState(true);
+  const playerData = usePlayerData();
 
   useEffect(() => {
-    const timer = setTimeout(() => setReady(true), 100);
+    setMounted(true);
+    playTransitionIn();
+    // Clear entering state after animation completes
+    const timer = setTimeout(() => setEntering(false), 800);
     return () => clearTimeout(timer);
   }, []);
 
+  // Handle keyboard shortcut
   useEffect(() => {
-    const handleKey = (e: KeyboardEvent) => {
-      if (ready && (e.key === 'Enter' || e.key === ' ')) {
-        onStart();
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        onPlayNow();
       }
     };
-    window.addEventListener('keydown', handleKey);
-    return () => window.removeEventListener('keydown', handleKey);
-  }, [ready, onStart]);
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [onPlayNow]);
+
+  const { isNewPlayer, stats, daily, questChapter, questsCompleted, totalQuests, nextUnlock, cosmetics, name } = playerData;
 
   return (
-    <div className="screen" style={{ justifyContent: 'center' }}>
-      {/* Scanline overlay */}
-      <div className="scanlines" />
+    <div className={`title-screen ${mounted ? 'mounted' : ''} ${entering ? 'entering' : ''}`}>
+      {/* Background */}
+      <div className="bg-gradient" />
+      <div className="bg-vignette" />
 
-      {/* Gradient glows */}
-      <div className="ambient-glow ambient-glow--primary" style={{ top: '25%', left: '50%', transform: 'translateX(-50%)', width: '800px', height: '500px' }} />
-      <div className="ambient-glow ambient-glow--gold" style={{ top: '35%', left: '50%', transform: 'translateX(-50%)', width: '400px', height: '300px' }} />
+      {/* Top Bar */}
+      <header className="top-bar">
+        <div className="logo-area">
+          <div className="logo-icon-small">
+            <svg viewBox="0 0 24 24" fill="none">
+              <rect x="4" y="4" width="3" height="16" rx="1" fill="currentColor" />
+              <rect x="17" y="4" width="3" height="16" rx="1" fill="currentColor" />
+              <circle cx="12" cy="12" r="3" fill="currentColor" />
+            </svg>
+          </div>
+          <span className="logo-text">LAST RALLY</span>
+        </div>
+        {!isNewPlayer && (
+          <div className="player-info">
+            <span className="player-name">{name}</span>
+            <span className="player-wins">{stats.totalWins}W</span>
+          </div>
+        )}
+      </header>
 
-      {/* Content container */}
-      <div className={`screen-enter ${ready ? '' : 'opacity-0'}`} style={{ textAlign: 'center', maxWidth: '520px', padding: 'var(--space-8)', position: 'relative', zIndex: 1 }}>
+      {/* Main Content - Two Zone Layout */}
+      <main className="main-content">
+        {/* Left Zone: Game Preview + CTAs */}
+        <div className="left-zone">
+          <div className="preview-container">
+            <GamePreviewCanvas
+              cosmetics={cosmetics}
+              onClick={onPlayNow}
+              width={400}
+              height={250}
+            />
+            <div className="preview-hint">Click to play</div>
+          </div>
 
-        {/* Logo - Pulsing orb */}
-        <div className="stagger-entrance stagger-slow" style={{ display: 'flex', justifyContent: 'center', marginBottom: 'var(--space-8)' }}>
-          <div
-            className="animate-pulse"
-            style={{
-              width: '64px',
-              height: '64px',
-              borderRadius: '50%',
-              background: 'radial-gradient(circle at 30% 30%, var(--color-gold), #B8860B)',
-              boxShadow: '0 0 30px rgba(255, 215, 0, 0.5), 0 0 60px rgba(255, 215, 0, 0.3), inset 0 0 20px rgba(255, 255, 255, 0.2)',
-            }}
-          />
+          {/* CTAs */}
+          <div className="cta-section">
+            <button className="btn-play-primary" onClick={onPlayNow}>
+              <svg className="play-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+              {isNewPlayer ? 'START PLAYING' : 'PLAY'}
+            </button>
+
+            {!isNewPlayer && (
+              <div className="cta-row">
+                <button className="btn-secondary" onClick={onQuickPlay}>
+                  QUICK MATCH
+                </button>
+                <button className="btn-secondary" onClick={onPlayNow}>
+                  VS FRIEND
+                </button>
+              </div>
+            )}
+          </div>
+
+          <p className="press-hint">Press Enter to start</p>
         </div>
 
-        {/* Title */}
-        <h1 style={{
-          fontSize: 'clamp(3rem, 10vw, 4.5rem)',
-          fontWeight: 700,
-          fontFamily: 'var(--font-display)',
-          letterSpacing: '-0.03em',
-          margin: 0,
-          lineHeight: 1,
-          textTransform: 'uppercase',
-        }}>
-          <span className="glow-text-primary" style={{ color: 'var(--color-primary)' }}>
-            LAST
-          </span>{' '}
-          <span className="glow-text-gold" style={{ color: 'var(--color-gold)' }}>
-            RALLY
-          </span>
-        </h1>
+        {/* Right Zone: Engagement Sidebar */}
+        {!isNewPlayer ? (
+          <aside className="right-zone">
+            <div className="engagement-stack">
+              <DailyChallengeCard daily={daily} />
+              <WinStreakBadge stats={stats} />
+              <QuestProgressCard
+                chapter={questChapter}
+                completed={questsCompleted}
+                total={totalQuests}
+              />
+              <NextUnlockCard nextUnlock={nextUnlock} />
+            </div>
+          </aside>
+        ) : (
+          <aside className="right-zone new-player-zone">
+            <div className="welcome-card">
+              <span className="welcome-badge">NEW PLAYER</span>
+              <h2 className="welcome-title">Welcome to Last Rally</h2>
+              <p className="welcome-text">
+                A fast-paced Pong game with quests, achievements, and unlockable cosmetics.
+              </p>
+              <ul className="welcome-features">
+                <li>Test your skills at 4 difficulty levels</li>
+                <li>Complete 13 unique quests</li>
+                <li>Unlock paddle skins, ball trails, and themes</li>
+                <li>Track your stats and climb the ranks</li>
+              </ul>
+            </div>
+          </aside>
+        )}
+      </main>
 
-        {/* Tagline */}
-        <p style={{
-          fontSize: 'var(--text-base)',
-          fontFamily: 'var(--font-display)',
-          color: 'var(--text-secondary)',
-          marginTop: 'var(--space-4)',
-          marginBottom: 'var(--space-10)',
-          letterSpacing: '0.15em',
-          textTransform: 'uppercase',
-        }}>
-          Fast. Fierce. Final.
-        </p>
+      {/* Bottom Bar */}
+      <footer className="bottom-bar">
+        <button className="bottom-btn" onClick={onSettings}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <rect x="3" y="3" width="7" height="7" rx="1" />
+            <rect x="14" y="3" width="7" height="7" rx="1" />
+            <rect x="3" y="14" width="7" height="7" rx="1" />
+            <rect x="14" y="14" width="7" height="7" rx="1" />
+          </svg>
+          <span>Customize</span>
+        </button>
+        <button className="bottom-btn" onClick={onPlayNow}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M3 3v18h18" />
+            <path d="M18 9l-5 5-4-4-3 3" />
+          </svg>
+          <span>Stats</span>
+        </button>
+        <button className="bottom-btn" onClick={onPlayNow}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <circle cx="12" cy="8" r="5" />
+            <path d="M3 21v-2a7 7 0 0 1 7-7h4a7 7 0 0 1 7 7v2" />
+          </svg>
+          <span>Achievements</span>
+        </button>
+        <button className="bottom-btn" onClick={onSettings}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <circle cx="12" cy="12" r="3" />
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+          </svg>
+          <span>Settings</span>
+        </button>
+      </footer>
 
-        {/* CTA Buttons */}
-        <div className="stagger-entrance" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)', alignItems: 'center' }}>
-          <button
-            className="btn btn--primary btn--xl"
-            onClick={onStart}
-            style={{ textTransform: 'uppercase', letterSpacing: '0.05em' }}
-          >
-            <IconPlay size={22} />
-            Play Now
-          </button>
-
-          <button
-            className="btn btn--secondary btn--lg"
-            onClick={onQuickPlay}
-            style={{ minWidth: '220px', textTransform: 'uppercase', letterSpacing: '0.05em' }}
-          >
-            Quick Play
-          </button>
-
-          <p style={{
-            fontSize: 'var(--text-xs)',
-            color: 'var(--text-muted)',
-            marginTop: 'var(--space-2)',
-            letterSpacing: '0.02em',
-          }}>
-            Jump straight into a match
-          </p>
-        </div>
-      </div>
-
-      {/* Footer */}
-      <div style={{
-        position: 'absolute',
-        bottom: 'var(--space-6)',
-        left: 0,
-        right: 0,
-        display: 'flex',
-        justifyContent: 'center',
-        gap: 'var(--space-6)',
-        fontSize: 'var(--text-xs)',
-        color: 'var(--text-disabled)',
-        fontFamily: 'var(--font-mono)',
-        opacity: 0.6,
-      }}>
-        <span>v4.0</span>
-        <span style={{ color: 'var(--border-default)' }}>|</span>
-        <span>Built on Linera</span>
-      </div>
+      {/* Bottom accent line */}
+      <div className="bottom-accent" />
     </div>
   );
 }

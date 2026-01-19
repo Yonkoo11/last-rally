@@ -1,309 +1,294 @@
-// ============================================
-// LAST RALLY - COSMETIC SELECTION v3.0
-// Premium Arcade Experience - CSS Class-based
-// ============================================
-
-import { useState } from 'react';
+import React, { useState } from 'react';
+import { PaddleSkin, TrailType, ArenaTheme } from '../types';
 import {
-  loadCosmeticState,
-  selectPaddleSkin,
-  selectBallTrail,
-  selectArenaTheme,
+  loadCosmetics,
+  loadStats,
+  loadQuestProgress,
+  loadAchievements,
+  selectCosmetic,
+} from '../lib/storage';
+import {
   PADDLE_SKINS,
   BALL_TRAILS,
   ARENA_THEMES,
-  PaddleSkin,
-  BallTrail,
-  ArenaTheme,
-  CosmeticState,
-} from '../lib/cosmetics';
-import { IconChevronLeft, IconCheck, IconLock } from './ui';
+  PADDLE_COLORS,
+  THEME_COLORS,
+  isUnlocked,
+} from '../data/cosmetics';
+import { playMenuSelect } from '../audio/sounds';
+import './CosmeticSelect.css';
+
+interface CosmeticSelectProps {
+  onClose: () => void;
+  isOverlay?: boolean;
+}
 
 type Tab = 'paddles' | 'trails' | 'themes';
 
-interface CosmeticSelectProps {
-  onBack: () => void;
-}
-
-export function CosmeticSelect({ onBack }: CosmeticSelectProps) {
-  const [cosmeticState, setCosmeticState] = useState<CosmeticState>(loadCosmeticState);
+export function CosmeticSelect({ onClose, isOverlay = false }: CosmeticSelectProps) {
   const [activeTab, setActiveTab] = useState<Tab>('paddles');
+  const [, forceUpdate] = useState({});
+  const cosmetics = loadCosmetics();
+  const stats = loadStats();
+  const questProgress = loadQuestProgress();
+  const achievements = loadAchievements();
 
-  const handleSelectPaddle = (skinId: string) => {
-    setCosmeticState(selectPaddleSkin(skinId));
+  const unlockContext = {
+    gamesPlayed: stats.totalGames,
+    completedQuests: questProgress.completedQuests,
+    unlockedAchievements: Object.keys(achievements),
+    bestStreak: stats.bestWinStreak,
+    aiEasyWins: stats.aiEasyWins,
+    aiMediumWins: stats.aiMediumWins,
+    aiHardWins: stats.aiHardWins,
+    aiImpossibleWins: stats.aiImpossibleWins,
   };
 
-  const handleSelectTrail = (trailId: string) => {
-    setCosmeticState(selectBallTrail(trailId));
+  const handleSelect = (type: 'paddle' | 'trail' | 'theme', id: string) => {
+    playMenuSelect();
+    selectCosmetic(type, id);
+    forceUpdate({});
   };
 
-  const handleSelectTheme = (themeId: string) => {
-    setCosmeticState(selectArenaTheme(themeId));
+  const handleTabChange = (tab: Tab) => {
+    playMenuSelect();
+    setActiveTab(tab);
   };
 
-  return (
-    <div className="screen">
-      <div className="scanlines" />
-      <div className="ambient-glow ambient-glow--gold" style={{ top: '20%', left: '50%', transform: 'translateX(-50%)', width: '700px', height: '500px' }} />
+  const content = (
+    <>
+      <div className="cosmetic-header">
+        <h2 className="modal-title">Settings</h2>
+        <button className="modal-close" onClick={onClose} aria-label="Close">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20">
+            <path d="M18 6L6 18M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
 
-      <div className="screen__content screen-enter" style={{ maxWidth: '800px' }}>
-        {/* Header */}
-        <div style={{ marginBottom: 'var(--space-6)' }}>
-          <button className="back-btn" onClick={onBack}>
-            <IconChevronLeft size={16} />
-            BACK
-          </button>
-          <h1 className="screen__title" style={{ marginTop: 'var(--space-4)', textTransform: 'uppercase' }}>
-            Custom<span style={{ color: 'var(--color-gold)' }}>ize</span>
-          </h1>
-          <p style={{ fontSize: 'var(--text-sm)', color: 'var(--text-secondary)', marginTop: 'var(--space-2)', fontFamily: 'var(--font-display)' }}>
-            Unlock cosmetics by completing achievements
-          </p>
-        </div>
+      <div className="cosmetic-tabs" role="tablist" aria-label="Cosmetic categories">
+        <button
+          className={`tab ${activeTab === 'paddles' ? 'active' : ''}`}
+          onClick={() => handleTabChange('paddles')}
+          role="tab"
+          aria-selected={activeTab === 'paddles'}
+          aria-controls="tabpanel-paddles"
+          id="tab-paddles"
+        >
+          Paddles
+        </button>
+        <button
+          className={`tab ${activeTab === 'trails' ? 'active' : ''}`}
+          onClick={() => handleTabChange('trails')}
+          role="tab"
+          aria-selected={activeTab === 'trails'}
+          aria-controls="tabpanel-trails"
+          id="tab-trails"
+        >
+          Trails
+        </button>
+        <button
+          className={`tab ${activeTab === 'themes' ? 'active' : ''}`}
+          onClick={() => handleTabChange('themes')}
+          role="tab"
+          aria-selected={activeTab === 'themes'}
+          aria-controls="tabpanel-themes"
+          id="tab-themes"
+        >
+          Themes
+        </button>
+      </div>
 
-        {/* Tabs */}
-        <div className="tabs stagger-entrance" style={{ marginBottom: 'var(--space-6)' }}>
-          <button className={`tab ${activeTab === 'paddles' ? 'tab--active' : ''}`} onClick={() => setActiveTab('paddles')}>
-            Paddles
-          </button>
-          <button className={`tab ${activeTab === 'trails' ? 'tab--active' : ''}`} onClick={() => setActiveTab('trails')}>
-            Trails
-          </button>
-          <button className={`tab ${activeTab === 'themes' ? 'tab--active' : ''}`} onClick={() => setActiveTab('themes')}>
-            Themes
-          </button>
-        </div>
+      <div
+        className="cosmetic-grid"
+        role="tabpanel"
+        id={`tabpanel-${activeTab}`}
+        aria-labelledby={`tab-${activeTab}`}
+      >
+        {activeTab === 'paddles' &&
+          PADDLE_SKINS.map(item => {
+            const unlocked = isUnlocked(item, unlockContext);
+            const selected = cosmetics.selectedPaddleSkin === item.id;
+            const color = PADDLE_COLORS[item.id as PaddleSkin];
 
-        {/* Content */}
-        <div className="stagger-entrance">
-          {activeTab === 'paddles' && (
-            <div className="item-grid">
-              {PADDLE_SKINS.map((skin) => (
-                <PaddlePreview
-                  key={skin.id}
-                  skin={skin}
-                  isSelected={cosmeticState.selectedPaddleSkin === skin.id}
-                  isUnlocked={cosmeticState.unlockedPaddleSkins.includes(skin.id)}
-                  onSelect={handleSelectPaddle}
+            return (
+              <button
+                key={item.id}
+                className={`cosmetic-card ${selected ? 'selected' : ''} ${
+                  !unlocked ? 'locked' : ''
+                }`}
+                onClick={() => unlocked && handleSelect('paddle', item.id)}
+                disabled={!unlocked}
+              >
+                <div
+                  className="paddle-preview"
+                  style={{
+                    background: Array.isArray(color)
+                      ? `linear-gradient(to bottom, ${color.join(', ')})`
+                      : color,
+                  }}
                 />
-              ))}
-            </div>
-          )}
+                <span className="cosmetic-name">{item.name}</span>
+                {!unlocked && (
+                  <span className="cosmetic-unlock">
+                    {item.unlockCondition.description}
+                  </span>
+                )}
+                {selected && (
+                  <span className="cosmetic-check">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" width="16" height="16">
+                      <path d="M20 6L9 17l-5-5" />
+                    </svg>
+                  </span>
+                )}
+                {!unlocked && (
+                  <span className="cosmetic-lock">
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
+                      <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zM9 8V6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9z" />
+                    </svg>
+                  </span>
+                )}
+              </button>
+            );
+          })}
 
-          {activeTab === 'trails' && (
-            <div className="item-grid">
-              {BALL_TRAILS.map((trail) => (
-                <TrailPreview
-                  key={trail.id}
-                  trail={trail}
-                  isSelected={cosmeticState.selectedBallTrail === trail.id}
-                  isUnlocked={cosmeticState.unlockedBallTrails.includes(trail.id)}
-                  onSelect={handleSelectTrail}
-                />
-              ))}
-            </div>
-          )}
+        {activeTab === 'trails' &&
+          BALL_TRAILS.map(item => {
+            const unlocked = isUnlocked(item, unlockContext);
+            const selected = cosmetics.selectedBallTrail === item.id;
 
-          {activeTab === 'themes' && (
-            <div className="item-grid">
-              {ARENA_THEMES.map((theme) => (
-                <ThemePreview
-                  key={theme.id}
-                  theme={theme}
-                  isSelected={cosmeticState.selectedArenaTheme === theme.id}
-                  isUnlocked={cosmeticState.unlockedArenaThemes.includes(theme.id)}
-                  onSelect={handleSelectTheme}
-                />
-              ))}
-            </div>
-          )}
-        </div>
+            return (
+              <button
+                key={item.id}
+                className={`cosmetic-card ${selected ? 'selected' : ''} ${
+                  !unlocked ? 'locked' : ''
+                }`}
+                onClick={() => unlocked && handleSelect('trail', item.id)}
+                disabled={!unlocked}
+              >
+                <div className="trail-preview">
+                  <TrailPreview type={item.id as TrailType} />
+                </div>
+                <span className="cosmetic-name">{item.name}</span>
+                {!unlocked && (
+                  <span className="cosmetic-unlock">
+                    {item.unlockCondition.description}
+                  </span>
+                )}
+                {selected && (
+                  <span className="cosmetic-check">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" width="16" height="16">
+                      <path d="M20 6L9 17l-5-5" />
+                    </svg>
+                  </span>
+                )}
+                {!unlocked && (
+                  <span className="cosmetic-lock">
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
+                      <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zM9 8V6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9z" />
+                    </svg>
+                  </span>
+                )}
+              </button>
+            );
+          })}
 
-        {/* Stats summary */}
-        <div className="stats-grid" style={{ marginTop: 'var(--space-8)' }}>
-          <div className="stat-card">
-            <span className="stat-card__label">PADDLES</span>
-            <span className="stat-card__value" style={{ color: 'var(--color-player1)' }}>
-              {cosmeticState.unlockedPaddleSkins.length}/{PADDLE_SKINS.length}
-            </span>
-          </div>
-          <div className="stat-card">
-            <span className="stat-card__label">TRAILS</span>
-            <span className="stat-card__value" style={{ color: 'var(--color-primary)' }}>
-              {cosmeticState.unlockedBallTrails.length}/{BALL_TRAILS.length}
-            </span>
-          </div>
-          <div className="stat-card">
-            <span className="stat-card__label">THEMES</span>
-            <span className="stat-card__value" style={{ color: 'var(--color-gold)' }}>
-              {cosmeticState.unlockedArenaThemes.length}/{ARENA_THEMES.length}
-            </span>
-          </div>
+        {activeTab === 'themes' &&
+          ARENA_THEMES.map(item => {
+            const unlocked = isUnlocked(item, unlockContext);
+            const selected = cosmetics.selectedArenaTheme === item.id;
+            const colors = THEME_COLORS[item.id as ArenaTheme];
+
+            return (
+              <button
+                key={item.id}
+                className={`cosmetic-card theme-card ${selected ? 'selected' : ''} ${
+                  !unlocked ? 'locked' : ''
+                }`}
+                onClick={() => unlocked && handleSelect('theme', item.id)}
+                disabled={!unlocked}
+              >
+                <div
+                  className="theme-preview"
+                  style={{ background: colors.background }}
+                >
+                  <div
+                    className="theme-line"
+                    style={{ background: colors.lines }}
+                  />
+                  <div
+                    className="theme-ball"
+                    style={{ background: colors.ball }}
+                  />
+                </div>
+                <span className="cosmetic-name">{item.name}</span>
+                {!unlocked && (
+                  <span className="cosmetic-unlock">
+                    {item.unlockCondition.description}
+                  </span>
+                )}
+                {selected && (
+                  <span className="cosmetic-check">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" width="16" height="16">
+                      <path d="M20 6L9 17l-5-5" />
+                    </svg>
+                  </span>
+                )}
+                {!unlocked && (
+                  <span className="cosmetic-lock">
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
+                      <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zM9 8V6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9z" />
+                    </svg>
+                  </span>
+                )}
+              </button>
+            );
+          })}
+      </div>
+    </>
+  );
+
+  if (isOverlay) {
+    return (
+      <div className="overlay" onClick={onClose}>
+        <div className="cosmetic-modal" onClick={e => e.stopPropagation()}>
+          {content}
         </div>
       </div>
+    );
+  }
+
+  return (
+    <div className="cosmetic-select">
+      {content}
     </div>
   );
 }
 
-// Paddle preview component
-function PaddlePreview({ skin, isSelected, isUnlocked, onSelect }: { skin: PaddleSkin; isSelected: boolean; isUnlocked: boolean; onSelect: (id: string) => void }) {
+function TrailPreview({ type }: { type: TrailType }) {
+  const colors: Record<TrailType, string[]> = {
+    none: ['transparent'],
+    classic: ['rgba(255,255,255,0.8)', 'rgba(255,255,255,0.4)', 'rgba(255,255,255,0.1)'],
+    fire: ['#EF4444', '#F59E0B', '#FCD34D'],
+    rainbow: ['#EF4444', '#F59E0B', '#10B981', '#3B82F6', '#8B5CF6'],
+    pixel: ['#00FF00', '#00DD00', '#00BB00'],
+  };
+
+  const trailColors = colors[type];
+
   return (
-    <button
-      className={`cosmetic-item ${isSelected ? 'cosmetic-item--selected' : ''} ${!isUnlocked ? 'cosmetic-item--locked' : ''}`}
-      onClick={() => isUnlocked && onSelect(skin.id)}
-      disabled={!isUnlocked}
-      style={{ '--glow-color': skin.color } as React.CSSProperties}
-    >
-      {/* Preview */}
-      <div className="cosmetic-item__preview">
+    <div className="trail-dots">
+      {trailColors.map((color, i) => (
         <div
+          key={i}
+          className="trail-dot"
           style={{
-            width: '16px',
-            height: '60px',
-            background: skin.color,
-            borderRadius: '4px',
-            boxShadow: isUnlocked ? `0 0 25px ${skin.glowColor}` : 'none',
+            background: color,
+            opacity: 1 - i * 0.25,
+            transform: `scale(${1 - i * 0.15})`,
           }}
         />
-      </div>
-
-      {/* Name and status */}
-      <div className="cosmetic-item__footer">
-        <span className="cosmetic-item__name">{skin.name}</span>
-        {isSelected && <IconCheck size={16} style={{ color: 'var(--color-primary)' }} />}
-        {!isUnlocked && <IconLock size={14} style={{ color: 'var(--text-muted)' }} />}
-      </div>
-
-      {/* Unlock condition */}
-      {!isUnlocked && (
-        <div className="cosmetic-item__unlock">{skin.unlockCondition}</div>
-      )}
-    </button>
-  );
-}
-
-// Trail preview component
-function TrailPreview({ trail, isSelected, isUnlocked, onSelect }: { trail: BallTrail; isSelected: boolean; isUnlocked: boolean; onSelect: (id: string) => void }) {
-  return (
-    <button
-      className={`cosmetic-item ${isSelected ? 'cosmetic-item--selected' : ''} ${!isUnlocked ? 'cosmetic-item--locked' : ''}`}
-      onClick={() => isUnlocked && onSelect(trail.id)}
-      disabled={!isUnlocked}
-      style={{ '--glow-color': trail.colors[0] } as React.CSSProperties}
-    >
-      {/* Preview */}
-      <div className="cosmetic-item__preview" style={{ flexDirection: 'row', gap: 'var(--space-2)' }}>
-        {trail.colors.map((color, i) => (
-          <div
-            key={i}
-            style={{
-              width: `${16 - i * 2}px`,
-              height: `${16 - i * 2}px`,
-              background: color,
-              borderRadius: '50%',
-              boxShadow: isUnlocked ? `0 0 10px ${color}` : 'none',
-              opacity: 1 - i * 0.15,
-            }}
-          />
-        ))}
-        <div
-          style={{
-            width: '20px',
-            height: '20px',
-            background: 'var(--color-gold)',
-            borderRadius: '50%',
-            boxShadow: isUnlocked ? '0 0 15px var(--color-gold)' : 'none',
-          }}
-        />
-      </div>
-
-      {/* Name and status */}
-      <div className="cosmetic-item__footer">
-        <span className="cosmetic-item__name">{trail.name}</span>
-        {isSelected && <IconCheck size={16} style={{ color: 'var(--color-primary)' }} />}
-        {!isUnlocked && <IconLock size={14} style={{ color: 'var(--text-muted)' }} />}
-      </div>
-
-      {/* Unlock condition */}
-      {!isUnlocked && (
-        <div className="cosmetic-item__unlock">{trail.unlockCondition}</div>
-      )}
-    </button>
-  );
-}
-
-// Theme preview component
-function ThemePreview({ theme, isSelected, isUnlocked, onSelect }: { theme: ArenaTheme; isSelected: boolean; isUnlocked: boolean; onSelect: (id: string) => void }) {
-  return (
-    <button
-      className={`cosmetic-item ${isSelected ? 'cosmetic-item--selected' : ''} ${!isUnlocked ? 'cosmetic-item--locked' : ''}`}
-      onClick={() => isUnlocked && onSelect(theme.id)}
-      disabled={!isUnlocked}
-      style={{ '--glow-color': theme.accentColor } as React.CSSProperties}
-    >
-      {/* Mini arena preview */}
-      <div
-        className="cosmetic-item__preview"
-        style={{
-          background: theme.bgColor,
-          borderRadius: 'var(--radius-md)',
-          position: 'relative',
-          overflow: 'hidden',
-        }}
-      >
-        {/* Center line */}
-        <div style={{ position: 'absolute', top: 0, bottom: 0, left: '50%', width: '2px', background: theme.lineColor }} />
-        {/* Left paddle */}
-        <div
-          style={{
-            position: 'absolute',
-            left: '10px',
-            top: '50%',
-            transform: 'translateY(-50%)',
-            width: '4px',
-            height: '30px',
-            background: theme.accentColor,
-            borderRadius: '2px',
-            boxShadow: isUnlocked ? `0 0 10px ${theme.accentColor}` : 'none',
-          }}
-        />
-        {/* Right paddle */}
-        <div
-          style={{
-            position: 'absolute',
-            right: '10px',
-            top: '50%',
-            transform: 'translateY(-50%)',
-            width: '4px',
-            height: '30px',
-            background: theme.accentColor,
-            borderRadius: '2px',
-            boxShadow: isUnlocked ? `0 0 10px ${theme.accentColor}` : 'none',
-          }}
-        />
-        {/* Ball */}
-        <div
-          style={{
-            width: '8px',
-            height: '8px',
-            background: theme.accentColor,
-            borderRadius: '50%',
-            boxShadow: isUnlocked ? `0 0 8px ${theme.accentColor}` : 'none',
-          }}
-        />
-      </div>
-
-      {/* Name and status */}
-      <div className="cosmetic-item__footer">
-        <span className="cosmetic-item__name">{theme.name}</span>
-        {isSelected && <IconCheck size={16} style={{ color: 'var(--color-primary)' }} />}
-        {!isUnlocked && <IconLock size={14} style={{ color: 'var(--text-muted)' }} />}
-      </div>
-
-      {/* Unlock condition */}
-      {!isUnlocked && (
-        <div className="cosmetic-item__unlock">{theme.unlockCondition}</div>
-      )}
-    </button>
+      ))}
+    </div>
   );
 }

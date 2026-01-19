@@ -1,42 +1,87 @@
-# Last Rally - Memory
+# Last Rally - Project Memory
 
-## Project Overview
-Last Rally is a Pong game with:
-- Single player vs AI (Easy/Medium/Hard)
-- Local multiplayer
-- Online multiplayer (via GraphQL)
-- Customizable controls
-- Cosmetics system
-- Daily challenges
-- Quest system
-- Achievements
+## Architecture Decisions
 
-## Tech Stack
-- **Framework:** Vite + React + TypeScript
-- **Styling:** CSS (no Tailwind)
-- **Hosting:** Vercel
-- **Multiplayer:** GraphQL
+### Tech Stack
+- **Framework:** React + TypeScript + Vite
+- **Styling:** CSS Modules (not Tailwind)
+- **Audio:** Web Audio API (synthesized, no audio files)
+- **State:** Local Storage for persistence, React refs for game loop
+- **Canvas:** 2D canvas for game rendering, React for UI
 
-## Key Decisions
-| Date | Decision | Rationale |
-|------|----------|-----------|
-| 2026-01-18 | Set up git + GitHub | Nearly lost v4.0 code due to no version control |
-| 2026-01-18 | Created auto-commit deploy script | Prevent future code loss |
-| 2026-01-18 | Connected Vercel to GitHub | Auto-deploy on every push |
+### Design System
+- **Colors:** Dark theme, `#0A0A0C` background, `#FAFAFA` text
+- **Accent Colors:**
+  - Cyan: `#00D4FF` (ball glow when moving right)
+  - Magenta: `#FF3366` (ball glow when moving left)
+  - Gold/Warm: `#FFAA00` (CTAs, exit transition glow)
+- **Font:** System fonts, uppercase for titles
 
-## Learned Context
-- v4.0 was originally in `/Users/yonko/epoch/` folder
-- Vercel deployment was not connected to any Git repo
-- There's an older v1.0 in `/Users/yonko/Projects/last-rally/` - different codebase
-- `vercel link` can auto-connect GitHub repos
+### Game Architecture
+- **Game Loop:** `requestAnimationFrame` with refs to avoid re-renders
+- **Physics:** Separate module (`src/game/physics.ts`)
+- **AI:** 4 difficulty levels (Easy, Medium, Hard, Impossible)
+- **Rendering:** Canvas-based with particle effects and trails
 
-## Gotchas & Warnings
-- **ALWAYS** commit before deploying
-- Don't confuse v1.0 (`/last-rally/`) with v4.0 (`/last-rally-v4/`)
-- Vercel's `vercel pull` only downloads settings, NOT source code
-- Searching grep for unique strings (like "VS RIVAL") can locate lost code
+### Features Implemented (Jan 2026)
+1. **Core Gameplay:** Pong with paddle/ball physics, wall bouncing
+2. **Progression System:**
+   - 13 quests with modifiers
+   - 22 achievements
+   - Daily challenges (deterministic by date)
+3. **Cosmetics:** 16 unlockables (paddle skins, ball trails, arena themes)
+4. **Game Modes:** AI (4 levels), Local PvP
+5. **AI Pitches:** Various pitch types (curve, sinker, slider, etc.)
 
-## Reflections
-- Version control is non-negotiable, even for small projects
-- Clear folder naming prevents confusion (epoch vs last-rally)
-- Recovery technique: grep for unique UI strings to find lost code
+### Page Transitions (Jan 19, 2026)
+- Landing → Dashboard: Ball accelerates 3x, warm gold glow, directional drift
+- Dashboard entry: Content reveals from blur with scale animation
+- Exit duration: 400ms
+
+## Known Gaps
+
+### Critical
+- **Mobile Touch Controls:** `touchControls` setting exists but does NOTHING
+  - PongArena only accepts keyboard input
+  - This severely limits mobile audience
+
+### Minor
+- Transition sound effects not implemented
+- Loading states for large assets could be improved
+- No haptic feedback on mobile
+
+## Patterns
+
+### State Management
+- Use `useRef` for game loop state (avoids re-renders)
+- Use `useState` for UI state (triggers re-renders for score display)
+- Sync refs with state via `useEffect` when needed
+
+### Sound Pattern
+```typescript
+if (!enabled) return;
+const ctx = initAudio();
+if (!ctx || !masterGain) return;
+// ... create oscillator/gain nodes
+```
+
+### Canvas Pattern
+```typescript
+const gameLoop = useCallback((timestamp: number) => {
+  // ... update game state via refs
+  // ... render to canvas
+  gameLoopRef.current = requestAnimationFrame(gameLoop);
+}, [deps]);
+```
+
+## File Structure
+```
+src/
+├── components/     # React components
+├── game/          # Game logic (physics, ai, renderer, constants)
+├── audio/         # Web Audio sound system
+├── data/          # Static data (quests, achievements, cosmetics, pitches)
+├── lib/           # Utilities (storage)
+├── hooks/         # Custom hooks (usePlayerData)
+└── types/         # TypeScript types
+```

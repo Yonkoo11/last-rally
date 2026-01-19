@@ -1,296 +1,296 @@
+import {
+  PlayerStats,
+  MatchResult,
+  Difficulty,
+  Achievement,
+  GameMode,
+} from '../types';
+import {
+  loadStats,
+  saveStats,
+  loadAchievements,
+  unlockAchievement,
+  loadQuestProgress,
+  completeQuest as saveQuestCompletion,
+  updateDailyProgress,
+} from './storage';
+import { ACHIEVEMENTS } from '../data/achievements';
+
 // ============================================
-// LAST RALLY - PLAYER STATISTICS
-// Track wins, losses, and achievements
+// MATCH RESULT PROCESSING
 // ============================================
 
-const STATS_STORAGE_KEY = 'lastrally_stats';
-
-export interface PlayerStats {
-  // Overall
-  totalGames: number;
-  totalWins: number;
-  totalLosses: number;
-
-  // By mode
-  pvpWins: number;
-  pvpLosses: number;
-
-  aiWins: number;
-  aiLosses: number;
-
-  questWins: number;
-  questLosses: number;
-
-  // By difficulty (wins)
-  aiEasyWins: number;
-  aiMediumWins: number;
-  aiHardWins: number;
-  aiImpossibleWins: number;
-
-  // By difficulty (losses) - for difficulty suggestions
-  aiEasyLosses: number;
-  aiMediumLosses: number;
-  aiHardLosses: number;
-  aiImpossibleLosses: number;
-
-  // Streaks
-  currentWinStreak: number;
-  bestWinStreak: number;
-
-  // Personal Bests
-  bestRally: number;
-  fastestWinMs: number | null; // Fastest 5-0 shutout in milliseconds
-  hasFirstWin: boolean;
-
-  // Timestamps
-  firstGameDate: string | null;
-  lastGameDate: string | null;
+export interface ProcessedResult {
+  stats: PlayerStats;
+  newAchievements: Achievement[];
+  questCompleted: boolean;
 }
 
-const DEFAULT_STATS: PlayerStats = {
-  totalGames: 0,
-  totalWins: 0,
-  totalLosses: 0,
-  pvpWins: 0,
-  pvpLosses: 0,
-  aiWins: 0,
-  aiLosses: 0,
-  questWins: 0,
-  questLosses: 0,
-  aiEasyWins: 0,
-  aiMediumWins: 0,
-  aiHardWins: 0,
-  aiImpossibleWins: 0,
-  aiEasyLosses: 0,
-  aiMediumLosses: 0,
-  aiHardLosses: 0,
-  aiImpossibleLosses: 0,
-  currentWinStreak: 0,
-  bestWinStreak: 0,
-  bestRally: 0,
-  fastestWinMs: null,
-  hasFirstWin: false,
-  firstGameDate: null,
-  lastGameDate: null,
-};
-
-// Load stats from localStorage
-export function loadStats(): PlayerStats {
-  try {
-    const saved = localStorage.getItem(STATS_STORAGE_KEY);
-    if (saved) {
-      return { ...DEFAULT_STATS, ...JSON.parse(saved) };
-    }
-  } catch {
-    // localStorage not available or corrupted
-  }
-  return { ...DEFAULT_STATS };
-}
-
-// Save stats to localStorage
-function saveStats(stats: PlayerStats): void {
-  try {
-    localStorage.setItem(STATS_STORAGE_KEY, JSON.stringify(stats));
-  } catch {
-    // localStorage not available
-  }
-}
-
-// Record a game result
-export function recordGameResult(
-  mode: 'pvp' | 'ai' | 'quest' | 'online',
-  won: boolean,
-  aiDifficulty?: 'easy' | 'medium' | 'hard' | 'impossible'
-): PlayerStats {
+export function processMatchResult(result: MatchResult): ProcessedResult {
   const stats = loadStats();
   const now = new Date().toISOString();
 
-  // Update totals
+  const isPlayerWin = result.winner === 'left';
+
+  // Update basic stats
   stats.totalGames++;
-  if (won) {
+  if (isPlayerWin) {
     stats.totalWins++;
     stats.currentWinStreak++;
-    if (stats.currentWinStreak > stats.bestWinStreak) {
-      stats.bestWinStreak = stats.currentWinStreak;
-    }
+    stats.bestWinStreak = Math.max(stats.bestWinStreak, stats.currentWinStreak);
   } else {
     stats.totalLosses++;
     stats.currentWinStreak = 0;
   }
 
-  // Update by mode
-  if (mode === 'pvp' || mode === 'online') {
-    // Online and local PvP are both human vs human
-    if (won) stats.pvpWins++;
-    else stats.pvpLosses++;
-  } else if (mode === 'ai') {
-    if (won) {
-      stats.aiWins++;
-      // Track wins by difficulty
-      if (aiDifficulty === 'easy') stats.aiEasyWins++;
-      else if (aiDifficulty === 'medium') stats.aiMediumWins++;
-      else if (aiDifficulty === 'hard') stats.aiHardWins++;
-      else if (aiDifficulty === 'impossible') stats.aiImpossibleWins++;
-    } else {
-      stats.aiLosses++;
-      // Track losses by difficulty
-      if (aiDifficulty === 'easy') stats.aiEasyLosses++;
-      else if (aiDifficulty === 'medium') stats.aiMediumLosses++;
-      else if (aiDifficulty === 'hard') stats.aiHardLosses++;
-      else if (aiDifficulty === 'impossible') stats.aiImpossibleLosses++;
+  // Update best rally
+  stats.bestRally = Math.max(stats.bestRally, result.bestRally);
+
+  // Update fastest win
+  if (isPlayerWin && result.duration > 0) {
+    if (!stats.fastestWinMs || result.duration < stats.fastestWinMs) {
+      stats.fastestWinMs = result.duration;
     }
-  } else if (mode === 'quest') {
-    if (won) stats.questWins++;
-    else stats.questLosses++;
+  }
+
+  // Update mode-specific stats
+  switch (result.mode) {
+    case 'ai':
+      if (isPlayerWin) {
+        stats.aiWins++;
+        updateDifficultyStats(stats, result.difficulty!, true);
+      } else {
+        stats.aiLosses++;
+        updateDifficultyStats(stats, result.difficulty!, false);
+      }
+      break;
+    case 'pvp':
+      if (isPlayerWin) stats.pvpWins++;
+      else stats.pvpLosses++;
+      break;
+    case 'quest':
+      if (isPlayerWin) stats.questWins++;
+      else stats.questLosses++;
+      break;
   }
 
   // Update timestamps
-  if (!stats.firstGameDate) {
-    stats.firstGameDate = now;
+  stats.lastPlayed = now;
+  if (!stats.firstPlayed) {
+    stats.firstPlayed = now;
   }
-  stats.lastGameDate = now;
 
   saveStats(stats);
-  return stats;
-}
 
-// Get win rate as percentage
-export function getWinRate(stats: PlayerStats): number {
-  if (stats.totalGames === 0) return 0;
-  return Math.round((stats.totalWins / stats.totalGames) * 100);
-}
+  // Update daily progress
+  updateDailyProgress(isPlayerWin, result.bestRally);
 
-// Get mode-specific win rate
-export function getModeWinRate(stats: PlayerStats, mode: 'pvp' | 'ai' | 'quest'): number {
-  let wins = 0;
-  let total = 0;
+  // Check achievements
+  const newAchievements = checkAchievements(stats, result);
 
-  if (mode === 'pvp') {
-    wins = stats.pvpWins;
-    total = stats.pvpWins + stats.pvpLosses;
-  } else if (mode === 'ai') {
-    wins = stats.aiWins;
-    total = stats.aiWins + stats.aiLosses;
-  } else if (mode === 'quest') {
-    wins = stats.questWins;
-    total = stats.questWins + stats.questLosses;
+  // Handle quest completion
+  let questCompleted = false;
+  if (result.mode === 'quest' && isPlayerWin && result.questId) {
+    saveQuestCompletion(result.questId);
+    questCompleted = true;
   }
 
-  if (total === 0) return 0;
-  return Math.round((wins / total) * 100);
+  return { stats, newAchievements, questCompleted };
 }
 
-// Reset all stats
-export function resetStats(): void {
-  saveStats({ ...DEFAULT_STATS });
-}
-
-// Record types for tracking new records
-export interface NewRecords {
-  newBestRally: boolean;
-  newFastestWin: boolean;
-  isFirstWin: boolean;
-  bestRally: number;
-  fastestWinMs: number | null;
-}
-
-// Check and update personal bests
-export function checkPersonalBests(
-  won: boolean,
-  playerScore: number,
-  opponentScore: number,
-  longestRally: number,
-  matchDurationMs: number
-): NewRecords {
-  const stats = loadStats();
-  const result: NewRecords = {
-    newBestRally: false,
-    newFastestWin: false,
-    isFirstWin: false,
-    bestRally: stats.bestRally,
-    fastestWinMs: stats.fastestWinMs,
-  };
-
-  // Check for new best rally
-  if (longestRally > stats.bestRally) {
-    stats.bestRally = longestRally;
-    result.newBestRally = true;
-    result.bestRally = longestRally;
+function updateDifficultyStats(
+  stats: PlayerStats,
+  difficulty: Difficulty,
+  won: boolean
+): void {
+  switch (difficulty) {
+    case 'easy':
+      if (won) stats.aiEasyWins++;
+      else stats.aiEasyLosses++;
+      break;
+    case 'medium':
+      if (won) stats.aiMediumWins++;
+      else stats.aiMediumLosses++;
+      break;
+    case 'hard':
+      if (won) stats.aiHardWins++;
+      else stats.aiHardLosses++;
+      break;
+    case 'impossible':
+      if (won) stats.aiImpossibleWins++;
+      else stats.aiImpossibleLosses++;
+      break;
   }
+}
 
-  // Check for fastest 5-0 shutout win
-  if (won && playerScore === 5 && opponentScore === 0) {
-    if (stats.fastestWinMs === null || matchDurationMs < stats.fastestWinMs) {
-      stats.fastestWinMs = matchDurationMs;
-      result.newFastestWin = true;
-      result.fastestWinMs = matchDurationMs;
+// ============================================
+// ACHIEVEMENT CHECKING
+// ============================================
+
+function checkAchievements(
+  stats: PlayerStats,
+  result: MatchResult
+): Achievement[] {
+  const unlocked: Achievement[] = [];
+  const currentAchievements = loadAchievements();
+  const questProgress = loadQuestProgress();
+  const isPlayerWin = result.winner === 'left';
+
+  for (const achievement of ACHIEVEMENTS) {
+    // Skip if already unlocked
+    if (currentAchievements[achievement.id]) continue;
+
+    let earned = false;
+
+    switch (achievement.condition.type) {
+      case 'wins':
+        earned = stats.totalWins >= (achievement.condition.value || 0);
+        break;
+
+      case 'games':
+        earned = stats.totalGames >= (achievement.condition.value || 0);
+        break;
+
+      case 'streak':
+        earned = stats.bestWinStreak >= (achievement.condition.value || 0);
+        break;
+
+      case 'rally':
+        earned = stats.bestRally >= (achievement.condition.value || 0);
+        break;
+
+      case 'shutout':
+        earned =
+          isPlayerWin &&
+          result.leftScore === 5 &&
+          result.rightScore === 0;
+        break;
+
+      case 'comeback':
+        // This would need to be tracked during the match
+        // For now, check if won with opponent at 4
+        earned =
+          isPlayerWin &&
+          result.rightScore === 4 &&
+          result.leftScore === 5;
+        break;
+
+      case 'time':
+        earned =
+          isPlayerWin &&
+          result.duration > 0 &&
+          result.duration <= (achievement.condition.value || 0);
+        break;
+
+      case 'difficulty':
+        const requiredWins = achievement.condition.value || 1;
+        switch (achievement.condition.difficulty) {
+          case 'easy':
+            earned = stats.aiEasyWins >= requiredWins;
+            break;
+          case 'medium':
+            earned = stats.aiMediumWins >= requiredWins;
+            break;
+          case 'hard':
+            earned = stats.aiHardWins >= requiredWins;
+            break;
+          case 'impossible':
+            earned = stats.aiImpossibleWins >= requiredWins;
+            break;
+        }
+        break;
+
+      case 'quest':
+        earned =
+          questProgress.completedQuests.length >=
+          (achievement.condition.value || 0);
+        break;
+
+      case 'special':
+        // Photo finish: won 5-4
+        if (achievement.id === 'photo_finish') {
+          earned =
+            isPlayerWin &&
+            result.leftScore === 5 &&
+            result.rightScore === 4;
+        }
+        break;
+    }
+
+    if (earned) {
+      const wasNew = unlockAchievement(achievement.id);
+      if (wasNew) {
+        unlocked.push(achievement);
+      }
     }
   }
 
-  // Check for first ever win
-  if (won && !stats.hasFirstWin) {
-    stats.hasFirstWin = true;
-    result.isFirstWin = true;
-  }
-
-  saveStats(stats);
-  return result;
+  return unlocked;
 }
 
-// Difficulty suggestion types
-export type DifficultySuggestion = {
-  type: 'ready_for_next' | 'try_easier' | null;
-  message: string;
-  targetDifficulty: 'easy' | 'medium' | 'hard' | 'impossible' | null;
-};
+// ============================================
+// STATS UTILITIES
+// ============================================
 
-// Get difficulty suggestion based on player performance
-export function getDifficultySuggestion(stats: PlayerStats): DifficultySuggestion {
-  // Ready to move up: 3+ consecutive wins on a difficulty
-  if (stats.aiEasyWins >= 3 && stats.aiMediumWins === 0) {
-    return {
-      type: 'ready_for_next',
-      message: 'Ready for a bigger challenge?',
-      targetDifficulty: 'medium',
-    };
-  }
-  if (stats.aiMediumWins >= 3 && stats.aiHardWins === 0) {
-    return {
-      type: 'ready_for_next',
-      message: 'You\'re getting good! Try Hard?',
-      targetDifficulty: 'hard',
-    };
-  }
-  if (stats.aiHardWins >= 3 && stats.aiImpossibleWins === 0) {
-    return {
-      type: 'ready_for_next',
-      message: 'Ready for the ultimate test?',
-      targetDifficulty: 'impossible',
-    };
-  }
+export function getWinRate(stats: PlayerStats): number {
+  if (stats.totalGames === 0) return 0;
+  return (stats.totalWins / stats.totalGames) * 100;
+}
 
-  // Struggling: 3+ losses on a difficulty without a win
-  if (stats.aiMediumLosses >= 3 && stats.aiMediumWins === 0) {
-    return {
-      type: 'try_easier',
-      message: 'Warm up on Easy first?',
-      targetDifficulty: 'easy',
-    };
-  }
-  if (stats.aiHardLosses >= 3 && stats.aiHardWins === 0) {
-    return {
-      type: 'try_easier',
-      message: 'Try Medium to build skills?',
-      targetDifficulty: 'medium',
-    };
-  }
-  if (stats.aiImpossibleLosses >= 3 && stats.aiImpossibleWins === 0) {
-    return {
-      type: 'try_easier',
-      message: 'Master Hard mode first?',
-      targetDifficulty: 'hard',
-    };
+export function getDifficultyWinRate(
+  stats: PlayerStats,
+  difficulty: Difficulty
+): number {
+  let wins = 0;
+  let losses = 0;
+
+  switch (difficulty) {
+    case 'easy':
+      wins = stats.aiEasyWins;
+      losses = stats.aiEasyLosses;
+      break;
+    case 'medium':
+      wins = stats.aiMediumWins;
+      losses = stats.aiMediumLosses;
+      break;
+    case 'hard':
+      wins = stats.aiHardWins;
+      losses = stats.aiHardLosses;
+      break;
+    case 'impossible':
+      wins = stats.aiImpossibleWins;
+      losses = stats.aiImpossibleLosses;
+      break;
   }
 
-  return { type: null, message: '', targetDifficulty: null };
+  const total = wins + losses;
+  if (total === 0) return 0;
+  return (wins / total) * 100;
+}
+
+export function getSuggestedDifficulty(stats: PlayerStats): Difficulty {
+  // Suggest based on win rates
+  if (stats.aiEasyWins < 3) return 'easy';
+
+  const easyRate = getDifficultyWinRate(stats, 'easy');
+  if (easyRate < 60) return 'easy';
+
+  const mediumRate = getDifficultyWinRate(stats, 'medium');
+  if (stats.aiMediumWins < 3 || mediumRate < 50) return 'medium';
+
+  const hardRate = getDifficultyWinRate(stats, 'hard');
+  if (stats.aiHardWins < 3 || hardRate < 40) return 'hard';
+
+  return 'impossible';
+}
+
+export function formatDuration(ms: number): string {
+  const seconds = Math.floor(ms / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+
+  if (minutes > 0) {
+    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+  }
+  return `${seconds}s`;
 }

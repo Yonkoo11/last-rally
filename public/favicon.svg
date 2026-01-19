@@ -1,0 +1,19 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="fg" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" style="stop-color:#D97706"/>
+      <stop offset="50%" style="stop-color:#F59E0B"/>
+      <stop offset="100%" style="stop-color:#FCD34D"/>
+    </linearGradient>
+    <linearGradient id="ig" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" style="stop-color:#FBBF24"/>
+      <stop offset="100%" style="stop-color:#FEF3C7"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Outer flame -->
+  <path d="M16 2 C16 2 24 8 24 14 C24 17 25 19 25 22 C25 27 21 30 16 30 C11 30 7 27 7 22 C7 19 8 17 8 14 C8 8 16 2 16 2 Z" fill="url(#fg)"/>
+
+  <!-- Inner flame -->
+  <path d="M16 10 C16 10 20 14 20 18 C20 20 21 21 21 23 C21 26 19 28 16 28 C13 28 11 26 11 23 C11 21 12 20 12 18 C12 14 16 10 16 10 Z" fill="url(#ig)"/>
+</svg>

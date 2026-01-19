@@ -1,44 +1,78 @@
-# Last Rally - Progress
+# Last Rally - Session Progress
 
-## Last Session Summary
-- **Date:** 2026-01-18
-- **What was done:**
-  - Recovered v4.0 source code from `/Users/yonko/epoch/` (was nearly lost)
-  - Copied to `/Users/yonko/Projects/last-rally-v4/`
-  - Initialized git repository
-  - Pushed to GitHub: https://github.com/Yonkoo11/last-rally
-  - Created auto-commit deploy script: `scripts/deploy.sh`
-  - Verified localhost matches Vercel deployment
-  - **Connected Vercel to GitHub** - auto-deploys on push
-  - Added `last-rally.vercel.app` domain to new project
-  - Deployed to production successfully
+## Current Session: Jan 19, 2026
 
-- **What's next:**
-  - Implement UI improvements (Senior Designer plan was deferred)
-  - Clean up old folders (`/epoch/`, `/last-rally/`)
-  - Consider adding CI/CD tests
+### Completed Today
+- [x] Visual QA of page transitions (Landing → Dashboard)
+- [x] Verified ball acceleration and warm glow during exit
+- [x] Created ai/ directory with memory files
+- [x] **Mobile Touch Controls Implementation:**
+  - Created `src/game/touch.ts` - TouchController class
+  - Integrated touch events in PongArena.tsx
+  - Touch Y position maps directly to paddle Y
+  - Left half = Player 1, Right half = Player 2 (PvP)
+  - Touch hint overlay for first-time mobile users
+  - Auto-detect touch devices in settings
+  - CSS optimizations for touch devices
+- [x] **Transition Sound Effects:**
+  - `playTransitionOut()` - Rising filtered noise whoosh (0.2s)
+  - `playTransitionIn()` - Descending sine tone (0.15s)
+  - Integrated into LandingPage and TitleScreen
+- [x] Build passes with no errors
+- [x] **AI Wording Cleanup:**
+  - Replaced all user-facing "AI" text with friendlier alternatives
+  - Opponent personas: ROOKIE, RIVAL, ACE, CHAMPION (instead of EASY AI, etc.)
+  - "Challenge the AI" → "Test your skills"
+  - "Beat Easy AI" → "Win matches on Easy"
+  - Updated: ModeSelect.tsx, App.tsx, achievements.ts, cosmetics.ts, quests.ts, TitleScreen.tsx, usePlayerData.ts, GamePreviewCanvas.tsx, ModeSelect.css
 
-- **Blockers/Issues:** None
+### Blockers
+None.
 
-## Handover Notes
-The v4.0 code is now properly version controlled and connected to Vercel.
+### Files Modified
+- `src/game/touch.ts` (NEW)
+- `src/game/ai.ts` (OPPONENT_NAMES added)
+- `src/components/PongArena.tsx`
+- `src/components/PongArena.css`
+- `src/components/ModeSelect.tsx`
+- `src/components/ModeSelect.css`
+- `src/components/TitleScreen.tsx`
+- `src/components/GamePreviewCanvas.tsx`
+- `src/lib/storage.ts`
+- `src/audio/sounds.ts`
+- `src/components/LandingPage.tsx`
+- `src/data/achievements.ts`
+- `src/data/cosmetics.ts`
+- `src/data/quests.ts`
+- `src/hooks/usePlayerData.ts`
+- `src/App.tsx`
 
-**Infrastructure complete:**
-- GitHub: https://github.com/Yonkoo11/last-rally
-- Vercel project: `last-rally-v4`
-- Production URL: https://last-rally.vercel.app
-- Auto-deploy: Every `git push` triggers Vercel build
+---
 
-**Cleanup needed:**
-- `/Users/yonko/epoch/` - original location (can delete)
-- `/Users/yonko/Projects/last-rally/` - old v1.0 (can delete)
+## Previous Sessions
 
-## Deploy Workflow
+### Jan 18-19, 2026
+- Implemented "Connected & Alive" page transitions
+- Ball accelerates 3x during exit with warm gold glow
+- Dashboard preview reveals from center with blur fade
+- Build passes, code ready
+
+### Prior Work
+- Full game implementation with 13 quests, 22 achievements
+- 4 AI difficulty levels
+- Local PvP mode
+- 16 cosmetics (paddle skins, ball trails, arena themes)
+- Daily challenge system
+
+---
+
+## Resume Commands
 ```bash
-# Option 1: Manual
-git add -A && git commit -m "message" && git push
-# Vercel auto-deploys
-
-# Option 2: Script
-./scripts/deploy.sh  # Auto-commits + deploys
+cd /Users/yonko/Projects/last-rally
+pnpm dev  # Runs on next available port (5177+)
 ```
+
+## Key Files for Touch Controls
+- `src/components/PongArena.tsx` - Main game component, needs touch event handlers
+- `src/lib/storage.ts` - Has `touchControls` setting (line 367)
+- `src/game/touch.ts` - NEW file to create for touch controller

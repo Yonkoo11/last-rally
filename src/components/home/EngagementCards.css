@@ -1,0 +1,231 @@
+/* ============================================
+   Engagement Cards - Home Screen Sidebar
+   Compact, data-rich cards
+   ============================================ */
+
+.engagement-card {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  transition: border-color 0.2s var(--ease-out),
+              background-color 0.2s var(--ease-out);
+}
+
+.engagement-card:hover {
+  background: var(--bg-subtle);
+  border-color: var(--border-default);
+}
+
+.engagement-card.completed {
+  border-color: rgba(0, 255, 170, 0.3);
+}
+
+/* Card Header */
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-2);
+}
+
+.card-label {
+  font-family: var(--font-ui);
+  font-size: 10px;
+  font-weight: var(--font-semibold);
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.card-badge {
+  font-family: var(--font-ui);
+  font-size: 9px;
+  font-weight: var(--font-bold);
+  color: var(--color-primary);
+  background: var(--color-primary-muted);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  letter-spacing: 0.05em;
+}
+
+/* Card Description */
+.card-description {
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+  margin: 0 0 var(--space-3) 0;
+  line-height: 1.4;
+}
+
+.card-chapter {
+  font-family: var(--font-display);
+  font-size: var(--text-base);
+  font-weight: var(--font-semibold);
+  color: var(--text-primary);
+  margin: 0 0 var(--space-3) 0;
+}
+
+/* Progress Bar */
+.progress-container {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.progress-bar {
+  flex: 1;
+  height: 6px;
+  background: var(--bg-muted);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-gold) 0%, var(--color-gold-light) 100%);
+  border-radius: var(--radius-full);
+  transition: width 0.3s var(--ease-out);
+}
+
+.quest-progress .progress-fill {
+  background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
+}
+
+.unlock-progress .progress-fill {
+  background: linear-gradient(90deg, #A855F7 0%, #C084FC 100%);
+}
+
+.progress-text {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-secondary);
+  min-width: 32px;
+  text-align: right;
+}
+
+/* ============================================
+   Win Streak Card
+   ============================================ */
+
+.streak-card.hot {
+  border-color: rgba(255, 150, 50, 0.3);
+}
+
+.streak-card.on-fire {
+  border-color: rgba(255, 100, 50, 0.4);
+  animation: fireGlow 2s ease-in-out infinite;
+}
+
+@keyframes fireGlow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(255, 100, 50, 0);
+  }
+  50% {
+    box-shadow: 0 0 12px 2px rgba(255, 100, 50, 0.2);
+  }
+}
+
+.streak-display {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.streak-icon {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.streak-icon.fire-pulse {
+  animation: firePulse 1s ease-in-out infinite;
+}
+
+@keyframes firePulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.15);
+  }
+}
+
+.streak-value {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: var(--font-bold);
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.streak-label {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.streak-best {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+/* ============================================
+   Next Unlock Card
+   ============================================ */
+
+.unlock-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.unlock-icon {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.unlock-name {
+  font-family: var(--font-display);
+  font-size: var(--text-base);
+  font-weight: var(--font-semibold);
+  color: var(--text-primary);
+}
+
+.unlock-requirement {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin: 0 0 var(--space-3) 0;
+}
+
+.unlock-complete {
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
+  color: var(--color-primary);
+  margin: var(--space-2) 0 0 0;
+}
+
+.all-unlocked {
+  border-color: rgba(0, 255, 170, 0.3);
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
+
+@media (max-width: 768px) {
+  .engagement-card {
+    padding: var(--space-3);
+  }
+
+  .streak-value {
+    font-size: var(--text-xl);
+  }
+
+  .card-description {
+    font-size: 12px;
+  }
+}
