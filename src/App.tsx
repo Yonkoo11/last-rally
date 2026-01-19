@@ -14,6 +14,8 @@ import { TitleScreen } from './components/TitleScreen';
 import { ModeSelect } from './components/ModeSelect';
 import { PongArena } from './components/PongArena';
 import { CosmeticSelect } from './components/CosmeticSelect';
+import { StatsScreen } from './components/StatsScreen';
+import { AchievementsScreen } from './components/AchievementsScreen';
 import { processMatchResult } from './lib/stats';
 import { loadCosmetics, loadPlayerName } from './lib/storage';
 import { getQuestById } from './data/quests';
@@ -117,6 +119,8 @@ function AppContent() {
             onQuickPlay={handleQuickPlay}
             onPlayNow={() => setView('modeSelect')}
             onSettings={() => setShowSettings(true)}
+            onStats={() => setView('stats')}
+            onAchievements={() => setView('achievements')}
           />
         );
 
@@ -138,6 +142,12 @@ function AppContent() {
             onQuit={handleQuit}
           />
         );
+
+      case 'stats':
+        return <StatsScreen onBack={handleBackToTitle} />;
+
+      case 'achievements':
+        return <AchievementsScreen onBack={handleBackToTitle} />;
 
       default:
         return null;

@@ -15,7 +15,9 @@ export type ViewState =
   | 'playerSetup'
   | 'pong'
   | 'cosmetics'
-  | 'onlineLobby';
+  | 'onlineLobby'
+  | 'stats'
+  | 'achievements';
 
 export type GamePhase = 'countdown' | 'playing' | 'paused' | 'victory';
 

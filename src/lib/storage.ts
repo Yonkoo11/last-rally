@@ -5,7 +5,27 @@ import {
   CosmeticState,
   DailyState,
   DailyChallenge,
+  PaddleSkin,
+  TrailType,
+  ArenaTheme,
 } from '../types';
+
+// Type guards for cosmetics
+const VALID_PADDLE_SKINS: PaddleSkin[] = ['default', 'green', 'purple', 'gold', 'rainbow', 'neon', 'retro'];
+const VALID_TRAILS: TrailType[] = ['none', 'classic', 'fire', 'rainbow', 'pixel'];
+const VALID_THEMES: ArenaTheme[] = ['classic', 'neon', 'minimal-dark', 'retro'];
+
+function isPaddleSkin(id: string): id is PaddleSkin {
+  return VALID_PADDLE_SKINS.includes(id as PaddleSkin);
+}
+
+function isTrailType(id: string): id is TrailType {
+  return VALID_TRAILS.includes(id as TrailType);
+}
+
+function isArenaTheme(id: string): id is ArenaTheme {
+  return VALID_THEMES.includes(id as ArenaTheme);
+}
 
 // Storage keys
 const KEYS = {
@@ -75,11 +95,9 @@ function safeStorageSet(key: string, value: string): boolean {
   try {
     localStorage.setItem(key, value);
     return true;
-  } catch (error) {
+  } catch {
     // Handle QuotaExceededError (storage full) and SecurityError (private browsing)
-    if (error instanceof Error) {
-      console.warn(`Storage write failed for key "${key}":`, error.name);
-    }
+    // Silently fail - user won't lose gameplay, just persistent data
     return false;
   }
 }
@@ -246,18 +264,18 @@ export function unlockCosmetic(
   const current = loadCosmetics();
   switch (type) {
     case 'paddle':
-      if (!current.unlockedPaddleSkins.includes(id as any)) {
-        current.unlockedPaddleSkins.push(id as any);
+      if (isPaddleSkin(id) && !current.unlockedPaddleSkins.includes(id)) {
+        current.unlockedPaddleSkins.push(id);
       }
       break;
     case 'trail':
-      if (!current.unlockedBallTrails.includes(id as any)) {
-        current.unlockedBallTrails.push(id as any);
+      if (isTrailType(id) && !current.unlockedBallTrails.includes(id)) {
+        current.unlockedBallTrails.push(id);
       }
       break;
     case 'theme':
-      if (!current.unlockedArenaThemes.includes(id as any)) {
-        current.unlockedArenaThemes.push(id as any);
+      if (isArenaTheme(id) && !current.unlockedArenaThemes.includes(id)) {
+        current.unlockedArenaThemes.push(id);
       }
       break;
   }
@@ -271,13 +289,19 @@ export function selectCosmetic(
   const current = loadCosmetics();
   switch (type) {
     case 'paddle':
-      current.selectedPaddleSkin = id as any;
+      if (isPaddleSkin(id)) {
+        current.selectedPaddleSkin = id;
+      }
       break;
     case 'trail':
-      current.selectedBallTrail = id as any;
+      if (isTrailType(id)) {
+        current.selectedBallTrail = id;
+      }
       break;
     case 'theme':
-      current.selectedArenaTheme = id as any;
+      if (isArenaTheme(id)) {
+        current.selectedArenaTheme = id;
+      }
       break;
   }
   saveCosmetics(current);

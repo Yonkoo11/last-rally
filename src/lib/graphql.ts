@@ -73,36 +73,19 @@ export const FORFEIT = gql`
 // =============================================================================
 
 export async function createMatch() {
-  try {
-    const result = await client.mutate({ mutation: CREATE_MATCH });
-    console.log('Match created:', result.data);
-    return result.data;
-  } catch (error) {
-    console.error('Failed to create match:', error);
-    throw error;
-  }
+  const result = await client.mutate({ mutation: CREATE_MATCH });
+  return result.data;
 }
 
 export async function reportScore(scorer: 1 | 2) {
-  try {
-    const result = await client.mutate({
-      mutation: REPORT_SCORE,
-      variables: { scorer },
-    });
-    console.log('Score reported:', result.data);
-    return result.data;
-  } catch (error) {
-    console.error('Failed to report score:', error);
-    throw error;
-  }
+  const result = await client.mutate({
+    mutation: REPORT_SCORE,
+    variables: { scorer },
+  });
+  return result.data;
 }
 
 export async function getMatchState() {
-  try {
-    const result = await client.query({ query: GET_MATCH_STATE });
-    return result.data;
-  } catch (error) {
-    console.error('Failed to get match state:', error);
-    throw error;
-  }
+  const result = await client.query({ query: GET_MATCH_STATE });
+  return result.data;
 }

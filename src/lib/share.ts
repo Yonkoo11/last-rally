@@ -13,7 +13,10 @@ function getOrCreatePlayerId(): string {
   const STORAGE_KEY = 'lastrally_player_id';
   let id = localStorage.getItem(STORAGE_KEY);
   if (!id) {
-    id = Math.random().toString(36).substring(2, 10);
+    // Use crypto API for better randomness
+    const arr = new Uint8Array(8);
+    crypto.getRandomValues(arr);
+    id = Array.from(arr, b => b.toString(16).padStart(2, '0')).join('');
     localStorage.setItem(STORAGE_KEY, id);
   }
   return id;

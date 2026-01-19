@@ -14,9 +14,11 @@ interface TitleScreenProps {
   onQuickPlay: () => void;
   onPlayNow: () => void;
   onSettings?: () => void;
+  onStats?: () => void;
+  onAchievements?: () => void;
 }
 
-export function TitleScreen({ onQuickPlay, onPlayNow, onSettings }: TitleScreenProps) {
+export function TitleScreen({ onQuickPlay, onPlayNow, onSettings, onStats, onAchievements }: TitleScreenProps) {
   const [mounted, setMounted] = useState(false);
   const [entering, setEntering] = useState(true);
   const playerData = usePlayerData();
@@ -150,26 +152,23 @@ export function TitleScreen({ onQuickPlay, onPlayNow, onSettings }: TitleScreenP
           </svg>
           <span>Customize</span>
         </button>
-        <button className="bottom-btn" onClick={onPlayNow}>
+        <button className="bottom-btn" onClick={onStats}>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M3 3v18h18" />
             <path d="M18 9l-5 5-4-4-3 3" />
           </svg>
           <span>Stats</span>
         </button>
-        <button className="bottom-btn" onClick={onPlayNow}>
+        <button className="bottom-btn" onClick={onAchievements}>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <circle cx="12" cy="8" r="5" />
-            <path d="M3 21v-2a7 7 0 0 1 7-7h4a7 7 0 0 1 7 7v2" />
+            <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
+            <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
+            <path d="M4 22h16" />
+            <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" />
+            <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" />
+            <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" />
           </svg>
           <span>Achievements</span>
-        </button>
-        <button className="bottom-btn" onClick={onSettings}>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <circle cx="12" cy="12" r="3" />
-            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
-          </svg>
-          <span>Settings</span>
         </button>
       </footer>
 

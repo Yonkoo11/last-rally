@@ -75,20 +75,17 @@ class MultiplayerClient {
         this.ws = new WebSocket(SERVER_URL);
 
         this.ws.onopen = () => {
-          console.log('Connected to multiplayer server');
           this.setConnectionState('connected');
           resolve();
         };
 
         this.ws.onclose = () => {
-          console.log('Disconnected from multiplayer server');
           this.setConnectionState('disconnected');
           this._roomCode = null;
           this._playerId = null;
         };
 
         this.ws.onerror = (error) => {
-          console.error('WebSocket error:', error);
           this.callbacks.onError?.('Connection failed');
           reject(error);
         };
@@ -97,8 +94,8 @@ class MultiplayerClient {
           try {
             const msg = JSON.parse(event.data);
             this.handleMessage(msg);
-          } catch (e) {
-            console.error('Failed to parse message:', e);
+          } catch {
+            // Silently ignore malformed messages
           }
         };
       } catch (error) {
