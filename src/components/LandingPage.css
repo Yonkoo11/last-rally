@@ -1,0 +1,156 @@
+/* ============================================
+   LANDING PAGE - Epic first impression
+   Minimal, atmospheric, memorable
+   ============================================ */
+
+.landing {
+  position: fixed;
+  inset: 0;
+  background: var(--bg-base);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* Ball canvas - full viewport background */
+.landing-ball-canvas {
+  z-index: 0;
+}
+
+/* Main content - centered, above canvas */
+.landing-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-8);
+  animation: landingFadeIn 0.8s var(--ease-out) forwards;
+  animation-delay: 0.3s;
+  opacity: 0;
+}
+
+/* Title - bold, letter-spaced, clean */
+.landing-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 10vw, 5rem);
+  font-weight: var(--font-bold);
+  letter-spacing: 0.3em;
+  color: var(--text-primary);
+  margin: 0;
+  text-align: center;
+  /* Push letter-spacing compensation */
+  margin-right: -0.3em;
+}
+
+/* CTA Button - Gold gradient, pulse animation */
+.landing-cta {
+  background: linear-gradient(135deg, #FFD700 0%, #FF9500 100%);
+  color: #1a1a1a;
+  font-family: var(--font-ui);
+  font-size: var(--text-lg);
+  font-weight: var(--font-bold);
+  letter-spacing: 0.1em;
+  padding: var(--space-4) var(--space-12);
+  border: none;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: transform var(--duration-normal) var(--ease-out),
+              box-shadow var(--duration-normal) var(--ease-out);
+  animation: ctaPulse 2.5s ease-in-out infinite;
+}
+
+.landing-cta:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 40px rgba(255, 170, 0, 0.5);
+  animation: none;
+}
+
+.landing-cta:active {
+  transform: scale(0.98);
+}
+
+/* Hint text - subtle instruction */
+.landing-hint {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  opacity: 0.6;
+}
+
+/* Returning player hook - bottom right, whisper */
+.landing-hook {
+  position: absolute;
+  bottom: var(--space-6);
+  right: var(--space-6);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  animation: landingFadeIn 0.6s var(--ease-out) forwards;
+  animation-delay: 0.8s;
+  opacity: 0;
+}
+
+/* ============================================
+   Animations
+   ============================================ */
+
+@keyframes landingFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes ctaPulse {
+  0%, 100% {
+    box-shadow: 0 4px 20px rgba(255, 170, 0, 0.3);
+  }
+  50% {
+    box-shadow: 0 4px 30px rgba(255, 170, 0, 0.5);
+  }
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
+
+@media (max-width: 600px) {
+  .landing-title {
+    letter-spacing: 0.15em;
+    margin-right: -0.15em;
+  }
+
+  .landing-cta {
+    padding: var(--space-3) var(--space-8);
+    font-size: var(--text-base);
+  }
+
+  .landing-hook {
+    bottom: var(--space-4);
+    right: var(--space-4);
+    font-size: var(--text-xs);
+  }
+}
+
+/* ============================================
+   Reduced motion preference
+   ============================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-content,
+  .landing-hook {
+    animation: none;
+    opacity: 1;
+  }
+
+  .landing-cta {
+    animation: none;
+  }
+}

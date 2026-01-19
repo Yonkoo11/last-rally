@@ -9,6 +9,7 @@ import {
 } from './types';
 import { ToastProvider, useToast } from './hooks/useToast';
 import { ToastContainer } from './components/ToastContainer';
+import { LandingPage } from './components/LandingPage';
 import { TitleScreen } from './components/TitleScreen';
 import { ModeSelect } from './components/ModeSelect';
 import { PongArena } from './components/PongArena';
@@ -20,7 +21,7 @@ import { playVictory, playDefeat, playAchievement } from './audio/sounds';
 import './App.css';
 
 function AppContent() {
-  const [view, setView] = useState<ViewState>('title');
+  const [view, setView] = useState<ViewState>('landing');
   const [gameConfig, setGameConfig] = useState<GameConfig | null>(null);
   const [showSettings, setShowSettings] = useState(false);
 
@@ -107,6 +108,9 @@ function AppContent() {
   // Render current view
   const renderView = () => {
     switch (view) {
+      case 'landing':
+        return <LandingPage onEnter={() => setView('title')} />;
+
       case 'title':
         return (
           <TitleScreen
