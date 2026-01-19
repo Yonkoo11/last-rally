@@ -5,7 +5,7 @@ export const QUESTS: Quest[] = [
   {
     id: 1,
     name: 'First Steps',
-    description: 'Win your first match against Easy AI',
+    description: 'Win your first match on Easy',
     chapter: 1,
     difficulty: 'easy',
     modifiers: {},
@@ -61,7 +61,7 @@ export const QUESTS: Quest[] = [
   {
     id: 7,
     name: 'Rising Star',
-    description: 'Defeat Medium AI cleanly',
+    description: 'Win a clean match on Medium',
     chapter: 2,
     difficulty: 'medium',
     modifiers: {},
@@ -73,7 +73,7 @@ export const QUESTS: Quest[] = [
   {
     id: 8,
     name: 'The Wall',
-    description: 'Face a faster Hard AI',
+    description: 'Face a tougher opponent on Hard',
     chapter: 3,
     difficulty: 'hard',
     modifiers: { aiHandicap: -0.1 },

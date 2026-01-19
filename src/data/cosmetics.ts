@@ -17,7 +17,7 @@ export const PADDLE_SKINS: Cosmetic[] = [
     unlockCondition: {
       type: 'difficulty',
       value: 'easy',
-      description: 'Beat Easy AI 5 times',
+      description: 'Win 5 matches on Easy',
     },
   },
   {
@@ -27,7 +27,7 @@ export const PADDLE_SKINS: Cosmetic[] = [
     unlockCondition: {
       type: 'difficulty',
       value: 'medium',
-      description: 'Beat Medium AI 5 times',
+      description: 'Win 5 matches on Medium',
     },
   },
   {
@@ -37,7 +37,7 @@ export const PADDLE_SKINS: Cosmetic[] = [
     unlockCondition: {
       type: 'difficulty',
       value: 'hard',
-      description: 'Beat Hard AI 5 times',
+      description: 'Win 5 matches on Hard',
     },
   },
   {
@@ -47,7 +47,7 @@ export const PADDLE_SKINS: Cosmetic[] = [
     unlockCondition: {
       type: 'difficulty',
       value: 'impossible',
-      description: 'Beat Impossible AI',
+      description: 'Conquer Impossible difficulty',
     },
   },
   {

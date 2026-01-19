@@ -19,18 +19,33 @@
   - `playTransitionIn()` - Descending sine tone (0.15s)
   - Integrated into LandingPage and TitleScreen
 - [x] Build passes with no errors
+- [x] **AI Wording Cleanup:**
+  - Replaced all user-facing "AI" text with friendlier alternatives
+  - Opponent personas: ROOKIE, RIVAL, ACE, CHAMPION (instead of EASY AI, etc.)
+  - "Challenge the AI" → "Test your skills"
+  - "Beat Easy AI" → "Win matches on Easy"
+  - Updated: ModeSelect.tsx, App.tsx, achievements.ts, cosmetics.ts, quests.ts, TitleScreen.tsx, usePlayerData.ts, GamePreviewCanvas.tsx, ModeSelect.css
 
 ### Blockers
 None.
 
 ### Files Modified
 - `src/game/touch.ts` (NEW)
+- `src/game/ai.ts` (OPPONENT_NAMES added)
 - `src/components/PongArena.tsx`
 - `src/components/PongArena.css`
+- `src/components/ModeSelect.tsx`
+- `src/components/ModeSelect.css`
+- `src/components/TitleScreen.tsx`
+- `src/components/GamePreviewCanvas.tsx`
 - `src/lib/storage.ts`
 - `src/audio/sounds.ts`
 - `src/components/LandingPage.tsx`
-- `src/components/TitleScreen.tsx`
+- `src/data/achievements.ts`
+- `src/data/cosmetics.ts`
+- `src/data/quests.ts`
+- `src/hooks/usePlayerData.ts`
+- `src/App.tsx`
 
 ---
 

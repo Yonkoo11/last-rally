@@ -15,7 +15,7 @@ import {
 import { THEME_COLORS, PADDLE_COLORS, PLAYER_COLORS } from '../data/cosmetics';
 
 // ============================================
-// PREVIEW CANVAS - AI vs AI Demo
+// PREVIEW CANVAS - Auto Demo Match
 // Directional glow matches LandingBall behavior
 // ============================================
 
@@ -129,14 +129,14 @@ export function GamePreviewCanvas({
         y = Math.max(ballR, Math.min(height - ballR, y));
       }
 
-      // AI targeting
+      // Paddle targeting
       const leftTargetX = paddleMargin + paddleW;
       const rightTargetX = width - paddleMargin - paddleW;
 
       let leftTarget = state.leftPaddle.targetY;
       let rightTarget = state.rightPaddle.targetY;
 
-      // Left AI
+      // Left paddle
       if (vx < 0) {
         const predicted = predictBallY(state.ball, leftTargetX);
         leftTarget = predicted - paddleH / 2 + (Math.random() - 0.5) * 20;
@@ -144,7 +144,7 @@ export function GamePreviewCanvas({
         leftTarget = y - paddleH / 2;
       }
 
-      // Right AI
+      // Right paddle
       if (vx > 0) {
         const predicted = predictBallY(state.ball, rightTargetX);
         rightTarget = predicted - paddleH / 2 + (Math.random() - 0.5) * 20;
@@ -371,7 +371,7 @@ export function GamePreviewCanvas({
         cursor: onClick ? 'pointer' : 'default',
         display: 'block',
       }}
-      aria-label="Game preview - AI vs AI demo match"
+      aria-label="Game preview demo"
     />
   );
 }

@@ -129,7 +129,7 @@ export function TitleScreen({ onQuickPlay, onPlayNow, onSettings }: TitleScreenP
                 A fast-paced Pong game with quests, achievements, and unlockable cosmetics.
               </p>
               <ul className="welcome-features">
-                <li>Challenge AI opponents at 4 difficulty levels</li>
+                <li>Test your skills at 4 difficulty levels</li>
                 <li>Complete 13 unique quests</li>
                 <li>Unlock paddle skins, ball trails, and themes</li>
                 <li>Track your stats and climb the ranks</li>

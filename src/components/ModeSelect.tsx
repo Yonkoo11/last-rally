@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Difficulty, Quest, GameMode } from '../types';
 import { loadQuestProgress, loadStats, loadPlayerName, savePlayerName } from '../lib/storage';
 import { QUESTS, getAvailableQuests } from '../data/quests';
-import { DIFFICULTY_NAMES, DIFFICULTY_DESCRIPTIONS } from '../game/ai';
+import { DIFFICULTY_NAMES, DIFFICULTY_DESCRIPTIONS, OPPONENT_NAMES } from '../game/ai';
 import { getSuggestedDifficulty } from '../lib/stats';
 import { playMenuSelect } from '../audio/sounds';
 import './ModeSelect.css';
@@ -80,18 +80,18 @@ export function ModeSelect({ onBack, onStartGame }: ModeSelectProps) {
     const name1 = player1Name.trim().toUpperCase() || 'PLAYER 1';
     const name2 = pendingGame.mode === 'pvp'
       ? player2Name.trim().toUpperCase() || 'PLAYER 2'
-      : getAIName();
+      : getOpponentName();
 
     savePlayerName(name1);
     playMenuSelect();
     onStartGame(name1, name2, pendingGame.mode, pendingGame.difficulty, pendingGame.quest);
   };
 
-  const getAIName = () => {
-    if (!pendingGame) return 'AI';
+  const getOpponentName = () => {
+    if (!pendingGame) return 'OPPONENT';
     if (pendingGame.quest) return `QUEST ${pendingGame.quest.id}`;
-    if (pendingGame.difficulty) return `${DIFFICULTY_NAMES[pendingGame.difficulty].toUpperCase()} AI`;
-    return 'AI';
+    if (pendingGame.difficulty) return OPPONENT_NAMES[pendingGame.difficulty];
+    return 'OPPONENT';
   };
 
   // Name Input Modal
@@ -176,7 +176,7 @@ export function ModeSelect({ onBack, onStartGame }: ModeSelectProps) {
             <div className="vs-display">
               <span className="vs-player">{player1Name || 'PLAYER 1'}</span>
               <span className="vs-text">vs</span>
-              <span className="vs-ai">{getAIName()}</span>
+              <span className="vs-opponent">{getOpponentName()}</span>
             </div>
           )}
 
@@ -202,7 +202,7 @@ export function ModeSelect({ onBack, onStartGame }: ModeSelectProps) {
           <h2 className="page-header">Select Difficulty</h2>
         </div>
 
-        <div className="difficulty-grid" role="radiogroup" aria-label="Select AI difficulty level">
+        <div className="difficulty-grid" role="radiogroup" aria-label="Select difficulty level">
           {(['easy', 'medium', 'hard', 'impossible'] as Difficulty[]).map(diff => {
             const isSuggested = diff === suggestedDifficulty;
             const wins = stats[`ai${diff.charAt(0).toUpperCase()}${diff.slice(1)}Wins` as keyof typeof stats] || 0;
@@ -307,7 +307,7 @@ export function ModeSelect({ onBack, onStartGame }: ModeSelectProps) {
         <button
           className="mode-card mode-solo"
           onClick={() => handleSubViewChange('difficulty')}
-          aria-label="Solo Play: Challenge the AI"
+          aria-label="Solo Play: Test your skills"
         >
           <div className="mode-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -317,7 +317,7 @@ export function ModeSelect({ onBack, onStartGame }: ModeSelectProps) {
             </svg>
           </div>
           <span className="mode-name">Solo Play</span>
-          <span className="mode-desc">Challenge the AI</span>
+          <span className="mode-desc">Test your skills</span>
         </button>
 
         <button className="mode-card mode-pvp" onClick={handlePvP} aria-label="Local Multiplayer: Play with a friend">

@@ -125,14 +125,14 @@ export function resetAIState(): void {
 }
 
 // ============================================
-// AI DIFFICULTY DESCRIPTIONS
+// DIFFICULTY CONFIG
 // ============================================
 
 export const DIFFICULTY_DESCRIPTIONS: Record<Difficulty, string> = {
   easy: 'Relaxed opponent. Perfect for learning the basics.',
   medium: 'Balanced challenge. Tests your fundamentals.',
   hard: 'Tough opponent. Requires quick reflexes.',
-  impossible: 'Near-perfect AI. Only for the truly skilled.',
+  impossible: 'Ultimate challenge. Only for the truly skilled.',
 };
 
 export const DIFFICULTY_NAMES: Record<Difficulty, string> = {
@@ -140,4 +140,12 @@ export const DIFFICULTY_NAMES: Record<Difficulty, string> = {
   medium: 'Medium',
   hard: 'Hard',
   impossible: 'Impossible',
+};
+
+// Opponent persona names shown during gameplay
+export const OPPONENT_NAMES: Record<Difficulty, string> = {
+  easy: 'ROOKIE',
+  medium: 'RIVAL',
+  hard: 'ACE',
+  impossible: 'CHAMPION',
 };

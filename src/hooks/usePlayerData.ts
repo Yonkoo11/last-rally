@@ -192,25 +192,25 @@ function calculateProgress(
           return {
             progress: stats.aiEasyWins,
             target: 5,
-            description: 'Beat Easy AI 5 times',
+            description: 'Win 5 matches on Easy',
           };
         case 'medium':
           return {
             progress: stats.aiMediumWins,
             target: 5,
-            description: 'Beat Medium AI 5 times',
+            description: 'Win 5 matches on Medium',
           };
         case 'hard':
           return {
             progress: stats.aiHardWins,
             target: 5,
-            description: 'Beat Hard AI 5 times',
+            description: 'Win 5 matches on Hard',
           };
         case 'impossible':
           return {
             progress: stats.aiImpossibleWins,
             target: 1,
-            description: 'Beat Impossible AI',
+            description: 'Conquer Impossible difficulty',
           };
         default:
           return { progress: 0, target: 1, description: '' };

@@ -27,7 +27,7 @@ function AppContent() {
 
   const { showAchievement, showQuestComplete } = useToast();
 
-  // Quick Play handler - Direct to easy AI game
+  // Quick Play handler - Direct to easy game
   const handleQuickPlay = useCallback(() => {
     const cosmetics = loadCosmetics();
     const playerName = loadPlayerName();
@@ -36,7 +36,7 @@ function AppContent() {
       mode: 'ai',
       difficulty: 'easy',
       player1Name: playerName || 'PLAYER 1',
-      player2Name: 'EASY AI',
+      player2Name: 'ROOKIE',
       arenaTheme: cosmetics.selectedArenaTheme,
     });
     setView('pong');

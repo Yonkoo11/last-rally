@@ -83,7 +83,7 @@ export const ACHIEVEMENTS: Achievement[] = [
   {
     id: 'easy_master',
     name: 'Easy Peasy',
-    description: 'Beat Easy AI 5 times',
+    description: 'Win 5 matches on Easy',
     icon: '🟢',
     category: 'progression',
     condition: { type: 'difficulty', difficulty: 'easy', value: 5 },
@@ -92,7 +92,7 @@ export const ACHIEVEMENTS: Achievement[] = [
   {
     id: 'medium_master',
     name: 'Rising Challenger',
-    description: 'Beat Medium AI 5 times',
+    description: 'Win 5 matches on Medium',
     icon: '🟣',
     category: 'progression',
     condition: { type: 'difficulty', difficulty: 'medium', value: 5 },
@@ -101,7 +101,7 @@ export const ACHIEVEMENTS: Achievement[] = [
   {
     id: 'hard_master',
     name: 'Hard Mode Hero',
-    description: 'Beat Hard AI 5 times',
+    description: 'Win 5 matches on Hard',
     icon: '🟡',
     category: 'progression',
     condition: { type: 'difficulty', difficulty: 'hard', value: 5 },
@@ -110,7 +110,7 @@ export const ACHIEVEMENTS: Achievement[] = [
   {
     id: 'impossible_master',
     name: 'The Impossible',
-    description: 'Beat Impossible AI',
+    description: 'Conquer Impossible difficulty',
     icon: '🌈',
     category: 'progression',
     condition: { type: 'difficulty', difficulty: 'impossible', value: 1 },

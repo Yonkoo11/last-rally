@@ -690,7 +690,7 @@
   50% { opacity: 1; transform: scale(1.1); }
 }
 
-.vs-ai {
+.vs-opponent {
   font-family: var(--font-display);
   font-size: var(--text-lg);
   font-weight: var(--font-bold);
