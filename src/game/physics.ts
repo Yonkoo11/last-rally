@@ -11,6 +11,12 @@ import {
   PADDLE_HEIGHT,
   PADDLE_MARGIN,
   PADDLE_SPEED,
+  WOBBLE_PERIOD,
+  WOBBLE_AMPLITUDE,
+  WOBBLE_RANDOM_JITTER,
+  LATE_CURVE_THRESHOLD,
+  LATE_CURVE_WINDOW,
+  RANDOM_CURVE_PROBABILITY,
 } from './constants';
 import { PITCHES } from '../data/pitches';
 
@@ -44,7 +50,8 @@ function getRandomStartVelocity(): Vector2D {
 
 export function updateBall(
   ball: BallWithPitch,
-  modifiers: QuestModifiers = {}
+  modifiers: QuestModifiers = {},
+  gameTime: number = 0
 ): { ball: BallWithPitch; hitWall: boolean } {
   const speedMod = modifiers.ballSpeed || 1;
   let hitWall = false;
@@ -76,23 +83,23 @@ export function updateBall(
         curveEffect = -curveMagnitude * Math.sin(newCurveProgress * Math.PI);
         break;
       case 'late':
-        // Only curve in the last 30% of travel
-        if (newCurveProgress > 0.7) {
-          const lateProgress = (newCurveProgress - 0.7) / 0.3;
+        // Only curve in the last portion of travel
+        if (newCurveProgress > LATE_CURVE_THRESHOLD) {
+          const lateProgress = (newCurveProgress - LATE_CURVE_THRESHOLD) / LATE_CURVE_WINDOW;
           curveEffect = curveMagnitude * Math.pow(lateProgress, 2) * 2;
         }
         break;
       case 'random':
         // Change direction randomly
-        if (Math.random() < 0.05) {
+        if (Math.random() < RANDOM_CURVE_PROBABILITY) {
           curveEffect = (Math.random() - 0.5) * curveMagnitude * 2;
         }
         break;
     }
 
-    // Add wobble for knuckleball
+    // Add wobble for knuckleball (use gameTime for frame-accurate animation)
     if (wobble) {
-      newWobbleOffset = Math.sin(Date.now() / 50) * 0.5 + (Math.random() - 0.5) * 0.3;
+      newWobbleOffset = Math.sin(gameTime / WOBBLE_PERIOD) * WOBBLE_AMPLITUDE + (Math.random() - 0.5) * WOBBLE_RANDOM_JITTER;
       curveEffect += newWobbleOffset;
     }
   }
@@ -419,14 +426,14 @@ function predictBallYWithCurve(
         curveEffect = -curveMagnitude * Math.sin(progress * Math.PI);
         break;
       case 'late':
-        if (progress > 0.7) {
-          const lateProgress = (progress - 0.7) / 0.3;
+        if (progress > LATE_CURVE_THRESHOLD) {
+          const lateProgress = (progress - LATE_CURVE_THRESHOLD) / LATE_CURVE_WINDOW;
           curveEffect = curveMagnitude * Math.pow(lateProgress, 2) * 2;
         }
         break;
       case 'random':
         // For prediction, assume average random movement (slightly downward)
-        curveEffect = curveMagnitude * 0.3;
+        curveEffect = curveMagnitude * LATE_CURVE_WINDOW;
         break;
     }
 

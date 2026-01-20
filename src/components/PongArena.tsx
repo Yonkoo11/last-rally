@@ -92,6 +92,7 @@ export function PongArena({ config, onMatchEnd, onQuit }: PongArenaProps) {
   const phaseRef = useRef<GamePhase>('countdown');
   const leftScoreRef = useRef(0);
   const rightScoreRef = useRef(0);
+  const gameTimeRef = useRef(0); // Accumulated game time for animations
 
   const modifiers: QuestModifiers = useMemo(() => config.modifiers || {}, [config.modifiers]);
   const winScore = modifiers.winScore || WIN_SCORE;
@@ -302,6 +303,9 @@ export function PongArena({ config, onMatchEnd, onQuit }: PongArenaProps) {
       updateParticles(deltaTime);
 
       if (phaseRef.current === 'playing') {
+        // Accumulate game time for animations (only when playing)
+        gameTimeRef.current += deltaTime;
+
         // Update left paddle (player 1) - Touch, W/S, or Arrow keys
         const touchController = touchControllerRef.current;
         const leftTouchY = touchEnabled ? touchController.getPaddleY('left') : null;
@@ -362,7 +366,8 @@ export function PongArena({ config, onMatchEnd, onQuit }: PongArenaProps) {
         // Update ball
         const { ball: updatedBall, hitWall } = updateBall(
           ballRef.current,
-          modifiers
+          modifiers,
+          gameTimeRef.current
         );
         ballRef.current = updatedBall;
 

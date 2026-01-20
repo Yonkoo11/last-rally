@@ -65,3 +65,22 @@ export const AI_CONFIGS = {
 // Frame timing
 export const TARGET_FPS = 60;
 export const FRAME_TIME = 1000 / TARGET_FPS;
+
+// Pitch physics
+export const WOBBLE_PERIOD = 50; // ms period for knuckleball wobble
+export const WOBBLE_AMPLITUDE = 0.5; // base wobble magnitude
+export const WOBBLE_RANDOM_JITTER = 0.3; // random offset range
+export const LATE_CURVE_THRESHOLD = 0.7; // when late curve starts (0-1 progress)
+export const LATE_CURVE_WINDOW = 0.3; // portion of travel for late curve
+export const RANDOM_CURVE_PROBABILITY = 0.05; // chance per frame for random direction change
+
+// AI behavior
+export const AI_MIN_SPEED_MULTIPLIER = 0.3;
+export const AI_MIN_ERROR_MARGIN = 3;
+export const AI_ERROR_UPDATE_BASE_MS = 300;
+export const AI_ERROR_UPDATE_VARIANCE_MS = 200;
+export const AI_DEAD_ZONE = 5; // pixels to ignore small differences
+
+// Weather particles
+export const SNOW_PARTICLE_COUNT = 80;
+export const RAIN_PARTICLE_COUNT = 120;

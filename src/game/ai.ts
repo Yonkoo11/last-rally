@@ -2,6 +2,11 @@ import { Ball, Paddle, Difficulty, AIConfig, QuestModifiers } from '../types';
 import { predictBallY, movePaddle } from './physics';
 import {
   AI_CONFIGS,
+  AI_MIN_SPEED_MULTIPLIER,
+  AI_MIN_ERROR_MARGIN,
+  AI_ERROR_UPDATE_BASE_MS,
+  AI_ERROR_UPDATE_VARIANCE_MS,
+  AI_DEAD_ZONE,
   CANVAS_WIDTH,
   PADDLE_HEIGHT,
   PADDLE_MARGIN,
@@ -48,9 +53,9 @@ export function updateAI(
 
   // Apply AI handicap from quest modifiers
   const handicapMod = modifiers.aiHandicap || 0;
-  const adjustedSpeedMult = Math.max(0.3, config.speedMultiplier + handicapMod);
+  const adjustedSpeedMult = Math.max(AI_MIN_SPEED_MULTIPLIER, config.speedMultiplier + handicapMod);
   const adjustedErrorMargin = Math.max(
-    3,
+    AI_MIN_ERROR_MARGIN,
     config.errorMargin * (1 - handicapMod)
   );
 
@@ -79,7 +84,7 @@ export function updateAI(
 
       // Update error offset periodically (independently of reaction timer)
       // This prevents stale offsets when ball trajectory changes
-      const errorUpdateInterval = 300 + Math.random() * 200; // 300-500ms
+      const errorUpdateInterval = AI_ERROR_UPDATE_BASE_MS + Math.random() * AI_ERROR_UPDATE_VARIANCE_MS;
       if (now - aiState.lastUpdateTime > errorUpdateInterval) {
         aiState.errorOffset =
           (Math.random() - 0.5) * 2 * adjustedErrorMargin;
@@ -104,8 +109,7 @@ export function updateAI(
     aiState.targetY + (PADDLE_HEIGHT * (modifiers.paddleSize || 1)) / 2;
   const diff = targetCenter - currentCenter;
 
-  const deadZone = 5;
-  if (Math.abs(diff) < deadZone) {
+  if (Math.abs(diff) < AI_DEAD_ZONE) {
     return paddle;
   }
 

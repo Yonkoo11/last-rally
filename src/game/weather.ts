@@ -3,7 +3,12 @@
 // ============================================
 
 import { WeatherEffect } from '../types';
-import { CANVAS_WIDTH, CANVAS_HEIGHT } from './constants';
+import {
+  CANVAS_WIDTH,
+  CANVAS_HEIGHT,
+  SNOW_PARTICLE_COUNT,
+  RAIN_PARTICLE_COUNT,
+} from './constants';
 
 // ============================================
 // PARTICLE DEFINITIONS
@@ -24,23 +29,20 @@ let snowParticles: WeatherParticle[] = [];
 let rainParticles: WeatherParticle[] = [];
 let initialized = false;
 
-const SNOW_COUNT = 80;
-const RAIN_COUNT = 120;
-
 // ============================================
 // INITIALIZATION
 // ============================================
 
 function initSnow(): void {
   snowParticles = [];
-  for (let i = 0; i < SNOW_COUNT; i++) {
+  for (let i = 0; i < SNOW_PARTICLE_COUNT; i++) {
     snowParticles.push(createSnowflake(true));
   }
 }
 
 function initRain(): void {
   rainParticles = [];
-  for (let i = 0; i < RAIN_COUNT; i++) {
+  for (let i = 0; i < RAIN_PARTICLE_COUNT; i++) {
     rainParticles.push(createRaindrop(true));
   }
 }
