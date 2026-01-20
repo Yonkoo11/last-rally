@@ -79,10 +79,9 @@
   bottom: 5px;
   left: 50%;
   transform: translateX(-50%);
+  transform-origin: center bottom;
   filter: drop-shadow(0 0 10px rgba(255, 150, 0, 0.5));
-  animation: flameBreath 1.5s ease-in-out infinite,
-             flameSway 2.5s ease-in-out infinite,
-             flameFlicker 0.15s ease-in-out infinite alternate;
+  animation: flameBurn 2s ease-in-out infinite;
 }
 
 .fire-glow {
@@ -103,36 +102,31 @@
   animation: glowPulse 1.2s ease-in-out infinite;
 }
 
-/* Breathing animation - noticeable pulse */
-@keyframes flameBreath {
-  0%, 100% {
-    transform: translateX(-50%) scaleX(1) scaleY(1);
-  }
-  50% {
-    transform: translateX(-50%) scaleX(0.94) scaleY(1.04);
-  }
-}
-
-/* Swaying motion - gentle side-to-side */
-@keyframes flameSway {
-  0%, 100% {
-    transform: translateX(-50%) rotate(0deg);
-  }
-  25% {
-    transform: translateX(-49%) rotate(1.5deg);
-  }
-  75% {
-    transform: translateX(-51%) rotate(-1.5deg);
-  }
-}
-
-/* Quick flicker for alive feeling */
-@keyframes flameFlicker {
+/* Organic burning motion - smooth and natural */
+@keyframes flameBurn {
   0% {
-    filter: drop-shadow(0 0 8px rgba(255, 150, 0, 0.45)) brightness(1);
+    transform: translateX(-50%) scaleX(1) scaleY(1) rotate(0deg);
+    filter: drop-shadow(0 0 10px rgba(255, 150, 0, 0.5));
+  }
+  20% {
+    transform: translateX(-50%) scaleX(0.97) scaleY(1.02) rotate(0.8deg);
+    filter: drop-shadow(0 0 12px rgba(255, 150, 0, 0.55));
+  }
+  40% {
+    transform: translateX(-50%) scaleX(1.01) scaleY(0.99) rotate(-0.5deg);
+    filter: drop-shadow(0 0 11px rgba(255, 150, 0, 0.52));
+  }
+  60% {
+    transform: translateX(-50%) scaleX(0.98) scaleY(1.03) rotate(0.3deg);
+    filter: drop-shadow(0 0 13px rgba(255, 150, 0, 0.58));
+  }
+  80% {
+    transform: translateX(-50%) scaleX(1.02) scaleY(0.98) rotate(-0.6deg);
+    filter: drop-shadow(0 0 10px rgba(255, 150, 0, 0.48));
   }
   100% {
-    filter: drop-shadow(0 0 12px rgba(255, 150, 0, 0.55)) brightness(1.03);
+    transform: translateX(-50%) scaleX(1) scaleY(1) rotate(0deg);
+    filter: drop-shadow(0 0 10px rgba(255, 150, 0, 0.5));
   }
 }
 
