@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Difficulty, Quest, GameMode } from '../types';
-import { loadQuestProgress, loadStats, loadPlayerName, savePlayerName } from '../lib/storage';
+import { Difficulty, Quest, GameMode, CourtStyle } from '../types';
+import { loadQuestProgress, loadStats, loadPlayerName, savePlayerName, loadCosmetics, selectCosmetic } from '../lib/storage';
 import { QUESTS, getAvailableQuests } from '../data/quests';
+import { COURT_STYLES, isUnlocked } from '../data/cosmetics';
 import { DIFFICULTY_NAMES, DIFFICULTY_DESCRIPTIONS, OPPONENT_NAMES } from '../game/ai';
 import { getSuggestedDifficulty } from '../lib/stats';
 import { playMenuSelect } from '../audio/sounds';
@@ -31,8 +32,29 @@ export function ModeSelect({ onBack, onStartGame }: ModeSelectProps) {
 
   const stats = loadStats();
   const questProgress = loadQuestProgress();
+  const cosmetics = loadCosmetics();
+  const [selectedCourt, setSelectedCourt] = useState<CourtStyle>(cosmetics.selectedCourtStyle);
   const suggestedDifficulty = getSuggestedDifficulty(stats);
   const availableQuests = getAvailableQuests(questProgress.completedQuests);
+
+  // Stats object for cosmetics unlock checking
+  const statsForUnlock = {
+    gamesPlayed: stats.totalGames,
+    totalWins: stats.totalWins,
+    completedQuests: questProgress.completedQuests,
+    unlockedAchievements: Object.keys(loadCosmetics().unlockedPaddleSkins || []),
+    bestStreak: stats.bestWinStreak,
+    aiEasyWins: stats.aiEasyWins,
+    aiMediumWins: stats.aiMediumWins,
+    aiHardWins: stats.aiHardWins,
+    aiImpossibleWins: stats.aiImpossibleWins,
+  };
+
+  const handleCourtSelect = (courtId: CourtStyle) => {
+    playMenuSelect();
+    selectCosmetic('court', courtId);
+    setSelectedCourt(courtId);
+  };
 
   useEffect(() => {
     if (subView === 'nameInput' && inputRef.current) {
@@ -171,6 +193,33 @@ export function ModeSelect({ onBack, onStartGame }: ModeSelectProps) {
               <span className="input-hint">Controls: I / K keys (or W/S)</span>
             </div>
           )}
+
+          {/* Court Style Selector */}
+          <div className="court-selector">
+            <label className="court-label">Court Style</label>
+            <div className="court-options">
+              {COURT_STYLES.map(court => {
+                const unlocked = isUnlocked(court, statsForUnlock);
+                const isSelected = selectedCourt === court.id;
+                return (
+                  <button
+                    key={court.id}
+                    className={`court-option ${isSelected ? 'selected' : ''} ${!unlocked ? 'locked' : ''}`}
+                    onClick={() => unlocked && handleCourtSelect(court.id as CourtStyle)}
+                    disabled={!unlocked}
+                    title={unlocked ? court.name : court.unlockCondition.description}
+                  >
+                    <span className="court-name">{court.id === 'pong' ? 'Pong' : court.id.charAt(0).toUpperCase() + court.id.slice(1)}</span>
+                    {!unlocked && (
+                      <svg className="lock-icon" viewBox="0 0 24 24" fill="currentColor" width="10" height="10">
+                        <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zM9 8V6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9z" />
+                      </svg>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
 
           {!isPvP && (
             <div className="vs-display">

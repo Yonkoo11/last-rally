@@ -646,6 +646,74 @@
   color: var(--text-disabled);
 }
 
+/* ============================================
+   COURT SELECTOR
+   ============================================ */
+
+.court-selector {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  animation: formEnter 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both;
+}
+
+.court-label {
+  font-size: var(--text-xs);
+  font-weight: var(--font-medium);
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.court-options {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.court-option {
+  padding: var(--space-2) var(--space-4);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.court-option.selected {
+  border-color: var(--color-gold);
+  color: var(--color-gold);
+  background: rgba(255, 215, 0, 0.1);
+  box-shadow: 0 0 12px rgba(255, 215, 0, 0.2);
+}
+
+.court-option.locked {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.court-option .lock-icon {
+  width: 10px;
+  height: 10px;
+  margin-left: var(--space-1);
+}
+
+@media (hover: hover) {
+  .court-option:hover:not(.locked):not(.selected) {
+    border-color: var(--border-default);
+    color: var(--text-primary);
+    background: var(--bg-subtle);
+  }
+}
+
 /* VS Display */
 .vs-display {
   display: flex;
