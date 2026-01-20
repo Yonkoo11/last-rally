@@ -255,11 +255,42 @@ function checkSinglePaddleCollision(
   const ballBottom = ball.y + ball.radius;
 
   // Simple AABB collision
-  const colliding =
+  let colliding =
     ballRight >= paddleLeft &&
     ballLeft <= paddleRight &&
     ballBottom >= paddleTop &&
     ballTop <= paddleBottom;
+
+  // Swept collision detection for fast-moving balls
+  // Check if ball crossed paddle plane this frame (prevents tunneling)
+  if (!colliding) {
+    const prevX = ball.x - ball.velocity.x;
+    const movingToward = (side === 'left' && ball.velocity.x < 0) ||
+                         (side === 'right' && ball.velocity.x > 0);
+
+    if (movingToward) {
+      // Check if ball crossed the paddle's front edge this frame
+      const paddleEdge = side === 'left' ? paddleRight : paddleLeft;
+      const prevBallEdge = side === 'left' ? (prevX + ball.radius) : (prevX - ball.radius);
+      const currBallEdge = side === 'left' ? ballLeft : ballRight;
+
+      const crossedPaddle = (side === 'left' && prevBallEdge > paddleEdge && currBallEdge <= paddleEdge) ||
+                            (side === 'right' && prevBallEdge < paddleEdge && currBallEdge >= paddleEdge);
+
+      if (crossedPaddle) {
+        // Interpolate Y position at the moment of crossing
+        const totalXMove = Math.abs(ball.velocity.x);
+        const crossDistance = Math.abs(paddleEdge - prevBallEdge);
+        const t = totalXMove > 0 ? crossDistance / totalXMove : 0;
+        const yAtCross = (ball.y - ball.velocity.y) + ball.velocity.y * t;
+
+        // Check if Y was within paddle bounds at crossing point
+        if (yAtCross + ball.radius >= paddleTop && yAtCross - ball.radius <= paddleBottom) {
+          colliding = true;
+        }
+      }
+    }
+  }
 
   if (!colliding) {
     return { hit: false, side: null, newBall: ball };
@@ -299,10 +330,11 @@ function checkSinglePaddleCollision(
 }
 
 export function checkScore(ball: Ball): 'left' | 'right' | null {
-  if (ball.x - ball.radius <= 0) {
+  // Use strict comparison to prevent edge-case double scoring
+  if (ball.x - ball.radius < 0) {
     return 'right'; // Right player scores
   }
-  if (ball.x + ball.radius >= CANVAS_WIDTH) {
+  if (ball.x + ball.radius > CANVAS_WIDTH) {
     return 'left'; // Left player scores
   }
   return null;
@@ -317,6 +349,12 @@ export function predictBallY(
   targetX: number,
   maxIterations: number = 100
 ): number {
+  // Use curve-aware prediction for balls with pitch
+  const ballWithPitch = ball as BallWithPitch;
+  if (ballWithPitch.pitch) {
+    return predictBallYWithCurve(ballWithPitch, targetX, maxIterations);
+  }
+
   let x = ball.x;
   let y = ball.y;
   const vx = ball.velocity.x;
@@ -331,6 +369,70 @@ export function predictBallY(
     // Update position
     x += vx;
     y += vy;
+
+    // Wall bounce
+    if (y - BALL_RADIUS <= 0 || y + BALL_RADIUS >= CANVAS_HEIGHT) {
+      vy = -vy;
+      y = Math.max(BALL_RADIUS, Math.min(CANVAS_HEIGHT - BALL_RADIUS, y));
+    }
+  }
+
+  return y;
+}
+
+// Curve-aware prediction for balls with pitch effects
+function predictBallYWithCurve(
+  ball: BallWithPitch,
+  targetX: number,
+  maxIterations: number = 100
+): number {
+  const pitchConfig = ball.pitch ? PITCHES[ball.pitch] : null;
+  if (!pitchConfig) {
+    return predictBallY({ ...ball, pitch: undefined } as Ball, targetX, maxIterations);
+  }
+
+  let x = ball.x;
+  let y = ball.y;
+  const vx = ball.velocity.x * (pitchConfig.speedMod || 1);
+  let vy = ball.velocity.y;
+
+  const totalDistance = CANVAS_WIDTH - PADDLE_MARGIN * 2;
+  const { curveMagnitude, curveDirection } = pitchConfig;
+
+  for (let i = 0; i < maxIterations; i++) {
+    // Check if we've reached the target X
+    if ((vx > 0 && x >= targetX) || (vx < 0 && x <= targetX)) {
+      return y;
+    }
+
+    // Calculate curve progress
+    const traveled = vx > 0 ? x - PADDLE_MARGIN : CANVAS_WIDTH - PADDLE_MARGIN - x;
+    const progress = Math.min(1, Math.max(0, traveled / totalDistance));
+
+    // Calculate curve effect based on pitch type
+    let curveEffect = 0;
+    switch (curveDirection) {
+      case 'down':
+        curveEffect = curveMagnitude * Math.sin(progress * Math.PI);
+        break;
+      case 'up':
+        curveEffect = -curveMagnitude * Math.sin(progress * Math.PI);
+        break;
+      case 'late':
+        if (progress > 0.7) {
+          const lateProgress = (progress - 0.7) / 0.3;
+          curveEffect = curveMagnitude * Math.pow(lateProgress, 2) * 2;
+        }
+        break;
+      case 'random':
+        // For prediction, assume average random movement (slightly downward)
+        curveEffect = curveMagnitude * 0.3;
+        break;
+    }
+
+    // Update position with curve
+    x += vx;
+    y += vy + curveEffect;
 
     // Wall bounce
     if (y - BALL_RADIUS <= 0 || y + BALL_RADIUS >= CANVAS_HEIGHT) {

@@ -95,45 +95,54 @@ export function updateWeather(effect: WeatherEffect): void {
 }
 
 function updateSnow(): void {
-  snowParticles = snowParticles.map(p => {
-    let newX = p.x + p.vx + Math.sin(p.y * 0.01) * 0.3;
-    const newY = p.y + p.vy;
-    const newRotation = (p.rotation || 0) + (p.rotationSpeed || 0);
+  // Mutate particles in place to reduce GC pressure
+  for (let i = 0; i < snowParticles.length; i++) {
+    const p = snowParticles[i];
 
-    // Wrap around horizontally
-    if (newX < -10) newX = CANVAS_WIDTH + 10;
-    if (newX > CANVAS_WIDTH + 10) newX = -10;
-
-    // Reset if below canvas
-    if (newY > CANVAS_HEIGHT + 10) {
-      return createSnowflake(false);
+    // Update position
+    p.x += p.vx + Math.sin(p.y * 0.01) * 0.3;
+    p.y += p.vy;
+    if (p.rotation !== undefined && p.rotationSpeed !== undefined) {
+      p.rotation += p.rotationSpeed;
     }
 
-    return {
-      ...p,
-      x: newX,
-      y: newY,
-      rotation: newRotation,
-    };
-  });
+    // Wrap around horizontally
+    if (p.x < -10) p.x = CANVAS_WIDTH + 10;
+    if (p.x > CANVAS_WIDTH + 10) p.x = -10;
+
+    // Reset if below canvas (recycle particle instead of creating new)
+    if (p.y > CANVAS_HEIGHT + 10) {
+      p.x = Math.random() * CANVAS_WIDTH;
+      p.y = -10;
+      p.vx = (Math.random() - 0.5) * 0.5;
+      p.vy = 0.5 + Math.random() * 1;
+      p.size = 2 + Math.random() * 4;
+      p.alpha = 0.4 + Math.random() * 0.4;
+      p.rotation = Math.random() * Math.PI * 2;
+      p.rotationSpeed = (Math.random() - 0.5) * 0.05;
+    }
+  }
 }
 
 function updateRain(): void {
-  rainParticles = rainParticles.map(p => {
-    const newX = p.x + p.vx;
-    const newY = p.y + p.vy;
+  // Mutate particles in place to reduce GC pressure
+  for (let i = 0; i < rainParticles.length; i++) {
+    const p = rainParticles[i];
 
-    // Reset if below or right of canvas
-    if (newY > CANVAS_HEIGHT + 20 || newX > CANVAS_WIDTH + 50) {
-      return createRaindrop(false);
+    // Update position
+    p.x += p.vx;
+    p.y += p.vy;
+
+    // Reset if below or right of canvas (recycle particle instead of creating new)
+    if (p.y > CANVAS_HEIGHT + 20 || p.x > CANVAS_WIDTH + 50) {
+      p.x = Math.random() * (CANVAS_WIDTH + 100) - 50;
+      p.y = -20;
+      p.vx = 1.5;
+      p.vy = 8 + Math.random() * 4;
+      p.size = 1 + Math.random() * 2;
+      p.alpha = 0.3 + Math.random() * 0.4;
     }
-
-    return {
-      ...p,
-      x: newX,
-      y: newY,
-    };
-  });
+  }
 }
 
 // ============================================

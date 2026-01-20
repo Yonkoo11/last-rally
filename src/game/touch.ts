@@ -31,14 +31,46 @@ function touchToPaddleY(touchY: number, canvasRect: DOMRect): number {
 export class TouchController {
   private activeTouches: Map<number, TouchZone> = new Map();
   private canvasRect: DOMRect | null = null;
+  private canvasElement: HTMLCanvasElement | null = null;
   private leftPaddleY: number | null = null;
   private rightPaddleY: number | null = null;
+  private boundUpdateRect: () => void;
 
   // Track touch indicator positions for visual feedback
   public touchIndicators: { x: number; y: number; side: 'left' | 'right' }[] = [];
 
+  constructor() {
+    // Bind the update function for event listeners
+    this.boundUpdateRect = this.updateCanvasRect.bind(this);
+  }
+
   setCanvasRect(rect: DOMRect): void {
     this.canvasRect = rect;
+  }
+
+  // Set canvas element and auto-update rect on resize/orientation changes
+  setCanvas(canvas: HTMLCanvasElement): void {
+    this.canvasElement = canvas;
+    this.updateCanvasRect();
+
+    // Listen for resize and orientation changes
+    window.addEventListener('resize', this.boundUpdateRect);
+    window.addEventListener('orientationchange', this.boundUpdateRect);
+  }
+
+  // Update canvas rect from element
+  private updateCanvasRect(): void {
+    if (this.canvasElement) {
+      this.canvasRect = this.canvasElement.getBoundingClientRect();
+    }
+  }
+
+  // Cleanup event listeners
+  destroy(): void {
+    window.removeEventListener('resize', this.boundUpdateRect);
+    window.removeEventListener('orientationchange', this.boundUpdateRect);
+    this.canvasElement = null;
+    this.canvasRect = null;
   }
 
   handleTouchStart(e: TouchEvent): void {
@@ -178,6 +210,14 @@ export function getTouchController(): TouchController {
     touchControllerInstance = new TouchController();
   }
   return touchControllerInstance;
+}
+
+// Reset the singleton (useful for cleanup)
+export function resetTouchController(): void {
+  if (touchControllerInstance) {
+    touchControllerInstance.destroy();
+    touchControllerInstance = null;
+  }
 }
 
 // Check if device supports touch

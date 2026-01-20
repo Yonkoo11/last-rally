@@ -378,7 +378,7 @@ export function PongArena({ config, onMatchEnd, onQuit }: PongArenaProps) {
           modifiers
         );
 
-        if (collision.hit) {
+        if (collision.hit && collision.side) {
           ballRef.current = collision.newBall;
           rallyCountRef.current++;
           setRallyCount(rallyCountRef.current);
@@ -386,7 +386,7 @@ export function PongArena({ config, onMatchEnd, onQuit }: PongArenaProps) {
           spawnHitParticles(
             collision.newBall.x,
             collision.newBall.y,
-            collision.side!
+            collision.side
           );
         }
 

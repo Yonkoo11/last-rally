@@ -77,15 +77,19 @@ export function updateAI(
         Math.floor(100 * config.predictionDepth)
       );
 
-      // Add intentional error for easier difficulties
-      if (now - aiState.lastUpdateTime > 500) {
+      // Update error offset periodically (independently of reaction timer)
+      // This prevents stale offsets when ball trajectory changes
+      const errorUpdateInterval = 300 + Math.random() * 200; // 300-500ms
+      if (now - aiState.lastUpdateTime > errorUpdateInterval) {
         aiState.errorOffset =
           (Math.random() - 0.5) * 2 * adjustedErrorMargin;
         aiState.lastUpdateTime = now;
       }
 
-      aiState.targetY =
-        predictedY + aiState.errorOffset - (PADDLE_HEIGHT * (modifiers.paddleSize || 1)) / 2;
+      // Target Y is where we want the paddle CENTER to be
+      // predictedY is the ball's Y, so we subtract half paddle height to get paddle top
+      const paddleHeight = PADDLE_HEIGHT * (modifiers.paddleSize || 1);
+      aiState.targetY = predictedY + aiState.errorOffset - paddleHeight / 2;
     }
   } else {
     // Ball moving away - return to center

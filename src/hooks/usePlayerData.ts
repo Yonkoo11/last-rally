@@ -54,55 +54,61 @@ export interface PlayerData {
 }
 
 // ============================================
+// CORE DATA LOADING (shared logic)
+// ============================================
+
+function loadAllPlayerData(): PlayerData {
+  // Load all data from localStorage
+  const name = loadPlayerName();
+  const stats = loadStats();
+  const questProgress = loadQuestProgress();
+  const achievements = loadAchievements();
+  const cosmetics = loadCosmetics();
+  const daily = loadDailyState();
+
+  // Derive computed values
+  const isNewPlayer = stats.totalGames === 0;
+  const winRate = getWinRate(stats);
+  const suggestedDifficulty = getSuggestedDifficulty(stats);
+
+  const totalAchievements = ACHIEVEMENTS.length;
+  const unlockedAchievements = Object.keys(achievements).length;
+
+  const questsCompleted = questProgress.completedQuests.length;
+  const totalQuests = QUESTS.length;
+
+  // Calculate current quest chapter
+  const currentQuest = QUESTS.find(q => q.id === questProgress.currentQuest);
+  const questChapter = currentQuest?.chapter || 1;
+
+  // Find next cosmetic to unlock
+  const nextUnlock = findNextUnlock(stats, questProgress, achievements);
+
+  return {
+    name,
+    stats,
+    questProgress,
+    achievements,
+    cosmetics,
+    daily,
+    isNewPlayer,
+    winRate,
+    suggestedDifficulty,
+    totalAchievements,
+    unlockedAchievements,
+    questChapter,
+    questsCompleted,
+    totalQuests,
+    nextUnlock,
+  };
+}
+
+// ============================================
 // HOOK IMPLEMENTATION
 // ============================================
 
 export function usePlayerData(): PlayerData {
-  return useMemo(() => {
-    // Load all data from localStorage
-    const name = loadPlayerName();
-    const stats = loadStats();
-    const questProgress = loadQuestProgress();
-    const achievements = loadAchievements();
-    const cosmetics = loadCosmetics();
-    const daily = loadDailyState();
-
-    // Derive computed values
-    const isNewPlayer = stats.totalGames === 0;
-    const winRate = getWinRate(stats);
-    const suggestedDifficulty = getSuggestedDifficulty(stats);
-
-    const totalAchievements = ACHIEVEMENTS.length;
-    const unlockedAchievements = Object.keys(achievements).length;
-
-    const questsCompleted = questProgress.completedQuests.length;
-    const totalQuests = QUESTS.length;
-
-    // Calculate current quest chapter
-    const currentQuest = QUESTS.find(q => q.id === questProgress.currentQuest);
-    const questChapter = currentQuest?.chapter || 1;
-
-    // Find next cosmetic to unlock
-    const nextUnlock = findNextUnlock(stats, questProgress, achievements);
-
-    return {
-      name,
-      stats,
-      questProgress,
-      achievements,
-      cosmetics,
-      daily,
-      isNewPlayer,
-      winRate,
-      suggestedDifficulty,
-      totalAchievements,
-      unlockedAchievements,
-      questChapter,
-      questsCompleted,
-      totalQuests,
-      nextUnlock,
-    };
-  }, []);
+  return useMemo(() => loadAllPlayerData(), []);
 }
 
 // ============================================
@@ -251,44 +257,6 @@ function calculateProgress(
 // ============================================
 
 export function refreshPlayerData(): PlayerData {
-  // Force refresh by calling hook logic directly
-  const name = loadPlayerName();
-  const stats = loadStats();
-  const questProgress = loadQuestProgress();
-  const achievements = loadAchievements();
-  const cosmetics = loadCosmetics();
-  const daily = loadDailyState();
-
-  const isNewPlayer = stats.totalGames === 0;
-  const winRate = getWinRate(stats);
-  const suggestedDifficulty = getSuggestedDifficulty(stats);
-
-  const totalAchievements = ACHIEVEMENTS.length;
-  const unlockedAchievements = Object.keys(achievements).length;
-
-  const questsCompleted = questProgress.completedQuests.length;
-  const totalQuests = QUESTS.length;
-
-  const currentQuest = QUESTS.find(q => q.id === questProgress.currentQuest);
-  const questChapter = currentQuest?.chapter || 1;
-
-  const nextUnlock = findNextUnlock(stats, questProgress, achievements);
-
-  return {
-    name,
-    stats,
-    questProgress,
-    achievements,
-    cosmetics,
-    daily,
-    isNewPlayer,
-    winRate,
-    suggestedDifficulty,
-    totalAchievements,
-    unlockedAchievements,
-    questChapter,
-    questsCompleted,
-    totalQuests,
-    nextUnlock,
-  };
+  // Force refresh by calling shared loading logic directly
+  return loadAllPlayerData();
 }

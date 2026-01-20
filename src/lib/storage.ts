@@ -97,6 +97,17 @@ function getToday(): string {
   return new Date().toISOString().split('T')[0];
 }
 
+// Check if a date string is yesterday relative to today
+function isYesterday(dateStr: string, todayStr: string): boolean {
+  // Parse dates and compare
+  const [year, month, day] = todayStr.split('-').map(Number);
+  const today = new Date(year, month - 1, day);
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+  const yesterdayStr = yesterday.toISOString().split('T')[0];
+  return dateStr === yesterdayStr;
+}
+
 // Generate deterministic daily challenge based on date
 function generateDailyChallenge(date: string): DailyChallenge {
   const seed = date.split('-').reduce((acc, n) => acc + parseInt(n), 0);
@@ -318,10 +329,9 @@ export function loadDailyState(): DailyState {
 
   // Check if it's a new day
   if (!parsed || parsed.date !== today) {
-    const wasYesterday =
-      parsed &&
-      new Date(parsed.date).getTime() ===
-        new Date(today).getTime() - 86400000;
+    // Use ISO date string comparison instead of milliseconds
+    // This avoids timezone boundary issues
+    const wasYesterday = parsed && isYesterday(parsed.date, today);
 
     const newState: DailyState = {
       date: today,
