@@ -1,5 +1,5 @@
 import { Ball, Paddle, Difficulty, AIConfig, QuestModifiers } from '../types';
-import { predictBallY, movePaddle } from './physics';
+import { predictBallY, movePaddle, setPaddleY } from './physics';
 import {
   AI_CONFIGS,
   AI_MIN_SPEED_MULTIPLIER,
@@ -103,25 +103,23 @@ export function updateAI(
     aiState.reactionPending = false;
   }
 
-  // Move toward target
+  // Move toward target with proportional speed (smooth interpolation)
   const currentCenter = paddle.y + (PADDLE_HEIGHT * (modifiers.paddleSize || 1)) / 2;
-  const targetCenter =
-    aiState.targetY + (PADDLE_HEIGHT * (modifiers.paddleSize || 1)) / 2;
+  const targetCenter = aiState.targetY + (PADDLE_HEIGHT * (modifiers.paddleSize || 1)) / 2;
   const diff = targetCenter - currentCenter;
 
+  // Dead zone - stop if close enough
   if (Math.abs(diff) < AI_DEAD_ZONE) {
     return paddle;
   }
 
-  const direction = diff < 0 ? 'up' : 'down';
+  // Proportional movement: move by min(distance, maxSpeed) to prevent overshoot
+  const maxSpeed = paddle.speed * adjustedSpeedMult;
+  const moveDistance = Math.min(Math.abs(diff), maxSpeed);
+  const direction = diff < 0 ? -1 : 1;
+  const newY = paddle.y + direction * moveDistance;
 
-  // Apply speed multiplier
-  const modifiedPaddle = {
-    ...paddle,
-    speed: paddle.speed * adjustedSpeedMult,
-  };
-
-  return movePaddle(modifiedPaddle, direction, modifiers);
+  return setPaddleY(paddle, newY, modifiers);
 }
 
 export function resetAIState(): void {

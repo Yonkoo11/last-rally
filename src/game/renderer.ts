@@ -177,10 +177,6 @@ export function renderGame(
   // Draw particles
   renderParticles(ctx);
 
-  // Draw paddle reflections (floor effect)
-  renderPaddleReflection(ctx, leftPaddle, paddleSizeModifier, 'left');
-  renderPaddleReflection(ctx, rightPaddle, paddleSizeModifier, 'right');
-
   // Draw paddles with player-specific colors and glow
   renderPaddle(ctx, leftPaddle, paddleSizeModifier, 'left');
   renderPaddle(ctx, rightPaddle, paddleSizeModifier, 'right');
@@ -198,29 +194,6 @@ export function renderGame(
 export { clearWeather };
 
 
-function renderPaddleReflection(
-  ctx: CanvasRenderingContext2D,
-  paddle: Paddle,
-  sizeModifier: number = 1,
-  side: 'left' | 'right' = 'left'
-): void {
-  const height = PADDLE_HEIGHT * sizeModifier;
-  const { x, y, width } = paddle;
-  const playerColor = side === 'left' ? PLAYER_COLORS.player1 : PLAYER_COLORS.player2;
-
-  // Subtle floor reflection (reduced opacity to prevent "double paddle" appearance)
-  const reflectionGradient = ctx.createRadialGradient(
-    x + width / 2, y + height / 2, 0,
-    x + width / 2, y + height / 2, height * 0.5
-  );
-  reflectionGradient.addColorStop(0, `${playerColor}06`);
-  reflectionGradient.addColorStop(0.6, `${playerColor}03`);
-  reflectionGradient.addColorStop(1, 'transparent');
-
-  ctx.fillStyle = reflectionGradient;
-  ctx.fillRect(x - height * 0.2, y - height * 0.1, width + height * 0.4, height * 1.2);
-}
-
 function renderScores(
   _ctx: CanvasRenderingContext2D,
   _leftScore: number,
@@ -237,6 +210,8 @@ function renderPaddle(
   sizeModifier: number = 1,
   side: 'left' | 'right' = 'left'
 ): void {
+  ctx.save(); // Isolate canvas state to prevent shadow leaking between frames
+
   const height = PADDLE_HEIGHT * sizeModifier;
   const skinColor = PADDLE_COLORS[paddle.skin];
   const { x, y, width } = paddle;
@@ -279,6 +254,8 @@ function renderPaddle(
     ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
     ctx.fillRect(x, y, width, 2);
   }
+
+  ctx.restore(); // Restore canvas state
 }
 
 function renderBall(
