@@ -400,6 +400,23 @@ export function ModeSelect({ onBack, onStartGame }: ModeSelectProps) {
             {questProgress.completedQuests.length}/{QUESTS.length} completed
           </span>
         </button>
+
+        <button
+          className="mode-card mode-online"
+          disabled={true}
+          aria-label="Online Multiplayer: Coming Soon"
+        >
+          <div className="mode-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M2 12h20" />
+              <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+            </svg>
+          </div>
+          <span className="mode-name">Online</span>
+          <span className="mode-desc">Coming Soon</span>
+          <span className="coming-soon-badge">Soon</span>
+        </button>
       </div>
     </div>
   );

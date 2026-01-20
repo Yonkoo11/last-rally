@@ -208,17 +208,17 @@ function renderPaddleReflection(
   const { x, y, width } = paddle;
   const playerColor = side === 'left' ? PLAYER_COLORS.player1 : PLAYER_COLORS.player2;
 
-  // Floor reflection (subtle glow underneath)
+  // Subtle floor reflection (reduced opacity to prevent "double paddle" appearance)
   const reflectionGradient = ctx.createRadialGradient(
     x + width / 2, y + height / 2, 0,
-    x + width / 2, y + height / 2, height * 0.8
+    x + width / 2, y + height / 2, height * 0.5
   );
-  reflectionGradient.addColorStop(0, `${playerColor}15`);
-  reflectionGradient.addColorStop(0.5, `${playerColor}08`);
+  reflectionGradient.addColorStop(0, `${playerColor}06`);
+  reflectionGradient.addColorStop(0.6, `${playerColor}03`);
   reflectionGradient.addColorStop(1, 'transparent');
 
   ctx.fillStyle = reflectionGradient;
-  ctx.fillRect(x - height * 0.5, y - height * 0.3, width + height, height * 1.6);
+  ctx.fillRect(x - height * 0.2, y - height * 0.1, width + height * 0.4, height * 1.2);
 }
 
 function renderScores(
