@@ -1,6 +1,6 @@
 /* ============================================
    LANDING PAGE - Epic first impression
-   Minimal, atmospheric, memorable
+   Fire theme, atmospheric, memorable
    ============================================ */
 
 .landing {
@@ -14,80 +14,192 @@
   overflow: hidden;
 }
 
-/* Warm bleed effect - subtle warmth from bottom */
+/* Warm glow emanating from fire area (top-center) - DRAMATIC */
 .landing::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse 80% 60% at 50% 120%, rgba(255, 170, 0, 0.04) 0%, transparent 60%);
-  animation: warmBleed 8s ease-in-out infinite;
-  opacity: 0.6;
+  background: radial-gradient(
+    ellipse 80% 60% at 50% 30%,
+    rgba(255, 140, 0, 0.28) 0%,
+    rgba(255, 100, 0, 0.15) 25%,
+    rgba(255, 80, 0, 0.08) 45%,
+    transparent 70%
+  );
+  animation: fireGlow 3s ease-in-out infinite;
   pointer-events: none;
-  transition: opacity 0.4s var(--ease-out);
 }
 
-/* Intensify warm bleed on CTA hover - anticipation */
-.landing:has(.landing-cta:hover)::before {
-  opacity: 1;
-  animation: warmBleedIntense 3s ease-in-out infinite;
-}
-
-@keyframes warmBleed {
-  0%, 100% { opacity: 0.5; }
-  50% { opacity: 0.7; }
-}
-
-@keyframes warmBleedIntense {
-  0%, 100% { opacity: 0.9; }
+@keyframes fireGlow {
+  0%, 100% { opacity: 0.8; }
   50% { opacity: 1; }
 }
 
-/* Ball canvas - full viewport background */
-.landing-ball-canvas {
-  z-index: 0;
+/* Intensify glow on CTA hover */
+.landing:has(.landing-cta:hover)::before {
+  opacity: 1;
+  animation: fireGlowIntense 1.5s ease-in-out infinite;
 }
 
-/* Main content - centered, above canvas */
+@keyframes fireGlowIntense {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 1.2; }
+}
+
+/* ============================================
+   Main Content
+   ============================================ */
+
 .landing-content {
   position: relative;
   z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-8);
+  gap: var(--space-4);
   animation: landingFadeIn 0.8s var(--ease-out) forwards;
-  animation-delay: 0.3s;
+  animation-delay: 0.2s;
   opacity: 0;
 }
 
-/* Title - bold, letter-spaced, clean */
-.landing-title {
-  font-family: var(--font-display);
-  font-size: clamp(2.5rem, 10vw, 5rem);
-  font-weight: var(--font-bold);
-  letter-spacing: 0.3em;
-  color: var(--text-primary);
-  margin: 0;
-  text-align: center;
-  /* Push letter-spacing compensation */
-  margin-right: -0.3em;
+/* ============================================
+   Fire Animation
+   ============================================ */
+
+.landing-fire {
+  position: relative;
+  width: 80px;
+  height: 130px;
+  margin-bottom: var(--space-4);
 }
 
-/* CTA Button - Gold gradient, pulse animation */
+/* SVG Flame styling */
+.flame-svg {
+  position: absolute;
+  bottom: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+  filter: drop-shadow(0 0 8px rgba(255, 150, 0, 0.4));
+  animation: flameBreath 2s ease-in-out infinite,
+             flameSway 4s ease-in-out infinite;
+}
+
+.fire-glow {
+  position: absolute;
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 180px;
+  height: 120px;
+  background: radial-gradient(
+    ellipse at center bottom,
+    rgba(255, 150, 0, 0.55) 0%,
+    rgba(255, 120, 0, 0.3) 30%,
+    rgba(255, 100, 0, 0.15) 50%,
+    transparent 70%
+  );
+  filter: blur(20px);
+  animation: glowPulse 1.5s ease-in-out infinite;
+}
+
+/* Subtle breathing animation for flame */
+@keyframes flameBreath {
+  0%, 100% {
+    transform: translateX(-50%) scaleX(1) scaleY(1);
+  }
+  50% {
+    transform: translateX(-50%) scaleX(0.97) scaleY(1.02);
+  }
+}
+
+/* Gentle swaying motion */
+@keyframes flameSway {
+  0%, 100% {
+    filter: drop-shadow(0 0 8px rgba(255, 150, 0, 0.4));
+  }
+  50% {
+    filter: drop-shadow(0 0 12px rgba(255, 150, 0, 0.5));
+  }
+}
+
+@keyframes glowPulse {
+  0%, 100% {
+    opacity: 0.7;
+    transform: translateX(-50%) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translateX(-50%) scale(1.15);
+  }
+}
+
+/* ============================================
+   Typography
+   ============================================ */
+
+.landing-title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  line-height: 1;
+}
+
+.landing-title-top {
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 6vw, 3rem);
+  font-weight: var(--font-medium);
+  letter-spacing: 0.4em;
+  color: #a89060;
+  margin-right: -0.4em;
+}
+
+.landing-title-bottom {
+  font-family: var(--font-display);
+  font-size: clamp(3.5rem, 14vw, 7rem);
+  font-weight: var(--font-bold);
+  letter-spacing: 0.12em;
+  color: #e8a830;
+  margin-right: -0.12em;
+  text-shadow: 0 0 40px rgba(255, 170, 0, 0.3);
+}
+
+.landing-tagline {
+  font-family: var(--font-ui);
+  font-size: clamp(0.75rem, 2vw, 0.95rem);
+  font-weight: var(--font-medium);
+  letter-spacing: 0.35em;
+  color: var(--text-muted);
+  margin: var(--space-2) 0 var(--space-6) 0;
+  margin-right: -0.35em;
+}
+
+/* ============================================
+   Buttons
+   ============================================ */
+
 .landing-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
   background: linear-gradient(135deg, #FFD700 0%, #FF9500 100%);
   color: #1a1a1a;
   font-family: var(--font-ui);
   font-size: var(--text-lg);
   font-weight: var(--font-bold);
-  letter-spacing: 0.1em;
-  padding: var(--space-4) var(--space-12);
+  letter-spacing: 0.15em;
+  padding: var(--space-4) var(--space-16);
   border: none;
   border-radius: var(--radius-lg);
   cursor: pointer;
   transition: transform var(--duration-normal) var(--ease-out),
               box-shadow var(--duration-normal) var(--ease-out);
   animation: ctaPulse 2.5s ease-in-out infinite;
+}
+
+.landing-cta .play-icon {
+  font-size: 0.85em;
 }
 
 .landing-cta:hover {
@@ -100,25 +212,58 @@
   transform: scale(0.98);
 }
 
-/* Hint text - subtle instruction */
-.landing-hint {
-  font-family: var(--font-mono);
-  font-size: var(--text-sm);
-  color: var(--text-muted);
-  opacity: 0.6;
+@keyframes ctaPulse {
+  0%, 100% {
+    box-shadow: 0 4px 20px rgba(255, 170, 0, 0.3);
+  }
+  50% {
+    box-shadow: 0 4px 30px rgba(255, 170, 0, 0.5);
+  }
 }
 
-/* Returning player hook - bottom right, whisper */
-.landing-hook {
+.landing-quick-play {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-family: var(--font-ui);
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  letter-spacing: 0.2em;
+  padding: var(--space-3) var(--space-6);
+  margin-top: var(--space-2);
+  cursor: pointer;
+  transition: color var(--duration-normal) var(--ease-out);
+}
+
+.landing-quick-play:hover {
+  color: var(--text-primary);
+}
+
+/* ============================================
+   Settings Gear
+   ============================================ */
+
+.landing-settings {
   position: absolute;
   bottom: var(--space-6);
   right: var(--space-6);
-  font-family: var(--font-mono);
-  font-size: var(--text-sm);
+  background: transparent;
+  border: none;
   color: var(--text-muted);
+  opacity: 0.4;
+  padding: var(--space-2);
+  cursor: pointer;
+  transition: opacity var(--duration-normal) var(--ease-out);
   animation: landingFadeIn 0.6s var(--ease-out) forwards;
-  animation-delay: 0.8s;
-  opacity: 0;
+  animation-delay: 0.6s;
+}
+
+.landing-settings:hover {
+  opacity: 1;
+}
+
+.landing-settings svg {
+  display: block;
 }
 
 /* ============================================
@@ -136,29 +281,20 @@
   }
 }
 
-@keyframes ctaPulse {
-  0%, 100% {
-    box-shadow: 0 4px 20px rgba(255, 170, 0, 0.3);
-  }
-  50% {
-    box-shadow: 0 4px 30px rgba(255, 170, 0, 0.5);
-  }
-}
-
 /* ============================================
-   Exit Animations - Transition to Dashboard
+   Exit Animations
    ============================================ */
 
 .landing.exiting .landing-content {
   animation: landingContentExit 0.3s var(--ease-out) forwards;
 }
 
-.landing.exiting .landing-hook {
-  animation: landingHookExit 0.2s var(--ease-out) forwards;
+.landing.exiting .landing-settings {
+  animation: landingSettingsExit 0.2s var(--ease-out) forwards;
 }
 
 .landing.exiting::before {
-  animation: warmBleedExit 0.4s var(--ease-out) forwards;
+  animation: fireGlowExit 0.4s var(--ease-out) forwards;
 }
 
 @keyframes landingContentExit {
@@ -172,22 +308,20 @@
   }
 }
 
-@keyframes landingHookExit {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
+@keyframes landingSettingsExit {
+  from { opacity: 0.4; }
+  to { opacity: 0; }
 }
 
-@keyframes warmBleedExit {
-  from {
-    opacity: 1;
-  }
+@keyframes fireGlowExit {
+  from { opacity: 1; }
   to {
     opacity: 1.5;
-    background: radial-gradient(ellipse 100% 80% at 50% 100%, rgba(255, 170, 0, 0.12) 0%, transparent 70%);
+    background: radial-gradient(
+      ellipse 60% 45% at 50% 25%,
+      rgba(255, 150, 0, 0.25) 0%,
+      transparent 70%
+    );
   }
 }
 
@@ -196,37 +330,68 @@
    ============================================ */
 
 @media (max-width: 600px) {
-  .landing-title {
-    letter-spacing: 0.15em;
-    margin-right: -0.15em;
+  .landing-fire {
+    width: 60px;
+    height: 100px;
+  }
+
+  .flame-svg {
+    width: 50px;
+    height: 86px;
+  }
+
+  .fire-glow {
+    width: 140px;
+    height: 100px;
+  }
+
+  .landing-title-top {
+    letter-spacing: 0.3em;
+    margin-right: -0.3em;
+  }
+
+  .landing-title-bottom {
+    letter-spacing: 0.08em;
+    margin-right: -0.08em;
+  }
+
+  .landing-tagline {
+    letter-spacing: 0.25em;
+    margin-right: -0.25em;
   }
 
   .landing-cta {
-    padding: var(--space-3) var(--space-8);
+    padding: var(--space-3) var(--space-10);
     font-size: var(--text-base);
   }
 
-  .landing-hook {
+  .landing-settings {
     bottom: var(--space-4);
     right: var(--space-4);
-    font-size: var(--text-xs);
   }
 }
 
 /* ============================================
-   Reduced motion preference
+   Reduced Motion
    ============================================ */
 
 @media (prefers-reduced-motion: reduce) {
   .landing::before {
     animation: none;
-    opacity: 0.6;
+    opacity: 0.8;
   }
 
   .landing-content,
-  .landing-hook {
+  .landing-settings {
     animation: none;
     opacity: 1;
+  }
+
+  .fire-flame,
+  .fire-flame::before,
+  .fire-flame::after,
+  .fire-glow {
+    animation: none;
   }
 
   .landing-cta {
@@ -234,7 +399,7 @@
   }
 
   .landing.exiting .landing-content,
-  .landing.exiting .landing-hook,
+  .landing.exiting .landing-settings,
   .landing.exiting::before {
     animation: none;
     opacity: 0;

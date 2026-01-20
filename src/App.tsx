@@ -113,7 +113,13 @@ function AppContent() {
   const renderView = () => {
     switch (view) {
       case 'landing':
-        return <LandingPage onEnter={() => setView('title')} />;
+        return (
+          <LandingPage
+            onEnter={() => setView('title')}
+            onQuickPlay={handleQuickPlay}
+            onSettings={() => setShowSettings(true)}
+          />
+        );
 
       case 'title':
         return (
