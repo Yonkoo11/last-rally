@@ -156,7 +156,7 @@ export function LandingBall({ className, isExiting = false }: LandingBallProps) 
       const glowIntensity = 1 + exitProgress * 0.5;
 
       // Draw trail with glow
-      ball.trail.forEach((point, index) => {
+      ball.trail.forEach((point, _index) => {
         const alpha = 1 - (point.age / maxTrailAge);
         const size = ballRadius * (1 - point.age / 25);
 

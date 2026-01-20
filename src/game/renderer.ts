@@ -1,4 +1,4 @@
-import { Ball, Paddle, ArenaTheme, PaddleSkin, TrailType, Vector2D, CourtStyle, WeatherEffect } from '../types';
+import { Ball, Paddle, ArenaTheme, TrailType, CourtStyle, WeatherEffect } from '../types';
 import {
   CANVAS_WIDTH,
   CANVAS_HEIGHT,
@@ -197,212 +197,6 @@ export function renderGame(
 // Re-export clearWeather for cleanup
 export { clearWeather };
 
-// ============================================
-// PREMIUM COURT RENDERING
-// ============================================
-
-function renderCourtBackground(
-  ctx: CanvasRenderingContext2D,
-  colors: { background: string; lines: string; accent: string }
-): void {
-  // Layer 1: Vertical gradient for depth
-  const vertGradient = ctx.createLinearGradient(0, 0, 0, CANVAS_HEIGHT);
-  vertGradient.addColorStop(0, 'rgba(20, 20, 30, 0.4)');
-  vertGradient.addColorStop(0.5, 'rgba(10, 10, 18, 0.2)');
-  vertGradient.addColorStop(1, 'rgba(5, 5, 12, 0.5)');
-  ctx.fillStyle = vertGradient;
-  ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-
-  // Layer 2: Radial vignette from center
-  const radialGradient = ctx.createRadialGradient(
-    CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, 0,
-    CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, CANVAS_WIDTH * 0.7
-  );
-  radialGradient.addColorStop(0, 'rgba(30, 30, 45, 0.15)');
-  radialGradient.addColorStop(0.5, 'rgba(15, 15, 25, 0.1)');
-  radialGradient.addColorStop(1, 'rgba(0, 0, 0, 0.4)');
-  ctx.fillStyle = radialGradient;
-  ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-
-  // Layer 3: Subtle horizontal lines for floor texture
-  ctx.strokeStyle = 'rgba(255, 255, 255, 0.015)';
-  ctx.lineWidth = 1;
-  for (let y = 40; y < CANVAS_HEIGHT; y += 40) {
-    ctx.beginPath();
-    ctx.moveTo(0, y);
-    ctx.lineTo(CANVAS_WIDTH, y);
-    ctx.stroke();
-  }
-}
-
-function renderGoalZones(ctx: CanvasRenderingContext2D): void {
-  const zoneWidth = 80;
-  const margin = 8;
-
-  // Left goal zone (cyan glow) - stronger gradient
-  const leftGradient = ctx.createLinearGradient(0, 0, zoneWidth * 1.5, 0);
-  leftGradient.addColorStop(0, 'rgba(0, 212, 255, 0.18)');
-  leftGradient.addColorStop(0.3, 'rgba(0, 212, 255, 0.08)');
-  leftGradient.addColorStop(0.7, 'rgba(0, 212, 255, 0.02)');
-  leftGradient.addColorStop(1, 'rgba(0, 212, 255, 0)');
-  ctx.fillStyle = leftGradient;
-  ctx.fillRect(margin, margin, zoneWidth * 1.5, CANVAS_HEIGHT - margin * 2);
-
-  // Left goal line
-  ctx.strokeStyle = 'rgba(0, 212, 255, 0.25)';
-  ctx.lineWidth = 2;
-  ctx.setLineDash([8, 8]);
-  ctx.beginPath();
-  ctx.moveTo(margin + 35, margin + 20);
-  ctx.lineTo(margin + 35, CANVAS_HEIGHT - margin - 20);
-  ctx.stroke();
-  ctx.setLineDash([]);
-
-  // Right goal zone (red/pink glow) - stronger gradient
-  const rightGradient = ctx.createLinearGradient(CANVAS_WIDTH - zoneWidth * 1.5, 0, CANVAS_WIDTH, 0);
-  rightGradient.addColorStop(0, 'rgba(255, 51, 102, 0)');
-  rightGradient.addColorStop(0.3, 'rgba(255, 51, 102, 0.02)');
-  rightGradient.addColorStop(0.7, 'rgba(255, 51, 102, 0.08)');
-  rightGradient.addColorStop(1, 'rgba(255, 51, 102, 0.18)');
-  ctx.fillStyle = rightGradient;
-  ctx.fillRect(CANVAS_WIDTH - zoneWidth * 1.5 - margin, margin, zoneWidth * 1.5, CANVAS_HEIGHT - margin * 2);
-
-  // Right goal line
-  ctx.strokeStyle = 'rgba(255, 51, 102, 0.25)';
-  ctx.lineWidth = 2;
-  ctx.setLineDash([8, 8]);
-  ctx.beginPath();
-  ctx.moveTo(CANVAS_WIDTH - margin - 35, margin + 20);
-  ctx.lineTo(CANVAS_WIDTH - margin - 35, CANVAS_HEIGHT - margin - 20);
-  ctx.stroke();
-  ctx.setLineDash([]);
-}
-
-function renderCourtBorder(
-  ctx: CanvasRenderingContext2D,
-  colors: { lines: string }
-): void {
-  const margin = 8;
-  const borderRadius = 4;
-
-  // Outer glow
-  ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
-  ctx.lineWidth = 3;
-  ctx.beginPath();
-  ctx.roundRect(margin, margin, CANVAS_WIDTH - margin * 2, CANVAS_HEIGHT - margin * 2, borderRadius);
-  ctx.stroke();
-
-  // Main border
-  ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
-  ctx.lineWidth = 1.5;
-  ctx.beginPath();
-  ctx.roundRect(margin, margin, CANVAS_WIDTH - margin * 2, CANVAS_HEIGHT - margin * 2, borderRadius);
-  ctx.stroke();
-
-  // Inner subtle line
-  ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
-  ctx.lineWidth = 1;
-  ctx.beginPath();
-  ctx.roundRect(margin + 4, margin + 4, CANVAS_WIDTH - margin * 2 - 8, CANVAS_HEIGHT - margin * 2 - 8, borderRadius);
-  ctx.stroke();
-}
-
-function renderCornerBrackets(
-  ctx: CanvasRenderingContext2D,
-  colors: { lines: string; accent: string }
-): void {
-  const bracketSize = 25;
-  const margin = 20;
-  const thickness = 2;
-
-  ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
-  ctx.lineWidth = thickness;
-  ctx.lineCap = 'round';
-
-  // Top-left
-  ctx.beginPath();
-  ctx.moveTo(margin, margin + bracketSize);
-  ctx.lineTo(margin, margin);
-  ctx.lineTo(margin + bracketSize, margin);
-  ctx.stroke();
-
-  // Top-right
-  ctx.beginPath();
-  ctx.moveTo(CANVAS_WIDTH - margin - bracketSize, margin);
-  ctx.lineTo(CANVAS_WIDTH - margin, margin);
-  ctx.lineTo(CANVAS_WIDTH - margin, margin + bracketSize);
-  ctx.stroke();
-
-  // Bottom-left
-  ctx.beginPath();
-  ctx.moveTo(margin, CANVAS_HEIGHT - margin - bracketSize);
-  ctx.lineTo(margin, CANVAS_HEIGHT - margin);
-  ctx.lineTo(margin + bracketSize, CANVAS_HEIGHT - margin);
-  ctx.stroke();
-
-  // Bottom-right
-  ctx.beginPath();
-  ctx.moveTo(CANVAS_WIDTH - margin - bracketSize, CANVAS_HEIGHT - margin);
-  ctx.lineTo(CANVAS_WIDTH - margin, CANVAS_HEIGHT - margin);
-  ctx.lineTo(CANVAS_WIDTH - margin, CANVAS_HEIGHT - margin - bracketSize);
-  ctx.stroke();
-
-  ctx.lineCap = 'butt';
-}
-
-function renderCenterCircle(
-  ctx: CanvasRenderingContext2D,
-  colors: { lines: string }
-): void {
-  const centerX = CANVAS_WIDTH / 2;
-  const centerY = CANVAS_HEIGHT / 2;
-  const radius = 60;
-  const margin = 20;
-
-  // Outer glow
-  ctx.strokeStyle = 'rgba(255, 255, 255, 0.06)';
-  ctx.lineWidth = 4;
-  ctx.beginPath();
-  ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
-  ctx.stroke();
-
-  // Main circle
-  ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
-  ctx.lineWidth = 1.5;
-  ctx.beginPath();
-  ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
-  ctx.stroke();
-
-  // Inner small circle (center dot area)
-  ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
-  ctx.lineWidth = 1;
-  ctx.beginPath();
-  ctx.arc(centerX, centerY, 8, 0, Math.PI * 2);
-  ctx.stroke();
-
-  // Center dot
-  ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
-  ctx.beginPath();
-  ctx.arc(centerX, centerY, 3, 0, Math.PI * 2);
-  ctx.fill();
-
-  // Goal crease arcs (like hockey)
-  const creaseRadius = 70;
-
-  // Left crease arc (cyan tint)
-  ctx.strokeStyle = 'rgba(0, 212, 255, 0.12)';
-  ctx.lineWidth = 1.5;
-  ctx.beginPath();
-  ctx.arc(margin, centerY, creaseRadius, -Math.PI / 2, Math.PI / 2);
-  ctx.stroke();
-
-  // Right crease arc (red tint)
-  ctx.strokeStyle = 'rgba(255, 51, 102, 0.12)';
-  ctx.lineWidth = 1.5;
-  ctx.beginPath();
-  ctx.arc(CANVAS_WIDTH - margin, centerY, creaseRadius, Math.PI / 2, -Math.PI / 2);
-  ctx.stroke();
-}
 
 function renderPaddleReflection(
   ctx: CanvasRenderingContext2D,
@@ -427,46 +221,11 @@ function renderPaddleReflection(
   ctx.fillRect(x - height * 0.5, y - height * 0.3, width + height, height * 1.6);
 }
 
-function renderCenterLine(
-  ctx: CanvasRenderingContext2D,
-  color: string
-): void {
-  const centerX = CANVAS_WIDTH / 2;
-  const dashHeight = 16;
-  const gapHeight = 12;
-  const margin = 20;
-
-  // Draw dashed center line with glow
-  ctx.lineCap = 'round';
-
-  for (let y = margin; y < CANVAS_HEIGHT - margin; y += dashHeight + gapHeight) {
-    const segmentHeight = Math.min(dashHeight, CANVAS_HEIGHT - margin - y);
-
-    // Outer glow
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
-    ctx.lineWidth = 6;
-    ctx.beginPath();
-    ctx.moveTo(centerX, y);
-    ctx.lineTo(centerX, y + segmentHeight);
-    ctx.stroke();
-
-    // Main dash
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(centerX, y);
-    ctx.lineTo(centerX, y + segmentHeight);
-    ctx.stroke();
-  }
-
-  ctx.lineCap = 'butt';
-}
-
 function renderScores(
-  ctx: CanvasRenderingContext2D,
-  leftScore: number,
-  rightScore: number,
-  color: string
+  _ctx: CanvasRenderingContext2D,
+  _leftScore: number,
+  _rightScore: number,
+  _color: string
 ): void {
   // Scores are now rendered externally in the HUD
   // Keep this function but don't render anything on canvas
@@ -556,12 +315,11 @@ function renderBall(
 function renderTrail(
   ctx: CanvasRenderingContext2D,
   trailType: TrailType,
-  theme: ArenaTheme
+  _theme: ArenaTheme
 ): void {
   if (trailType === 'none' || trailPoints.length < 2) return;
 
   const trailColor = TRAIL_COLORS[trailType];
-  const themeColors = THEME_COLORS[theme];
 
   trailPoints.forEach((point, i) => {
     if (i === 0) return; // Skip current position (ball will be drawn there)
@@ -683,7 +441,7 @@ export function renderNames(
   ctx: CanvasRenderingContext2D,
   leftName: string,
   rightName: string,
-  theme: ArenaTheme
+  _theme: ArenaTheme
 ): void {
   ctx.font = '500 13px "Inter", sans-serif';
   ctx.globalAlpha = 0.85;

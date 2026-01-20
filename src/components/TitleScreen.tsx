@@ -14,15 +14,15 @@ interface TitleScreenProps {
   onQuickPlay: () => void;
   onPlayNow: () => void;
   onSettings?: () => void;
+  onStats?: () => void;
+  onAchievements?: () => void;
 }
 
-export function TitleScreen({ onQuickPlay, onPlayNow, onSettings }: TitleScreenProps) {
-  const [mounted, setMounted] = useState(false);
+export function TitleScreen({ onQuickPlay, onPlayNow, onSettings, onStats, onAchievements }: TitleScreenProps) {
   const [entering, setEntering] = useState(true);
   const playerData = usePlayerData();
 
   useEffect(() => {
-    setMounted(true);
     playTransitionIn();
     // Clear entering state after animation completes
     const timer = setTimeout(() => setEntering(false), 800);
@@ -43,7 +43,7 @@ export function TitleScreen({ onQuickPlay, onPlayNow, onSettings }: TitleScreenP
   const { isNewPlayer, stats, daily, questChapter, questsCompleted, totalQuests, nextUnlock, cosmetics, name } = playerData;
 
   return (
-    <div className={`title-screen ${mounted ? 'mounted' : ''} ${entering ? 'entering' : ''}`}>
+    <div className={`title-screen mounted ${entering ? 'entering' : ''}`}>
       {/* Background */}
       <div className="bg-gradient" />
       <div className="bg-vignette" />
@@ -150,14 +150,14 @@ export function TitleScreen({ onQuickPlay, onPlayNow, onSettings }: TitleScreenP
           </svg>
           <span>Customize</span>
         </button>
-        <button className="bottom-btn" onClick={onPlayNow}>
+        <button className="bottom-btn" onClick={onStats}>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M3 3v18h18" />
             <path d="M18 9l-5 5-4-4-3 3" />
           </svg>
           <span>Stats</span>
         </button>
-        <button className="bottom-btn" onClick={onPlayNow}>
+        <button className="bottom-btn" onClick={onAchievements}>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <circle cx="12" cy="8" r="5" />
             <path d="M3 21v-2a7 7 0 0 1 7-7h4a7 7 0 0 1 7 7v2" />

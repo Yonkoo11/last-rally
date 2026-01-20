@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState, useCallback } from 'react';
+import React, { useRef, useEffect, useState, useCallback, useMemo } from 'react';
 import {
   GameConfig,
   GamePhase,
@@ -68,6 +68,7 @@ interface KeyState {
 export function PongArena({ config, onMatchEnd, onQuit }: PongArenaProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const gameLoopRef = useRef<number | undefined>(undefined);
+  const gameLoopCallbackRef = useRef<(timestamp: number) => void>(() => {});
   const lastTimeRef = useRef<number>(0);
   const keysRef = useRef<KeyState>({ w: false, s: false, i: false, k: false, arrowup: false, arrowdown: false });
 
@@ -76,7 +77,7 @@ export function PongArena({ config, onMatchEnd, onQuit }: PongArenaProps) {
   const [leftScore, setLeftScore] = useState(0);
   const [rightScore, setRightScore] = useState(0);
   const [rallyCount, setRallyCount] = useState(0);
-  const [bestRally, setBestRally] = useState(0);
+  const [, setBestRally] = useState(0);
   const [matchStartTime, setMatchStartTime] = useState(0);
   const [winner, setWinner] = useState<'left' | 'right' | null>(null);
   const [currentPitch, setCurrentPitch] = useState<PitchType | null>(null);
@@ -92,7 +93,7 @@ export function PongArena({ config, onMatchEnd, onQuit }: PongArenaProps) {
   const leftScoreRef = useRef(0);
   const rightScoreRef = useRef(0);
 
-  const modifiers: QuestModifiers = config.modifiers || {};
+  const modifiers: QuestModifiers = useMemo(() => config.modifiers || {}, [config.modifiers]);
   const winScore = modifiers.winScore || WIN_SCORE;
 
   // Touch controls
@@ -208,9 +209,13 @@ export function PongArena({ config, onMatchEnd, onQuit }: PongArenaProps) {
       const timer = setTimeout(() => setCountdown(c => c - 1), 1000);
       return () => clearTimeout(timer);
     } else {
-      playGameStart();
-      setMatchStartTime(performance.now());
-      setPhase('playing');
+      // Schedule state updates for next tick to avoid sync setState in effect
+      const timer = setTimeout(() => {
+        playGameStart();
+        setMatchStartTime(performance.now());
+        setPhase('playing');
+      }, 0);
+      return () => clearTimeout(timer);
     }
   }, [phase, countdown]);
 
@@ -287,7 +292,7 @@ export function PongArena({ config, onMatchEnd, onQuit }: PongArenaProps) {
 
       // Cap frame rate
       if (deltaTime < FRAME_TIME) {
-        gameLoopRef.current = requestAnimationFrame(gameLoop);
+        gameLoopRef.current = requestAnimationFrame(gameLoopCallbackRef.current);
         return;
       }
 
@@ -420,11 +425,16 @@ export function PongArena({ config, onMatchEnd, onQuit }: PongArenaProps) {
 
       // Continue loop unless victory
       if (phaseRef.current !== 'victory') {
-        gameLoopRef.current = requestAnimationFrame(gameLoop);
+        gameLoopRef.current = requestAnimationFrame(gameLoopCallbackRef.current);
       }
     },
-    [config, modifiers, countdown, handleScore]
+    [config, modifiers, countdown, handleScore, touchEnabled]
   );
+
+  // Keep the callback ref in sync
+  useEffect(() => {
+    gameLoopCallbackRef.current = gameLoop;
+  }, [gameLoop]);
 
   // Start/stop game loop
   useEffect(() => {

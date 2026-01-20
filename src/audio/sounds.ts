@@ -30,7 +30,7 @@ function initAudio(): AudioContext | null {
       masterGain = audioContext.createGain();
       masterGain.connect(audioContext.destination);
       masterGain.gain.value = volume;
-    } catch (error) {
+    } catch {
       // AudioContext creation failed (e.g., no audio device, browser restrictions)
       audioAvailable = false;
       return null;

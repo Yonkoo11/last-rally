@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Difficulty, Quest, GameMode, CourtStyle } from '../types';
 import { loadQuestProgress, loadStats, loadPlayerName, savePlayerName, loadCosmetics, selectCosmetic } from '../lib/storage';
-import { QUESTS, getAvailableQuests } from '../data/quests';
+import { QUESTS } from '../data/quests';
 import { COURT_STYLES, isUnlocked } from '../data/cosmetics';
 import { DIFFICULTY_NAMES, DIFFICULTY_DESCRIPTIONS, OPPONENT_NAMES } from '../game/ai';
 import { getSuggestedDifficulty } from '../lib/stats';
@@ -35,7 +35,6 @@ export function ModeSelect({ onBack, onStartGame }: ModeSelectProps) {
   const cosmetics = loadCosmetics();
   const [selectedCourt, setSelectedCourt] = useState<CourtStyle>(cosmetics.selectedCourtStyle);
   const suggestedDifficulty = getSuggestedDifficulty(stats);
-  const availableQuests = getAvailableQuests(questProgress.completedQuests);
 
   // Stats object for cosmetics unlock checking
   const statsForUnlock = {

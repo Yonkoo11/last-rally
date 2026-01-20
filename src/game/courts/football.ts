@@ -7,14 +7,12 @@ import {
   ThemeColors,
   CourtColors,
   drawCircle,
-  drawRect,
-  drawLine,
   applyVignette,
 } from './base';
 
 export function renderFootballCourt(
   ctx: CanvasRenderingContext2D,
-  themeColors: ThemeColors,
+  _themeColors: ThemeColors,
   courtColors: CourtColors
 ): void {
   const margin = 20;

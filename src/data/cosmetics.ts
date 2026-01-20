@@ -1,4 +1,4 @@
-import { Cosmetic, PaddleSkin, TrailType, ArenaTheme, CourtStyle, WeatherEffect } from '../types';
+import { Cosmetic, PaddleSkin, TrailType, ArenaTheme, CourtStyle } from '../types';
 
 export const PADDLE_SKINS: Cosmetic[] = [
   {

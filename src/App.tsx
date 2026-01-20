@@ -14,6 +14,8 @@ import { TitleScreen } from './components/TitleScreen';
 import { ModeSelect } from './components/ModeSelect';
 import { PongArena } from './components/PongArena';
 import { CosmeticSelect } from './components/CosmeticSelect';
+import { StatsOverlay } from './components/StatsOverlay';
+import { AchievementsOverlay } from './components/AchievementsOverlay';
 import { processMatchResult } from './lib/stats';
 import { loadCosmetics, loadPlayerName } from './lib/storage';
 import { getQuestById } from './data/quests';
@@ -24,6 +26,8 @@ function AppContent() {
   const [view, setView] = useState<ViewState>('landing');
   const [gameConfig, setGameConfig] = useState<GameConfig | null>(null);
   const [showSettings, setShowSettings] = useState(false);
+  const [showStats, setShowStats] = useState(false);
+  const [showAchievements, setShowAchievements] = useState(false);
 
   const { showAchievement, showQuestComplete } = useToast();
 
@@ -127,6 +131,8 @@ function AppContent() {
             onQuickPlay={handleQuickPlay}
             onPlayNow={() => setView('modeSelect')}
             onSettings={() => setShowSettings(true)}
+            onStats={() => setShowStats(true)}
+            onAchievements={() => setShowAchievements(true)}
           />
         );
 
@@ -165,6 +171,16 @@ function AppContent() {
           onClose={() => setShowSettings(false)}
           isOverlay={true}
         />
+      )}
+
+      {/* Stats Overlay */}
+      {showStats && (
+        <StatsOverlay onClose={() => setShowStats(false)} />
+      )}
+
+      {/* Achievements Overlay */}
+      {showAchievements && (
+        <AchievementsOverlay onClose={() => setShowAchievements(false)} />
       )}
     </div>
   );

@@ -1,8 +1,6 @@
 import React, { useRef, useEffect, useCallback } from 'react';
-import { CosmeticState, Ball, Paddle, BallWithPitch } from '../types';
+import { CosmeticState } from '../types';
 import {
-  CANVAS_WIDTH,
-  CANVAS_HEIGHT,
   PADDLE_HEIGHT,
   PADDLE_WIDTH,
   PADDLE_MARGIN,
@@ -12,7 +10,7 @@ import {
   BALL_MAX_SPEED,
   MAX_BOUNCE_ANGLE,
 } from '../game/constants';
-import { THEME_COLORS, PADDLE_COLORS, PLAYER_COLORS } from '../data/cosmetics';
+import { THEME_COLORS, PLAYER_COLORS } from '../data/cosmetics';
 
 // ============================================
 // PREVIEW CANVAS - Auto Demo Match

@@ -6,17 +6,15 @@ import { CANVAS_WIDTH, CANVAS_HEIGHT } from '../constants';
 import {
   ThemeColors,
   CourtColors,
-  drawDashedLine,
   drawCircle,
   drawArc,
-  drawLine,
   applyVignette,
 } from './base';
 
 export function renderPongCourt(
   ctx: CanvasRenderingContext2D,
-  themeColors: ThemeColors,
-  courtColors: CourtColors
+  _themeColors: ThemeColors,
+  _courtColors: CourtColors
 ): void {
   // Layer 1: Vertical gradient for depth
   const vertGradient = ctx.createLinearGradient(0, 0, 0, CANVAS_HEIGHT);

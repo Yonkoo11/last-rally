@@ -6,15 +6,12 @@ import { CANVAS_WIDTH, CANVAS_HEIGHT } from '../constants';
 import {
   ThemeColors,
   CourtColors,
-  drawCircle,
-  drawLine,
-  drawArc,
   applyVignette,
 } from './base';
 
 export function renderHockeyCourt(
   ctx: CanvasRenderingContext2D,
-  themeColors: ThemeColors,
+  _themeColors: ThemeColors,
   courtColors: CourtColors
 ): void {
   const margin = 20;

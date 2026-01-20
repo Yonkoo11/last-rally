@@ -97,7 +97,7 @@ export function updateWeather(effect: WeatherEffect): void {
 function updateSnow(): void {
   snowParticles = snowParticles.map(p => {
     let newX = p.x + p.vx + Math.sin(p.y * 0.01) * 0.3;
-    let newY = p.y + p.vy;
+    const newY = p.y + p.vy;
     const newRotation = (p.rotation || 0) + (p.rotationSpeed || 0);
 
     // Wrap around horizontally

@@ -7,6 +7,9 @@ import {
   DailyChallenge,
   CourtStyle,
   WeatherEffect,
+  PaddleSkin,
+  TrailType,
+  ArenaTheme,
 } from '../types';
 
 // Storage keys
@@ -81,22 +84,11 @@ function safeStorageSet(key: string, value: string): boolean {
   try {
     localStorage.setItem(key, value);
     return true;
-  } catch (error) {
+  } catch (e) {
     // Handle QuotaExceededError (storage full) and SecurityError (private browsing)
-    if (error instanceof Error) {
-      console.warn(`Storage write failed for key "${key}":`, error.name);
+    if (e instanceof Error) {
+      console.warn(`Storage write failed for key "${key}":`, e.name);
     }
-    return false;
-  }
-}
-
-function isStorageAvailable(): boolean {
-  try {
-    const testKey = '__storage_test__';
-    localStorage.setItem(testKey, testKey);
-    localStorage.removeItem(testKey);
-    return true;
-  } catch {
     return false;
   }
 }
@@ -251,31 +243,41 @@ export function unlockCosmetic(
 ): void {
   const current = loadCosmetics();
   switch (type) {
-    case 'paddle':
-      if (!current.unlockedPaddleSkins.includes(id as any)) {
-        current.unlockedPaddleSkins.push(id as any);
+    case 'paddle': {
+      const skinId = id as PaddleSkin;
+      if (!current.unlockedPaddleSkins.includes(skinId)) {
+        current.unlockedPaddleSkins.push(skinId);
       }
       break;
-    case 'trail':
-      if (!current.unlockedBallTrails.includes(id as any)) {
-        current.unlockedBallTrails.push(id as any);
+    }
+    case 'trail': {
+      const trailId = id as TrailType;
+      if (!current.unlockedBallTrails.includes(trailId)) {
+        current.unlockedBallTrails.push(trailId);
       }
       break;
-    case 'theme':
-      if (!current.unlockedArenaThemes.includes(id as any)) {
-        current.unlockedArenaThemes.push(id as any);
+    }
+    case 'theme': {
+      const themeId = id as ArenaTheme;
+      if (!current.unlockedArenaThemes.includes(themeId)) {
+        current.unlockedArenaThemes.push(themeId);
       }
       break;
-    case 'court':
-      if (!current.unlockedCourtStyles.includes(id as CourtStyle)) {
-        current.unlockedCourtStyles.push(id as CourtStyle);
+    }
+    case 'court': {
+      const courtId = id as CourtStyle;
+      if (!current.unlockedCourtStyles.includes(courtId)) {
+        current.unlockedCourtStyles.push(courtId);
       }
       break;
-    case 'weather':
-      if (!current.unlockedWeatherEffects.includes(id as WeatherEffect)) {
-        current.unlockedWeatherEffects.push(id as WeatherEffect);
+    }
+    case 'weather': {
+      const weatherId = id as WeatherEffect;
+      if (!current.unlockedWeatherEffects.includes(weatherId)) {
+        current.unlockedWeatherEffects.push(weatherId);
       }
       break;
+    }
   }
   saveCosmetics(current);
 }
@@ -287,13 +289,13 @@ export function selectCosmetic(
   const current = loadCosmetics();
   switch (type) {
     case 'paddle':
-      current.selectedPaddleSkin = id as any;
+      current.selectedPaddleSkin = id as PaddleSkin;
       break;
     case 'trail':
-      current.selectedBallTrail = id as any;
+      current.selectedBallTrail = id as TrailType;
       break;
     case 'theme':
-      current.selectedArenaTheme = id as any;
+      current.selectedArenaTheme = id as ArenaTheme;
       break;
     case 'court':
       current.selectedCourtStyle = id as CourtStyle;
