@@ -34,30 +34,31 @@ export const PARTICLE_COUNT = 15;
 export const PARTICLE_LIFETIME = 500; // ms
 
 // AI configurations by difficulty
+// Tuned for NOTICEABLE differences between levels
 export const AI_CONFIGS = {
   easy: {
-    reactionDelay: 200,
-    errorMargin: 40,
-    predictionDepth: 0.3,
-    speedMultiplier: 0.6,
+    reactionDelay: 350,      // Very slow reaction
+    errorMargin: 70,         // Misses often
+    predictionDepth: 0.15,   // Poor prediction
+    speedMultiplier: 0.45,   // Slow movement
   },
   medium: {
-    reactionDelay: 100,
-    errorMargin: 25,
-    predictionDepth: 0.6,
-    speedMultiplier: 0.8,
+    reactionDelay: 100,      // Moderate reaction
+    errorMargin: 25,         // Some mistakes
+    predictionDepth: 0.65,   // Decent prediction
+    speedMultiplier: 0.8,    // Good speed
   },
   hard: {
-    reactionDelay: 50,
-    errorMargin: 12,
-    predictionDepth: 0.85,
-    speedMultiplier: 0.95,
+    reactionDelay: 30,       // Fast reaction
+    errorMargin: 6,          // Very accurate
+    predictionDepth: 0.95,   // Excellent prediction
+    speedMultiplier: 1.0,    // Full speed
   },
   impossible: {
-    reactionDelay: 16,
-    errorMargin: 3,
-    predictionDepth: 1.0,
-    speedMultiplier: 1.0,
+    reactionDelay: 8,        // Instant reaction
+    errorMargin: 1,          // Near-perfect
+    predictionDepth: 1.0,    // Perfect prediction
+    speedMultiplier: 1.15,   // Faster than player!
   },
 } as const;
 
