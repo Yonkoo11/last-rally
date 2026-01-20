@@ -79,9 +79,10 @@
   bottom: 5px;
   left: 50%;
   transform: translateX(-50%);
-  filter: drop-shadow(0 0 8px rgba(255, 150, 0, 0.4));
-  animation: flameBreath 2s ease-in-out infinite,
-             flameSway 4s ease-in-out infinite;
+  filter: drop-shadow(0 0 10px rgba(255, 150, 0, 0.5));
+  animation: flameBreath 1.5s ease-in-out infinite,
+             flameSway 2.5s ease-in-out infinite,
+             flameFlicker 0.15s ease-in-out infinite alternate;
 }
 
 .fire-glow {
@@ -99,26 +100,39 @@
     transparent 70%
   );
   filter: blur(20px);
-  animation: glowPulse 1.5s ease-in-out infinite;
+  animation: glowPulse 1.2s ease-in-out infinite;
 }
 
-/* Subtle breathing animation for flame */
+/* Breathing animation - noticeable pulse */
 @keyframes flameBreath {
   0%, 100% {
     transform: translateX(-50%) scaleX(1) scaleY(1);
   }
   50% {
-    transform: translateX(-50%) scaleX(0.97) scaleY(1.02);
+    transform: translateX(-50%) scaleX(0.94) scaleY(1.04);
   }
 }
 
-/* Gentle swaying motion */
+/* Swaying motion - gentle side-to-side */
 @keyframes flameSway {
   0%, 100% {
-    filter: drop-shadow(0 0 8px rgba(255, 150, 0, 0.4));
+    transform: translateX(-50%) rotate(0deg);
   }
-  50% {
-    filter: drop-shadow(0 0 12px rgba(255, 150, 0, 0.5));
+  25% {
+    transform: translateX(-49%) rotate(1.5deg);
+  }
+  75% {
+    transform: translateX(-51%) rotate(-1.5deg);
+  }
+}
+
+/* Quick flicker for alive feeling */
+@keyframes flameFlicker {
+  0% {
+    filter: drop-shadow(0 0 8px rgba(255, 150, 0, 0.45)) brightness(1);
+  }
+  100% {
+    filter: drop-shadow(0 0 12px rgba(255, 150, 0, 0.55)) brightness(1.03);
   }
 }
 
