@@ -51,14 +51,12 @@ export function AboutOverlay({ onClose }: AboutOverlayProps) {
           <section className="about-section">
             <h4>The Story</h4>
             <p>
-              What started as a simple idea—"What if Pong was actually fun?"—became
-              an obsession. 60+ features later, Last Rally is proof that even the
-              simplest games deserve polish, depth, and a soul.
+              I asked myself: "What if Pong was actually fun?" 60+ features later,
+              Last Rally is proof that even the simplest games deserve polish, depth, and a soul.
             </p>
             <p>
-              Built with passion during the Avalanche Build Games hackathon, Last Rally
-              brings blockchain to gaming in a way that makes sense: your achievements
-              are yours, permanently minted as soul-bound NFTs on Avalanche.
+              Built for the Avalanche Build Games hackathon. Your achievements are yours,
+              permanently minted as soul-bound NFTs on Avalanche.
             </p>
           </section>
 
