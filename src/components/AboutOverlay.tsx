@@ -131,7 +131,7 @@ export function AboutOverlay({ onClose }: AboutOverlayProps) {
           {/* Links */}
           <section className="about-section links-section">
             <a
-              href="https://github.com/last-rally/last-rally"
+              href="https://github.com/Yonkoo11/last-rally"
               target="_blank"
               rel="noopener noreferrer"
               className="about-link"

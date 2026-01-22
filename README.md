@@ -1,73 +1,83 @@
-# React + TypeScript + Vite
+# Last Rally
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A fast-paced Pong game with quests, achievements, and on-chain NFTs on Avalanche.
 
-Currently, two official plugins are available:
+**[Play Now](https://last-rally.vercel.app)** | **[Smart Contract](https://testnet.snowtrace.io/address/0x6b413bDFA822c84Bfe50BFc4dca062CdbecB1cf9)**
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+## What is Last Rally?
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Last Rally takes the simplest game ever made and asks: what if it was actually fun?
 
-## Expanding the ESLint configuration
+60+ features later, it's a full arcade experience with AI opponents, a quest campaign, unlockable cosmetics, and achievements that mint as soul-bound NFTs on Avalanche.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Features
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- **4 AI Difficulties** - From Rookie to Impossible
+- **13 Quests** - Story-driven challenges with modifiers
+- **22 Achievements** - Mint them as soul-bound NFTs
+- **16 Cosmetics** - Paddle skins, ball trails, arena themes
+- **Local Multiplayer** - Same keyboard (W/S vs Arrow keys)
+- **Daily Challenges** - Fresh challenge every day
+- **Mobile Support** - Touch controls included
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Avalanche Integration
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Achievements are minted as **soul-bound NFTs** on Avalanche C-Chain. They can't be transferred or sold - they're proof of your skill.
+
+| Network | Contract |
+|---------|----------|
+| Fuji Testnet | `0x6b413bDFA822c84Bfe50BFc4dca062CdbecB1cf9` |
+
+**How it works:**
+1. Connect wallet (MetaMask, Rainbow, etc.)
+2. Play and unlock achievements
+3. Mint achievements as NFTs
+4. View on Snowtrace
+
+## Tech Stack
+
+- React + TypeScript + Vite
+- Canvas 2D for rendering
+- Web Audio API (synthesized sounds, no audio files)
+- RainbowKit + wagmi for wallet connection
+- Solidity + OpenZeppelin for smart contracts
+- Hardhat for contract deployment
+
+## Local Development
+
+```bash
+# Install dependencies
+npm install
+
+# Start dev server
+npm run dev
+
+# Build for production
+npm run build
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Smart Contract Development
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+```bash
+cd contracts
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# Install dependencies
+npm install
+
+# Compile
+npx hardhat compile
+
+# Deploy to Fuji
+npx hardhat run scripts/deploy.js --network fuji
 ```
+
+## Links
+
+- **Live Game**: https://last-rally.vercel.app
+- **Contract (Fuji)**: https://testnet.snowtrace.io/address/0x6b413bDFA822c84Bfe50BFc4dca062CdbecB1cf9
+
+---
+
+Built for Avalanche Build Games 2026
