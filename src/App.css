@@ -1,0 +1,47 @@
+/* ============================================
+   App Root Styles - Uses Design System
+   ============================================ */
+
+.app {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ============================================
+   Legacy Button Overrides
+   These ensure backward compatibility while
+   the design system .btn class takes precedence
+   ============================================ */
+
+.btn-primary {
+  background: linear-gradient(135deg, #FFD700 0%, #FF9500 100%);
+  color: #1a1a1a;
+  box-shadow: 0 4px 20px rgba(255, 170, 0, 0.4);
+}
+
+@media (hover: hover) {
+  .btn-primary:hover {
+    background: linear-gradient(135deg, #FFE44D 0%, #FFAA00 100%);
+    box-shadow: 0 6px 30px rgba(255, 170, 0, 0.5);
+  }
+
+  .btn-secondary:hover {
+    background: var(--bg-subtle);
+    border-color: var(--border-strong);
+  }
+}
+
+.btn-secondary {
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  border: 1px solid var(--border-default);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}

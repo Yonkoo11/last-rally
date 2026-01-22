@@ -1,0 +1,120 @@
+.container {
+  display: flex;
+  align-items: center;
+}
+
+.connectButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: linear-gradient(135deg, #FFAA00 0%, #FF8800 100%);
+  border: none;
+  border-radius: 8px;
+  color: #0A0A0C;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.connectButton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 170, 0, 0.4);
+}
+
+.connectButton.compact {
+  padding: 8px 12px;
+  font-size: 12px;
+}
+
+.icon {
+  font-size: 16px;
+}
+
+.wrongNetwork {
+  padding: 10px 16px;
+  background: #FF3366;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.wrongNetwork.compact {
+  padding: 8px 12px;
+  font-size: 12px;
+}
+
+.connected {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.chainButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.chainButton:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.chainIcon {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+}
+
+.accountButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: #FAFAFA;
+  font-family: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.accountButton:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.accountButton.compact {
+  padding: 6px 10px;
+  font-size: 12px;
+}
+
+.address {
+  font-weight: 500;
+  color: #FAFAFA;
+}
+
+.balance {
+  color: rgba(250, 250, 250, 0.6);
+  font-size: 12px;
+}
