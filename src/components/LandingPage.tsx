@@ -16,33 +16,62 @@ interface LandingPageProps {
 // Transition duration in ms
 const EXIT_DURATION = 400;
 
-// Gold Coin SVG component
+// Official Goldcoin Logo SVG - matches brand style
 function GoldCoinIcon() {
   return (
     <svg
-      width="70"
-      height="70"
-      viewBox="0 0 70 70"
+      width="80"
+      height="80"
+      viewBox="0 0 80 80"
       fill="none"
       className="coin-svg"
     >
-      {/* Outer ring - gold */}
-      <circle cx="35" cy="35" r="33" fill="url(#coinGradient)" stroke="#B8860B" strokeWidth="2" />
-      {/* Inner shine */}
-      <circle cx="35" cy="35" r="26" fill="url(#coinInner)" />
-      {/* G symbol */}
-      <text x="35" y="44" textAnchor="middle" fill="#8B6914" fontSize="28" fontWeight="bold" fontFamily="serif">G</text>
+      {/* Outer edge with groove */}
+      <circle cx="40" cy="40" r="38" fill="url(#coinOuter)" stroke="#8B6914" strokeWidth="2" />
+      {/* First ring groove */}
+      <circle cx="40" cy="40" r="34" fill="none" stroke="#CD9B1D" strokeWidth="1" opacity="0.6" />
+      {/* Second ring */}
+      <circle cx="40" cy="40" r="30" fill="url(#coinMiddle)" />
+      {/* Third ring groove */}
+      <circle cx="40" cy="40" r="26" fill="none" stroke="#DAA520" strokeWidth="1" opacity="0.5" />
+      {/* Inner face */}
+      <circle cx="40" cy="40" r="22" fill="url(#coinInner)" />
+      {/* "goldcoin" text - official branding */}
+      <text
+        x="40"
+        y="44"
+        textAnchor="middle"
+        fill="#8B6914"
+        fontSize="11"
+        fontWeight="bold"
+        fontFamily="Arial, sans-serif"
+        letterSpacing="0.5"
+      >
+        goldcoin
+      </text>
       {/* Shine highlight */}
-      <ellipse cx="25" cy="22" rx="8" ry="5" fill="rgba(255,255,255,0.4)" />
+      <ellipse cx="28" cy="26" rx="10" ry="6" fill="rgba(255,255,255,0.35)" />
+      {/* Small circuit-style details on edge */}
+      <circle cx="40" cy="8" r="2" fill="#DAA520" opacity="0.7" />
+      <circle cx="72" cy="40" r="2" fill="#DAA520" opacity="0.7" />
+      <circle cx="40" cy="72" r="2" fill="#DAA520" opacity="0.7" />
+      <circle cx="8" cy="40" r="2" fill="#DAA520" opacity="0.7" />
       <defs>
-        <linearGradient id="coinGradient" x1="10" y1="10" x2="60" y2="60" gradientUnits="userSpaceOnUse">
+        <linearGradient id="coinOuter" x1="5" y1="5" x2="75" y2="75" gradientUnits="userSpaceOnUse">
           <stop offset="0%" stopColor="#FFD700" />
-          <stop offset="50%" stopColor="#FFC107" />
+          <stop offset="30%" stopColor="#FFC107" />
+          <stop offset="70%" stopColor="#DAA520" />
           <stop offset="100%" stopColor="#B8860B" />
         </linearGradient>
-        <linearGradient id="coinInner" x1="15" y1="15" x2="55" y2="55" gradientUnits="userSpaceOnUse">
+        <linearGradient id="coinMiddle" x1="10" y1="10" x2="70" y2="70" gradientUnits="userSpaceOnUse">
           <stop offset="0%" stopColor="#FFE44D" />
-          <stop offset="100%" stopColor="#FFD700" />
+          <stop offset="50%" stopColor="#FFD700" />
+          <stop offset="100%" stopColor="#DAA520" />
+        </linearGradient>
+        <linearGradient id="coinInner" x1="18" y1="18" x2="62" y2="62" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#FFF8DC" />
+          <stop offset="30%" stopColor="#FFD700" />
+          <stop offset="100%" stopColor="#CD9B1D" />
         </linearGradient>
       </defs>
     </svg>
@@ -141,6 +170,9 @@ export function LandingPage({ onEnter, onQuickPlay, onSettings }: LandingPagePro
           <span className="landing-title-top">GOLD</span>
           <span className="landing-title-bottom">COIN</span>
         </div>
+
+        {/* Arcade subtitle */}
+        <p className="landing-arcade-subtitle">GOLDCOIN ARCADE</p>
 
         {/* Tagline */}
         <p className="landing-tagline">DIG. STRIKE. WIN.</p>

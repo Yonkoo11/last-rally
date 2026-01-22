@@ -58,8 +58,14 @@ export function AboutOverlay({ onClose }: AboutOverlayProps) {
               Swing your pickaxe, strike the golden nugget, and prove you're
               the best miner in the shaft.
             </p>
+          </section>
+
+          {/* Goldcoin Arcade */}
+          <section className="about-section">
+            <h4>Goldcoin Arcade</h4>
             <p>
-              Part of the Goldcoin Arcade - retro games for the $GOLDCOIN community.
+              Part of the official Goldcoin Arcade alongside Goldcoin Man.
+              Retro-style games celebrating the $GOLDCOIN community.
             </p>
           </section>
 

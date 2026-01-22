@@ -172,6 +172,20 @@
   text-shadow: 0 0 40px rgba(255, 170, 0, 0.3);
 }
 
+.landing-arcade-subtitle {
+  font-family: var(--font-ui);
+  font-size: clamp(0.85rem, 2.5vw, 1.1rem);
+  font-weight: var(--font-semibold);
+  letter-spacing: 0.25em;
+  color: #F59E0B;
+  margin: var(--space-3) 0 var(--space-1) 0;
+  margin-right: -0.25em;
+  text-shadow: 0 0 20px rgba(245, 158, 11, 0.4);
+  animation: landingFadeIn 0.6s var(--ease-out) forwards;
+  animation-delay: 0.35s;
+  opacity: 0;
+}
+
 .landing-tagline {
   font-family: var(--font-ui);
   font-size: clamp(0.75rem, 2vw, 0.95rem);
