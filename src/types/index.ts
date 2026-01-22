@@ -167,7 +167,8 @@ export type PaddleSkin =
   | 'gold'
   | 'rainbow'
   | 'neon'
-  | 'retro';
+  | 'retro'
+  | 'avax';
 
 export type TrailType =
   | 'none'
@@ -180,7 +181,8 @@ export type ArenaTheme =
   | 'classic'
   | 'neon'
   | 'minimal-dark'
-  | 'retro';
+  | 'retro'
+  | 'avalanche';
 
 export type CourtStyle = 'pong' | 'football' | 'basketball' | 'hockey';
 
@@ -195,7 +197,7 @@ export interface Cosmetic {
 }
 
 export interface UnlockCondition {
-  type: 'default' | 'difficulty' | 'quest' | 'achievement' | 'streak' | 'games' | 'wins' | 'court';
+  type: 'default' | 'difficulty' | 'quest' | 'achievement' | 'streak' | 'games' | 'wins' | 'court' | 'wallet';
   value?: string | number;
   description: string;
 }

@@ -7,6 +7,7 @@ import {
   Quest,
   MatchResult,
 } from './types';
+import { WalletProvider } from './providers/WalletProvider';
 import { ToastProvider, useToast } from './hooks/useToast';
 import { ToastContainer } from './components/ToastContainer';
 import { LandingPage } from './components/LandingPage';
@@ -16,6 +17,8 @@ import { PongArena } from './components/PongArena';
 import { CosmeticSelect } from './components/CosmeticSelect';
 import { StatsOverlay } from './components/StatsOverlay';
 import { AchievementsOverlay } from './components/AchievementsOverlay';
+import { AboutOverlay } from './components/AboutOverlay';
+import { WalletConnect } from './components/WalletConnect';
 import { processMatchResult } from './lib/stats';
 import { loadCosmetics, loadPlayerName } from './lib/storage';
 import { getQuestById } from './data/quests';
@@ -28,6 +31,7 @@ function AppContent() {
   const [showSettings, setShowSettings] = useState(false);
   const [showStats, setShowStats] = useState(false);
   const [showAchievements, setShowAchievements] = useState(false);
+  const [showAbout, setShowAbout] = useState(false);
 
   const { showAchievement, showQuestComplete } = useToast();
 
@@ -133,6 +137,7 @@ function AppContent() {
             onSettings={() => setShowSettings(true)}
             onStats={() => setShowStats(true)}
             onAchievements={() => setShowAchievements(true)}
+            onAbout={() => setShowAbout(true)}
           />
         );
 
@@ -182,15 +187,22 @@ function AppContent() {
       {showAchievements && (
         <AchievementsOverlay onClose={() => setShowAchievements(false)} />
       )}
+
+      {/* About Overlay */}
+      {showAbout && (
+        <AboutOverlay onClose={() => setShowAbout(false)} />
+      )}
     </div>
   );
 }
 
 function App() {
   return (
-    <ToastProvider>
-      <AppContent />
-    </ToastProvider>
+    <WalletProvider>
+      <ToastProvider>
+        <AppContent />
+      </ToastProvider>
+    </WalletProvider>
   );
 }
 

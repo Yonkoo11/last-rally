@@ -1,78 +1,101 @@
 # Last Rally - Session Progress
 
-## Current Session: Jan 19, 2026
+## Current Session: Jan 22, 2026
+
+### Avalanche Fuji Integration (In Progress)
+- [x] **Smart Contract** - `LastRallyNFT.sol` with soul-bound achievements
+- [x] **WalletProvider** - RainbowKit + wagmi for Avalanche Fuji/Mainnet
+- [x] **WalletConnect Component** - Compact button in header
+- [x] **Mint Hooks** - `useMintAchievement`, `useHasAchievementOnChain`
+- [x] **NFT Metadata** - On-chain SVG images with categories
+- [x] **UI Integration** - Wallet button + mint buttons in AchievementsOverlay
+- [ ] **Deploy to Fuji** - Need private key + Fuji AVAX
+
+### Files Created This Session
+- `contracts/` - Hardhat project with LastRallyNFT.sol
+- `src/providers/WalletProvider.tsx` - RainbowKit setup
+- `src/components/WalletConnect.tsx` - Custom connect button
+- `src/lib/contracts.ts` - Contract addresses and ABI
+- `src/lib/nft.ts` - Minting hooks
+- `src/lib/metadata.ts` - NFT metadata generation
+- `src/components/AboutOverlay.tsx` - About page with Avalanche branding
+
+### Next Steps
+1. Get Fuji AVAX from faucet: https://core.app/tools/testnet-faucet/
+2. Create `contracts/.env` with PRIVATE_KEY
+3. Run: `cd contracts && npx hardhat run scripts/deploy.js --network fuji`
+4. Add contract address to `.env`: `VITE_NFT_CONTRACT_FUJI=0x...`
+
+---
+
+## Previous Session: Jan 20, 2026
 
 ### Completed Today
-- [x] Visual QA of page transitions (Landing → Dashboard)
-- [x] Verified ball acceleration and warm glow during exit
-- [x] Created ai/ directory with memory files
-- [x] **Mobile Touch Controls Implementation:**
-  - Created `src/game/touch.ts` - TouchController class
-  - Integrated touch events in PongArena.tsx
-  - Touch Y position maps directly to paddle Y
-  - Left half = Player 1, Right half = Player 2 (PvP)
-  - Touch hint overlay for first-time mobile users
-  - Auto-detect touch devices in settings
-  - CSS optimizations for touch devices
-- [x] **Transition Sound Effects:**
-  - `playTransitionOut()` - Rising filtered noise whoosh (0.2s)
-  - `playTransitionIn()` - Descending sine tone (0.15s)
-  - Integrated into LandingPage and TitleScreen
-- [x] Build passes with no errors
-- [x] **AI Wording Cleanup:**
-  - Replaced all user-facing "AI" text with friendlier alternatives
-  - Opponent personas: ROOKIE, RIVAL, ACE, CHAMPION (instead of EASY AI, etc.)
-  - "Challenge the AI" → "Test your skills"
-  - "Beat Easy AI" → "Win matches on Easy"
-  - Updated: ModeSelect.tsx, App.tsx, achievements.ts, cosmetics.ts, quests.ts, TitleScreen.tsx, usePlayerData.ts, GamePreviewCanvas.tsx, ModeSelect.css
+- [x] **Fixed AI Paddle "Flicking" Bug (Impossible difficulty)**
+  - Root cause: Binary movement (up/down at full speed) caused overshoot oscillation
+  - Solution: Proportional interpolation - move by min(distance, maxSpeed)
+  - Files: `src/game/ai.ts` (added setPaddleY import, replaced movement logic)
+  - Commit: `225c01f`
+
+- [x] **Simplified Pong Court to Original Design**
+  - Reverted from 228 lines of complex rendering to 26 lines
+  - Now just: simple dashed center line on dark background
+  - Removed: goal zones, corner brackets, vignette, center circle
+  - File: `src/game/courts/pong.ts`
+  - Commit: `2997eda`
+
+- [x] **Canvas Shadow Fix**
+  - Added ctx.save()/ctx.restore() to renderPaddle()
+  - Prevents shadow state leaking between frames
+  - File: `src/game/renderer.ts`
+
+- [x] **Deployed to Vercel**
+  - Live at: https://last-rally.vercel.app
+
+- [x] **Hackathon Research**
+  - Avalanche Build Games: $1M pool, 6 weeks, needs web3 integration
+  - Linera WaveHack Wave 6: $13k+, needs Rust contracts on Linera
+  - Decided: Build FlashBets (new project) for Linera, separate from Last Rally
 
 ### Blockers
 None.
 
-### Files Modified
-- `src/game/touch.ts` (NEW)
-- `src/game/ai.ts` (OPPONENT_NAMES added)
-- `src/components/PongArena.tsx`
-- `src/components/PongArena.css`
-- `src/components/ModeSelect.tsx`
-- `src/components/ModeSelect.css`
-- `src/components/TitleScreen.tsx`
-- `src/components/GamePreviewCanvas.tsx`
-- `src/lib/storage.ts`
-- `src/audio/sounds.ts`
-- `src/components/LandingPage.tsx`
-- `src/data/achievements.ts`
-- `src/data/cosmetics.ts`
-- `src/data/quests.ts`
-- `src/hooks/usePlayerData.ts`
-- `src/App.tsx`
+### Files Modified This Session
+- `src/game/ai.ts` - Proportional movement fix
+- `src/game/renderer.ts` - ctx.save()/restore() added
+- `src/game/courts/pong.ts` - Simplified to minimal design
 
 ---
 
 ## Previous Sessions
 
+### Jan 19, 2026
+- Mobile touch controls implementation
+- Transition sound effects
+- AI wording cleanup (ROOKIE, RIVAL, ACE, CHAMPION personas)
+
 ### Jan 18-19, 2026
-- Implemented "Connected & Alive" page transitions
-- Ball accelerates 3x during exit with warm gold glow
-- Dashboard preview reveals from center with blur fade
-- Build passes, code ready
+- Page transitions with ball acceleration
+- Dashboard preview animations
 
 ### Prior Work
-- Full game implementation with 13 quests, 22 achievements
-- 4 AI difficulty levels
-- Local PvP mode
-- 16 cosmetics (paddle skins, ball trails, arena themes)
-- Daily challenge system
+- Full game: 13 quests, 22 achievements, 4 AI difficulties
+- Local PvP, 16 cosmetics, daily challenges
 
 ---
 
 ## Resume Commands
 ```bash
 cd /Users/yonko/Projects/last-rally
-pnpm dev  # Runs on next available port (5177+)
+npm run dev  # Dev server
 ```
 
-## Key Files for Touch Controls
-- `src/components/PongArena.tsx` - Main game component, needs touch event handlers
-- `src/lib/storage.ts` - Has `touchControls` setting (line 367)
-- `src/game/touch.ts` - NEW file to create for touch controller
+## Deployment
+```bash
+npx vercel --prod
+```
+
+## Key Recent Commits
+- `2997eda` - Simplify Pong court to original minimal design
+- `225c01f` - Fix AI paddle flicking bug on Impossible difficulty
+- `42f7103` - Fix paddle reflection bug, add Online mode placeholder

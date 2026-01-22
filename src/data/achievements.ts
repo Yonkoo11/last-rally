@@ -4,7 +4,7 @@ export const ACHIEVEMENTS: Achievement[] = [
   // Victory Milestones
   {
     id: 'first_win',
-    name: 'First Victory',
+    name: 'First Block',
     description: 'Win your first match',
     icon: '🏆',
     category: 'victory',
@@ -12,7 +12,7 @@ export const ACHIEVEMENTS: Achievement[] = [
   },
   {
     id: 'ten_wins',
-    name: 'Getting Started',
+    name: 'Paper Hands No More',
     description: 'Win 10 matches',
     icon: '⭐',
     category: 'victory',
@@ -20,7 +20,7 @@ export const ACHIEVEMENTS: Achievement[] = [
   },
   {
     id: 'fifty_wins',
-    name: 'Veteran',
+    name: 'OG',
     description: 'Win 50 matches',
     icon: '🌟',
     category: 'victory',
@@ -29,9 +29,9 @@ export const ACHIEVEMENTS: Achievement[] = [
   },
   {
     id: 'hundred_wins',
-    name: 'Champion',
+    name: 'Whale Status',
     description: 'Win 100 matches',
-    icon: '👑',
+    icon: '🐋',
     category: 'victory',
     condition: { type: 'wins', value: 100 },
   },
@@ -39,23 +39,23 @@ export const ACHIEVEMENTS: Achievement[] = [
   // Skill Achievements
   {
     id: 'shutout',
-    name: 'Shutout',
-    description: 'Win 5-0',
-    icon: '🚫',
+    name: 'No Rugs',
+    description: 'Win 5-0 with zero losses',
+    icon: '🛡️',
     category: 'skill',
     condition: { type: 'shutout' },
   },
   {
     id: 'comeback_kid',
-    name: 'Comeback Kid',
+    name: 'Buy The Dip',
     description: 'Win after being down 0-4',
-    icon: '🔄',
+    icon: '📈',
     category: 'skill',
     condition: { type: 'comeback' },
   },
   {
     id: 'rally_master',
-    name: 'Rally Master',
+    name: 'HODL Master',
     description: 'Achieve a 20-hit rally',
     icon: '🏓',
     category: 'skill',
@@ -63,16 +63,16 @@ export const ACHIEVEMENTS: Achievement[] = [
   },
   {
     id: 'rally_legend',
-    name: 'Rally Legend',
+    name: 'Diamond Hands',
     description: 'Achieve a 50-hit rally',
-    icon: '💫',
+    icon: '💎',
     category: 'skill',
     condition: { type: 'rally', value: 50 },
     reward: { cosmetic: 'trail_pixel' },
   },
   {
     id: 'speedrun',
-    name: 'Speedrunner',
+    name: 'Gas Optimized',
     description: 'Win a match in under 60 seconds',
     icon: '⚡',
     category: 'skill',
@@ -82,7 +82,7 @@ export const ACHIEVEMENTS: Achievement[] = [
   // Difficulty Progression
   {
     id: 'easy_master',
-    name: 'Easy Peasy',
+    name: 'Testnet Ready',
     description: 'Win 5 matches on Easy',
     icon: '🟢',
     category: 'progression',
@@ -91,7 +91,7 @@ export const ACHIEVEMENTS: Achievement[] = [
   },
   {
     id: 'medium_master',
-    name: 'Rising Challenger',
+    name: 'Mainnet Vibes',
     description: 'Win 5 matches on Medium',
     icon: '🟣',
     category: 'progression',
@@ -100,7 +100,7 @@ export const ACHIEVEMENTS: Achievement[] = [
   },
   {
     id: 'hard_master',
-    name: 'Hard Mode Hero',
+    name: 'Alpha Hunter',
     description: 'Win 5 matches on Hard',
     icon: '🟡',
     category: 'progression',
@@ -109,7 +109,7 @@ export const ACHIEVEMENTS: Achievement[] = [
   },
   {
     id: 'impossible_master',
-    name: 'The Impossible',
+    name: 'Full Send',
     description: 'Conquer Impossible difficulty',
     icon: '🌈',
     category: 'progression',
@@ -120,7 +120,7 @@ export const ACHIEVEMENTS: Achievement[] = [
   // Streak Achievements
   {
     id: 'streak_3',
-    name: 'Hot Streak',
+    name: 'LFG',
     description: 'Win 3 matches in a row',
     icon: '🔥',
     category: 'skill',
@@ -128,15 +128,15 @@ export const ACHIEVEMENTS: Achievement[] = [
   },
   {
     id: 'streak_5',
-    name: 'On Fire',
+    name: 'Pumping',
     description: 'Win 5 matches in a row',
-    icon: '🔥🔥',
+    icon: '🚀',
     category: 'skill',
     condition: { type: 'streak', value: 5 },
   },
   {
     id: 'streak_10',
-    name: 'Unstoppable',
+    name: 'WAGMI',
     description: 'Win 10 matches in a row',
     icon: '💥',
     category: 'skill',
@@ -146,7 +146,7 @@ export const ACHIEVEMENTS: Achievement[] = [
   // Quest Achievements
   {
     id: 'quest_starter',
-    name: 'Quest Begun',
+    name: 'Quest Minted',
     description: 'Complete your first quest',
     icon: '📜',
     category: 'progression',
@@ -154,7 +154,7 @@ export const ACHIEVEMENTS: Achievement[] = [
   },
   {
     id: 'quest_halfway',
-    name: 'Halfway There',
+    name: 'Halfway to Valhalla',
     description: 'Complete 7 quests',
     icon: '📚',
     category: 'progression',
@@ -162,7 +162,7 @@ export const ACHIEVEMENTS: Achievement[] = [
   },
   {
     id: 'quest_master',
-    name: 'Quest Master',
+    name: 'Quest Maxi',
     description: 'Complete all 13 quests',
     icon: '🎖️',
     category: 'progression',
@@ -173,7 +173,7 @@ export const ACHIEVEMENTS: Achievement[] = [
   // Secret Achievements
   {
     id: 'hundred_games',
-    name: 'Dedicated',
+    name: 'Degen Hours',
     description: 'Play 100 games',
     icon: '💯',
     category: 'secret',
@@ -181,9 +181,9 @@ export const ACHIEVEMENTS: Achievement[] = [
   },
   {
     id: 'photo_finish',
-    name: 'Photo Finish',
+    name: 'Probably Nothing',
     description: 'Win a match 5-4',
-    icon: '📸',
+    icon: '👀',
     category: 'secret',
     condition: { type: 'special', value: 1 },
   },

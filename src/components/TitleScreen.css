@@ -119,6 +119,12 @@
   border-radius: var(--radius-sm);
 }
 
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
 /* ============================================
    MAIN CONTENT - TWO ZONE LAYOUT
    ============================================ */

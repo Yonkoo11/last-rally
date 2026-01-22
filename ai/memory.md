@@ -41,14 +41,25 @@
 ## Known Gaps
 
 ### Critical
-- **Mobile Touch Controls:** `touchControls` setting exists but does NOTHING
-  - PongArena only accepts keyboard input
-  - This severely limits mobile audience
+- None currently - touch controls implemented Jan 19
 
 ### Minor
-- Transition sound effects not implemented
 - Loading states for large assets could be improved
 - No haptic feedback on mobile
+- Online multiplayer placeholder (not implemented)
+
+## Key Lessons Learned
+
+### Jan 20, 2026 - AI Movement Bug
+- **Issue:** AI paddle on Impossible difficulty flicked between 2 positions
+- **Root cause:** Binary movement (full speed up/down) + dead zone = overshoot oscillation
+- **Solution:** Proportional movement: `moveDistance = min(|diff|, maxSpeed)`
+- **Lesson:** When something oscillates, check for overshoot in the control loop
+
+### Jan 20, 2026 - Canvas State Leaks
+- **Issue:** Shadow effects persisted between frames causing ghosting
+- **Solution:** Wrap render functions in `ctx.save()`/`ctx.restore()`
+- **Lesson:** Always isolate canvas state when setting shadow/blend properties
 
 ## Patterns
 

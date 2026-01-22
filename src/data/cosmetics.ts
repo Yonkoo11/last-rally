@@ -70,6 +70,15 @@ export const PADDLE_SKINS: Cosmetic[] = [
       description: 'Win 50 matches',
     },
   },
+  {
+    id: 'avax',
+    name: 'AVAX Red',
+    type: 'paddle',
+    unlockCondition: {
+      type: 'wallet',
+      description: 'Connect your wallet',
+    },
+  },
 ];
 
 export const BALL_TRAILS: Cosmetic[] = [
@@ -163,6 +172,15 @@ export const ARENA_THEMES: Cosmetic[] = [
       description: 'Win 10 matches in a row',
     },
   },
+  {
+    id: 'avalanche',
+    name: 'Avalanche',
+    type: 'theme',
+    unlockCondition: {
+      type: 'wallet',
+      description: 'Connect your wallet',
+    },
+  },
 ];
 
 export const COURT_STYLES: Cosmetic[] = [
@@ -248,6 +266,7 @@ export const PADDLE_COLORS: Record<PaddleSkin, string | string[]> = {
   rainbow: ['#EF4444', '#F59E0B', '#10B981', '#3B82F6', '#8B5CF6'],
   neon: '#00FFFF',
   retro: '#00FF00',
+  avax: '#E84142',  // Official Avalanche red
 };
 
 // Player-specific colors (used when skin is default)
@@ -301,6 +320,13 @@ export const THEME_COLORS: Record<
     ball: '#00FF00',
     text: '#00FF00',
     accent: '#00AA00',
+  },
+  avalanche: {
+    background: '#0F0A0A',  // Dark with subtle red tint
+    lines: '#E84142',       // Avalanche red
+    ball: '#FFFFFF',
+    text: '#E84142',
+    accent: '#FF6B6B',      // Lighter red accent
   },
 };
 
@@ -373,6 +399,7 @@ export const isUnlocked = (
     aiHardWins: number;
     aiImpossibleWins: number;
     courtWins?: Record<string, number>;
+    walletConnected?: boolean;
   }
 ): boolean => {
   const { type, value } = cosmetic.unlockCondition;
@@ -406,6 +433,9 @@ export const isUnlocked = (
     case 'court':
       // Check if player has won on specified court
       return (stats.courtWins?.[value as string] || 0) >= 1;
+    case 'wallet':
+      // Unlocked when wallet is connected
+      return stats.walletConnected === true;
     default:
       return false;
   }
