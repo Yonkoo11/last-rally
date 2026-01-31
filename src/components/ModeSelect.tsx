@@ -168,7 +168,7 @@ export function ModeSelect({ onBack, onStartGame }: ModeSelectProps) {
               type="text"
               className="input"
               value={player1Name}
-              onChange={e => setPlayer1Name(e.target.value.slice(0, 12))}
+              onChange={e => setPlayer1Name(e.target.value.toUpperCase().slice(0, 12))}
               placeholder="PLAYER 1"
               maxLength={12}
               autoComplete="off"
@@ -184,7 +184,7 @@ export function ModeSelect({ onBack, onStartGame }: ModeSelectProps) {
                 type="text"
                 className="input"
                 value={player2Name}
-                onChange={e => setPlayer2Name(e.target.value.slice(0, 12))}
+                onChange={e => setPlayer2Name(e.target.value.toUpperCase().slice(0, 12))}
                 placeholder="PLAYER 2"
                 maxLength={12}
                 autoComplete="off"
