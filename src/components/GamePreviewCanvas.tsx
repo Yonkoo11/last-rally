@@ -278,54 +278,57 @@ export function GamePreviewCanvas({
       ctx.fillRect(width - paddleMargin - paddleW, state.rightPaddle.y, paddleW, paddleH);
       ctx.shadowBlur = 0;
 
-      // Ball glow color based on velocity direction (matches LandingBall)
-      const glowColor = state.ball.vx > 0 ? CYAN_GLOW : MAGENTA_GLOW;
+      // Gold coin ball (matches main game renderer)
+      const { x, y } = state.ball;
 
-      // Outer glow - directional
-      ctx.beginPath();
-      ctx.arc(state.ball.x, state.ball.y, ballR * 3, 0, Math.PI * 2);
-      const outerGlow = ctx.createRadialGradient(
-        state.ball.x, state.ball.y, 0,
-        state.ball.x, state.ball.y, ballR * 3
+      // Outer glow - gold
+      ctx.shadowColor = '#FFD700';
+      ctx.shadowBlur = 15;
+
+      // Gold coin base gradient
+      const coinGradient = ctx.createRadialGradient(
+        x - ballR * 0.3, y - ballR * 0.3, 0,
+        x, y, ballR * 1.2
       );
-      outerGlow.addColorStop(0, `${glowColor}40`);
-      outerGlow.addColorStop(0.5, `${glowColor}15`);
-      outerGlow.addColorStop(1, 'transparent');
-      ctx.fillStyle = outerGlow;
-      ctx.fill();
+      coinGradient.addColorStop(0, '#FFE44D');
+      coinGradient.addColorStop(0.5, '#FFD700');
+      coinGradient.addColorStop(0.8, '#DAA520');
+      coinGradient.addColorStop(1, '#B8860B');
 
-      // Inner glow
+      ctx.fillStyle = coinGradient;
       ctx.beginPath();
-      ctx.arc(state.ball.x, state.ball.y, ballR * 1.5, 0, Math.PI * 2);
-      const innerGlow = ctx.createRadialGradient(
-        state.ball.x, state.ball.y, 0,
-        state.ball.x, state.ball.y, ballR * 1.5
+      ctx.arc(x, y, ballR, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      // Inner ring (coin edge detail)
+      ctx.strokeStyle = '#CD9B1D';
+      ctx.lineWidth = 0.5;
+      ctx.beginPath();
+      ctx.arc(x, y, ballR * 0.75, 0, Math.PI * 2);
+      ctx.stroke();
+
+      // "GC" text on coin (scaled for preview)
+      if (ballR > 5) {
+        ctx.fillStyle = '#8B6914';
+        ctx.font = `bold ${ballR * 0.8}px Arial, sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('GC', x, y + 0.5);
+      }
+
+      // Shine highlight
+      const shineGradient = ctx.createRadialGradient(
+        x - ballR * 0.3, y - ballR * 0.3, 0,
+        x, y, ballR
       );
-      innerGlow.addColorStop(0, `${glowColor}80`);
-      innerGlow.addColorStop(1, 'transparent');
-      ctx.fillStyle = innerGlow;
-      ctx.fill();
+      shineGradient.addColorStop(0, 'rgba(255, 255, 255, 0.4)');
+      shineGradient.addColorStop(0.3, 'rgba(255, 255, 255, 0.1)');
+      shineGradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
 
-      // Ball core
-      ctx.fillStyle = colors.ball;
+      ctx.fillStyle = shineGradient;
       ctx.beginPath();
-      ctx.arc(state.ball.x, state.ball.y, ballR, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Ball highlight
-      const ballGrad = ctx.createRadialGradient(
-        state.ball.x - ballR * 0.3,
-        state.ball.y - ballR * 0.3,
-        0,
-        state.ball.x,
-        state.ball.y,
-        ballR
-      );
-      ballGrad.addColorStop(0, 'rgba(255, 255, 255, 0.5)');
-      ballGrad.addColorStop(1, 'rgba(255, 255, 255, 0)');
-      ctx.fillStyle = ballGrad;
-      ctx.beginPath();
-      ctx.arc(state.ball.x, state.ball.y, ballR, 0, Math.PI * 2);
+      ctx.arc(x, y, ballR, 0, Math.PI * 2);
       ctx.fill();
     },
     [cosmetics.selectedArenaTheme, width, height]

@@ -5,27 +5,6 @@ interface AboutOverlayProps {
   onClose: () => void;
 }
 
-// Solana logo component
-function SolanaLogo({ size = 24 }: { size?: number }) {
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 397.7 311.7"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <linearGradient id="solanaGradAbout" x1="360.879" y1="351.455" x2="141.213" y2="-69.294" gradientUnits="userSpaceOnUse">
-        <stop offset="0" stopColor="#00FFA3"/>
-        <stop offset="1" stopColor="#DC1FFF"/>
-      </linearGradient>
-      <path fill="url(#solanaGradAbout)" d="M64.6,237.9c2.4-2.4,5.7-3.8,9.2-3.8h317.4c5.8,0,8.7,7,4.6,11.1l-62.7,62.7c-2.4,2.4-5.7,3.8-9.2,3.8H6.5 c-5.8,0-8.7-7-4.6-11.1L64.6,237.9z"/>
-      <path fill="url(#solanaGradAbout)" d="M64.6,3.8C67.1,1.4,70.4,0,73.8,0h317.4c5.8,0,8.7,7,4.6,11.1l-62.7,62.7c-2.4,2.4-5.7,3.8-9.2,3.8H6.5 c-5.8,0-8.7-7-4.6-11.1L64.6,3.8z"/>
-      <path fill="url(#solanaGradAbout)" d="M333.1,120.1c-2.4-2.4-5.7-3.8-9.2-3.8H6.5c-5.8,0-8.7,7-4.6,11.1l62.7,62.7c2.4,2.4,5.7,3.8,9.2,3.8h317.4 c5.8,0,8.7-7,4.6-11.1L333.1,120.1z"/>
-    </svg>
-  );
-}
-
 export function AboutOverlay({ onClose }: AboutOverlayProps) {
   return (
     <div className="overlay about-overlay" onClick={onClose}>
@@ -69,16 +48,6 @@ export function AboutOverlay({ onClose }: AboutOverlayProps) {
             </p>
           </section>
 
-          {/* Built On Solana */}
-          <section className="about-section solana-section">
-            <div className="solana-badge">
-              <SolanaLogo size={32} />
-              <div>
-                <span className="badge-title">$GOLDCOIN on Solana</span>
-                <span className="badge-desc">Fast, fun, community-driven</span>
-              </div>
-            </div>
-          </section>
 
           {/* Features */}
           <section className="about-section">
@@ -141,7 +110,17 @@ export function AboutOverlay({ onClose }: AboutOverlayProps) {
               rel="noopener noreferrer"
               className="about-link"
             >
-              <SolanaLogo size={20} />
+              <svg viewBox="0 0 24 24" width="20" height="20">
+                <defs>
+                  <linearGradient id="linkCoinGrad" x1="2" y1="2" x2="22" y2="22">
+                    <stop offset="0%" stopColor="#FFE44D"/>
+                    <stop offset="50%" stopColor="#FFD700"/>
+                    <stop offset="100%" stopColor="#B8860B"/>
+                  </linearGradient>
+                </defs>
+                <circle cx="12" cy="12" r="10" fill="url(#linkCoinGrad)"/>
+                <text x="12" y="15" textAnchor="middle" fill="#8B6914" fontSize="7" fontWeight="bold" fontFamily="Arial">GC</text>
+              </svg>
               goldcoinsol.net
             </a>
             <a

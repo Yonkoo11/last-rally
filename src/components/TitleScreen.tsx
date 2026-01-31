@@ -54,9 +54,17 @@ export function TitleScreen({ onQuickPlay, onPlayNow, onSettings, onStats, onAch
         <div className="logo-area">
           <div className="logo-icon-small">
             <svg viewBox="0 0 24 24" fill="none">
-              <rect x="4" y="4" width="3" height="16" rx="1" fill="currentColor" />
-              <rect x="17" y="4" width="3" height="16" rx="1" fill="currentColor" />
-              <circle cx="12" cy="12" r="3" fill="currentColor" />
+              <defs>
+                <linearGradient id="headerCoinGrad" x1="2" y1="2" x2="22" y2="22">
+                  <stop offset="0%" stopColor="#FFE44D"/>
+                  <stop offset="50%" stopColor="#FFD700"/>
+                  <stop offset="100%" stopColor="#B8860B"/>
+                </linearGradient>
+              </defs>
+              <circle cx="12" cy="12" r="10" fill="url(#headerCoinGrad)" stroke="#8B6914" strokeWidth="0.5"/>
+              <circle cx="12" cy="12" r="7" fill="none" stroke="#CD9B1D" strokeWidth="0.5" opacity="0.6"/>
+              <text x="12" y="15" textAnchor="middle" fill="#8B6914" fontSize="7" fontWeight="bold" fontFamily="Arial, sans-serif">GC</text>
+              <ellipse cx="8" cy="8" rx="3" ry="2" fill="rgba(255,255,255,0.4)"/>
             </svg>
           </div>
           <span className="logo-text">GOLDCOIN PONG</span>
