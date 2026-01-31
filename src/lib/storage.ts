@@ -155,11 +155,11 @@ function generateDailyChallenge(date: string): DailyChallenge {
 // ============================================
 
 export function loadPlayerName(): string {
-  return localStorage.getItem(KEYS.PLAYER_NAME) || 'PLAYER 1';
+  return localStorage.getItem(KEYS.PLAYER_NAME) || 'Player 1';
 }
 
 export function savePlayerName(name: string): void {
-  safeStorageSet(KEYS.PLAYER_NAME, name.toUpperCase().slice(0, 12));
+  safeStorageSet(KEYS.PLAYER_NAME, name.slice(0, 12));
 }
 
 // ============================================

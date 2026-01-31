@@ -98,9 +98,9 @@ export function ModeSelect({ onBack, onStartGame }: ModeSelectProps) {
     e.preventDefault();
     if (!pendingGame) return;
 
-    const name1 = player1Name.trim().toUpperCase() || 'PLAYER 1';
+    const name1 = player1Name.trim() || 'Player 1';
     const name2 = pendingGame.mode === 'pvp'
-      ? player2Name.trim().toUpperCase() || 'PLAYER 2'
+      ? player2Name.trim() || 'Player 2'
       : getOpponentName();
 
     savePlayerName(name1);
@@ -168,7 +168,7 @@ export function ModeSelect({ onBack, onStartGame }: ModeSelectProps) {
               type="text"
               className="input"
               value={player1Name}
-              onChange={e => setPlayer1Name(e.target.value.toUpperCase().slice(0, 12))}
+              onChange={e => setPlayer1Name(e.target.value.slice(0, 12))}
               placeholder="PLAYER 1"
               maxLength={12}
               autoComplete="off"
@@ -184,7 +184,7 @@ export function ModeSelect({ onBack, onStartGame }: ModeSelectProps) {
                 type="text"
                 className="input"
                 value={player2Name}
-                onChange={e => setPlayer2Name(e.target.value.toUpperCase().slice(0, 12))}
+                onChange={e => setPlayer2Name(e.target.value.slice(0, 12))}
                 placeholder="PLAYER 2"
                 maxLength={12}
                 autoComplete="off"
