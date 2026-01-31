@@ -1,74 +1,52 @@
 <svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <!-- Main flame gradient -->
-    <linearGradient id="flameGrad" x1="0%" y1="100%" x2="0%" y2="0%">
-      <stop offset="0%" style="stop-color:#D97706"/>
-      <stop offset="40%" style="stop-color:#F59E0B"/>
-      <stop offset="70%" style="stop-color:#FBBF24"/>
-      <stop offset="100%" style="stop-color:#FCD34D"/>
+    <linearGradient id="coinOuter" x1="50" y1="50" x2="462" y2="462" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FFE44D"/>
+      <stop offset="30%" stop-color="#FFD700"/>
+      <stop offset="70%" stop-color="#DAA520"/>
+      <stop offset="100%" stop-color="#B8860B"/>
     </linearGradient>
-
-    <!-- Inner flame gradient (brighter) -->
-    <linearGradient id="innerFlame" x1="0%" y1="100%" x2="0%" y2="0%">
-      <stop offset="0%" style="stop-color:#F59E0B"/>
-      <stop offset="50%" style="stop-color:#FCD34D"/>
-      <stop offset="100%" style="stop-color:#FEF3C7"/>
+    <linearGradient id="coinInner" x1="100" y1="100" x2="412" y2="412" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FFF8DC"/>
+      <stop offset="40%" stop-color="#FFD700"/>
+      <stop offset="100%" stop-color="#CD9B1D"/>
     </linearGradient>
-
-    <!-- Glow filter -->
-    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-      <feGaussianBlur stdDeviation="12" result="blur"/>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
       <feMerge>
         <feMergeNode in="blur"/>
         <feMergeNode in="SourceGraphic"/>
       </feMerge>
     </filter>
-
-    <!-- Soft shadow -->
-    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#F59E0B" flood-opacity="0.4"/>
-    </filter>
   </defs>
 
-  <!-- Background circle (optional, can be removed for transparent) -->
+  <!-- Background -->
   <circle cx="256" cy="256" r="240" fill="#0A0A0A"/>
 
-  <!-- Outer flame shape -->
-  <path d="
-    M256 56
-    C256 56 340 140 340 220
-    C340 260 360 290 360 340
-    C360 420 316 456 256 456
-    C196 456 152 420 152 340
-    C152 290 172 260 172 220
-    C172 140 256 56 256 56
-    Z
-  " fill="url(#flameGrad)" filter="url(#shadow)"/>
+  <!-- Outer coin edge -->
+  <circle cx="256" cy="256" r="200" fill="url(#coinOuter)" stroke="#8B6914" stroke-width="4" filter="url(#glow)"/>
 
-  <!-- Middle flame layer -->
-  <path d="
-    M256 100
-    C256 100 320 160 320 230
-    C320 270 332 295 332 335
-    C332 395 300 425 256 425
-    C212 425 180 395 180 335
-    C180 295 192 270 192 230
-    C192 160 256 100 256 100
-    Z
-  " fill="url(#flameGrad)" opacity="0.9"/>
+  <!-- First ring groove -->
+  <circle cx="256" cy="256" r="175" fill="none" stroke="#CD9B1D" stroke-width="3" opacity="0.5"/>
 
-  <!-- Inner flame (brightest) -->
-  <path d="
-    M256 180
-    C256 180 296 220 296 270
-    C296 295 304 315 304 345
-    C304 385 284 405 256 405
-    C228 405 208 385 208 345
-    C208 315 216 295 216 270
-    C216 220 256 180 256 180
-    Z
-  " fill="url(#innerFlame)"/>
+  <!-- Second ring -->
+  <circle cx="256" cy="256" r="150" fill="url(#coinInner)"/>
 
-  <!-- Core highlight -->
-  <ellipse cx="256" cy="340" rx="24" ry="40" fill="#FEF3C7" opacity="0.8"/>
+  <!-- Third ring groove -->
+  <circle cx="256" cy="256" r="125" fill="none" stroke="#DAA520" stroke-width="2" opacity="0.4"/>
+
+  <!-- Inner face -->
+  <circle cx="256" cy="256" r="100" fill="url(#coinOuter)"/>
+
+  <!-- "goldcoin" text -->
+  <text x="256" y="270" text-anchor="middle" fill="#8B6914" font-size="52" font-weight="bold" font-family="Arial, sans-serif">goldcoin</text>
+
+  <!-- Shine highlight -->
+  <ellipse cx="180" cy="160" rx="50" ry="30" fill="rgba(255,255,255,0.35)"/>
+
+  <!-- Circuit dots (like official logo) -->
+  <circle cx="256" cy="70" r="8" fill="#DAA520" opacity="0.7"/>
+  <circle cx="442" cy="256" r="8" fill="#DAA520" opacity="0.7"/>
+  <circle cx="256" cy="442" r="8" fill="#DAA520" opacity="0.7"/>
+  <circle cx="70" cy="256" r="8" fill="#DAA520" opacity="0.7"/>
 </svg>

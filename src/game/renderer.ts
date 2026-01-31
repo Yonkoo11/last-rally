@@ -41,7 +41,7 @@ export function clearTrail(): void {
 // PARTICLE SYSTEM (Sophisticated)
 // ============================================
 
-type ParticleShape = 'circle' | 'square' | 'triangle';
+type ParticleShape = 'circle' | 'square' | 'triangle' | 'coin';
 
 interface Particle {
   x: number;
@@ -60,10 +60,12 @@ interface Particle {
 let particles: Particle[] = [];
 
 const SHAPES: ParticleShape[] = ['circle', 'square', 'triangle'];
+const COIN_COLORS = ['#FFD700', '#FFE44D', '#DAA520', '#F59E0B'];
 
 function createParticle(
   x: number, y: number, vx: number, vy: number,
-  size: number, color: string, maxLife: number
+  size: number, color: string, maxLife: number,
+  shape?: ParticleShape
 ): Particle {
   return {
     x, y, vx, vy, size, color,
@@ -71,26 +73,28 @@ function createParticle(
     maxLife,
     rotation: Math.random() * Math.PI * 2,
     rotationSpeed: (Math.random() - 0.5) * 0.2,
-    shape: SHAPES[Math.floor(Math.random() * SHAPES.length)],
+    shape: shape || SHAPES[Math.floor(Math.random() * SHAPES.length)],
   };
 }
 
 export function spawnScoreParticles(
   x: number,
   y: number,
-  color: string = '#FFFFFF'
+  _color: string = '#FFFFFF'
 ): void {
-  const count = 18;
+  const count = 20;
   for (let i = 0; i < count; i++) {
     const angle = (Math.PI * 2 * i) / count + Math.random() * 0.3;
-    const speed = 2.5 + Math.random() * 3.5;
+    const speed = 3 + Math.random() * 4;
+    const coinColor = COIN_COLORS[Math.floor(Math.random() * COIN_COLORS.length)];
     particles.push(createParticle(
       x, y,
       Math.cos(angle) * speed,
       Math.sin(angle) * speed,
-      2 + Math.random() * 5,
-      color,
-      600 + Math.random() * 300
+      3 + Math.random() * 6,
+      coinColor,
+      600 + Math.random() * 300,
+      'coin'
     ));
   }
 }
@@ -99,20 +103,22 @@ export function spawnHitParticles(
   x: number,
   y: number,
   direction: 'left' | 'right',
-  color: string = '#FFFFFF'
+  _color: string = '#FFFFFF'
 ): void {
-  const count = 6;
+  const count = 8;
   const baseAngle = direction === 'right' ? 0 : Math.PI;
   for (let i = 0; i < count; i++) {
     const angle = baseAngle + (Math.random() - 0.5) * (Math.PI / 2);
-    const speed = 1.5 + Math.random() * 2.5;
+    const speed = 2 + Math.random() * 3;
+    const coinColor = COIN_COLORS[Math.floor(Math.random() * COIN_COLORS.length)];
     particles.push(createParticle(
       x, y,
       Math.cos(angle) * speed,
       Math.sin(angle) * speed,
-      2 + Math.random() * 3,
-      color,
-      350 + Math.random() * 100
+      3 + Math.random() * 4,
+      coinColor,
+      400 + Math.random() * 150,
+      'coin'
     ));
   }
 }
@@ -268,22 +274,47 @@ function renderBall(
   // Layer 1: Outer glow
   ctx.shadowColor = color;
   ctx.shadowBlur = 20;
-  ctx.fillStyle = color;
+
+  // Gold coin base gradient
+  const coinGradient = ctx.createRadialGradient(
+    x - r * 0.3, y - r * 0.3, 0,
+    x, y, r * 1.2
+  );
+  coinGradient.addColorStop(0, '#FFE44D');
+  coinGradient.addColorStop(0.5, '#FFD700');
+  coinGradient.addColorStop(0.8, '#DAA520');
+  coinGradient.addColorStop(1, '#B8860B');
+
+  ctx.fillStyle = coinGradient;
   ctx.beginPath();
   ctx.arc(x, y, r, 0, Math.PI * 2);
   ctx.fill();
   ctx.shadowBlur = 0;
 
-  // Layer 2: Inner highlight (radial gradient for 3D shine)
-  const gradient = ctx.createRadialGradient(
+  // Inner ring (coin edge detail)
+  ctx.strokeStyle = '#CD9B1D';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.arc(x, y, r * 0.75, 0, Math.PI * 2);
+  ctx.stroke();
+
+  // "GC" text on coin
+  ctx.fillStyle = '#8B6914';
+  ctx.font = `bold ${r * 0.9}px Arial, sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('GC', x, y + 1);
+
+  // Layer 2: Inner highlight (3D shine)
+  const shineGradient = ctx.createRadialGradient(
     x - r * 0.3, y - r * 0.3, 0,
     x, y, r
   );
-  gradient.addColorStop(0, 'rgba(255, 255, 255, 0.6)');
-  gradient.addColorStop(0.4, 'rgba(255, 255, 255, 0.15)');
-  gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+  shineGradient.addColorStop(0, 'rgba(255, 255, 255, 0.5)');
+  shineGradient.addColorStop(0.3, 'rgba(255, 255, 255, 0.1)');
+  shineGradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
 
-  ctx.fillStyle = gradient;
+  ctx.fillStyle = shineGradient;
   ctx.beginPath();
   ctx.arc(x, y, r, 0, Math.PI * 2);
   ctx.fill();
@@ -356,6 +387,18 @@ function renderParticles(ctx: CanvasRenderingContext2D): void {
         ctx.lineTo(-half, half);
         ctx.closePath();
         ctx.fill();
+        break;
+      case 'coin':
+        // Gold coin particle
+        ctx.beginPath();
+        ctx.arc(0, 0, half, 0, Math.PI * 2);
+        ctx.fill();
+        // Inner ring
+        ctx.strokeStyle = '#B8860B';
+        ctx.lineWidth = 0.5;
+        ctx.beginPath();
+        ctx.arc(0, 0, half * 0.6, 0, Math.PI * 2);
+        ctx.stroke();
         break;
     }
 
