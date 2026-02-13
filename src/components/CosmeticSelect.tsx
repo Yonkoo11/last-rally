@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useAccount } from 'wagmi';
 import { PaddleSkin, TrailType, ArenaTheme, CourtStyle, WeatherEffect } from '../types';
 import {
   loadCosmetics,
@@ -31,6 +32,7 @@ type Tab = 'paddles' | 'trails' | 'themes' | 'courts' | 'weather';
 export function CosmeticSelect({ onClose, isOverlay = false }: CosmeticSelectProps) {
   const [activeTab, setActiveTab] = useState<Tab>('paddles');
   const [, forceUpdate] = useState({});
+  const { address } = useAccount();
   const cosmetics = loadCosmetics();
   const stats = loadStats();
   const questProgress = loadQuestProgress();
@@ -47,6 +49,7 @@ export function CosmeticSelect({ onClose, isOverlay = false }: CosmeticSelectPro
     aiHardWins: stats.aiHardWins,
     aiImpossibleWins: stats.aiImpossibleWins,
     courtWins: {} as Record<string, number>, // TODO: Track per-court wins if needed
+    walletConnected: !!address,
   };
 
   const handleSelect = (type: 'paddle' | 'trail' | 'theme' | 'court' | 'weather', id: string) => {

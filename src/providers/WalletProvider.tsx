@@ -1,7 +1,5 @@
-'use client';
-
 import { ReactNode } from 'react';
-import { WagmiProvider, createConfig, http } from 'wagmi';
+import { WagmiProvider, http } from 'wagmi';
 import { avalanche, avalancheFuji } from 'wagmi/chains';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { RainbowKitProvider, getDefaultConfig, darkTheme } from '@rainbow-me/rainbowkit';
@@ -48,5 +46,3 @@ export function WalletProvider({ children }: WalletProviderProps) {
     </WagmiProvider>
   );
 }
-
-export { config };

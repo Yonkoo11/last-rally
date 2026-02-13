@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Difficulty, Quest, GameMode, CourtStyle } from '../types';
-import { loadQuestProgress, loadStats, loadPlayerName, savePlayerName, loadCosmetics, selectCosmetic } from '../lib/storage';
+import { loadQuestProgress, loadStats, loadPlayerName, savePlayerName, loadCosmetics, loadAchievements, selectCosmetic } from '../lib/storage';
 import { QUESTS } from '../data/quests';
 import { COURT_STYLES, isUnlocked } from '../data/cosmetics';
 import { DIFFICULTY_NAMES, DIFFICULTY_DESCRIPTIONS, OPPONENT_NAMES } from '../game/ai';
@@ -9,7 +9,6 @@ import { playMenuSelect } from '../audio/sounds';
 import './ModeSelect.css';
 
 interface ModeSelectProps {
-  onSelectMode: (mode: GameMode, difficulty?: Difficulty, quest?: Quest) => void;
   onBack: () => void;
   onStartGame: (player1Name: string, player2Name: string, mode: GameMode, difficulty?: Difficulty, quest?: Quest) => void;
 }
@@ -41,7 +40,7 @@ export function ModeSelect({ onBack, onStartGame }: ModeSelectProps) {
     gamesPlayed: stats.totalGames,
     totalWins: stats.totalWins,
     completedQuests: questProgress.completedQuests,
-    unlockedAchievements: Object.keys(loadCosmetics().unlockedPaddleSkins || []),
+    unlockedAchievements: Object.keys(loadAchievements()),
     bestStreak: stats.bestWinStreak,
     aiEasyWins: stats.aiEasyWins,
     aiMediumWins: stats.aiMediumWins,

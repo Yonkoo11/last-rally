@@ -54,6 +54,7 @@ interface PongArenaProps {
   config: GameConfig;
   onMatchEnd: (result: MatchResult) => void;
   onQuit: () => void;
+  onViewAchievements: () => void;
 }
 
 interface KeyState {
@@ -65,7 +66,7 @@ interface KeyState {
   arrowdown: boolean;
 }
 
-export function PongArena({ config, onMatchEnd, onQuit }: PongArenaProps) {
+export function PongArena({ config, onMatchEnd, onQuit, onViewAchievements }: PongArenaProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const gameLoopRef = useRef<number | undefined>(undefined);
   const gameLoopCallbackRef = useRef<(timestamp: number) => void>(() => {});
@@ -557,6 +558,7 @@ export function PongArena({ config, onMatchEnd, onQuit }: PongArenaProps) {
                 gameLoopRef.current = requestAnimationFrame(gameLoop);
               }}
               onQuit={onQuit}
+              onViewAchievements={onViewAchievements}
             />
           )}
         </div>
@@ -585,6 +587,7 @@ interface VictoryOverlayProps {
   isPlayerWin: boolean;
   onRematch: () => void;
   onQuit: () => void;
+  onViewAchievements: () => void;
 }
 
 function VictoryOverlay({
@@ -596,6 +599,7 @@ function VictoryOverlay({
   isPlayerWin,
   onRematch,
   onQuit,
+  onViewAchievements,
 }: VictoryOverlayProps) {
   const winnerName = winner === 'left' ? player1Name : player2Name;
 
@@ -613,6 +617,9 @@ function VictoryOverlay({
         <div className="victory-buttons">
           <button className="btn btn-primary" onClick={onRematch}>
             Rematch
+          </button>
+          <button className="btn btn-secondary" onClick={onViewAchievements}>
+            Achievements
           </button>
           <button className="btn btn-secondary" onClick={onQuit}>
             Quit

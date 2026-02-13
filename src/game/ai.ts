@@ -1,5 +1,5 @@
 import { Ball, Paddle, Difficulty, AIConfig, QuestModifiers } from '../types';
-import { predictBallY, movePaddle, setPaddleY } from './physics';
+import { predictBallY, setPaddleY } from './physics';
 import {
   AI_CONFIGS,
   AI_MIN_SPEED_MULTIPLIER,

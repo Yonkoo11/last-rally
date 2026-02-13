@@ -74,7 +74,7 @@ export function generateAchievementMetadata(achievementId: string): NFTMetadata 
     // Using a data URI for the emoji as placeholder
     // In production, this would be an IPFS URL to a proper image
     image: generateSVGDataUri(achievement.icon, achievement.name, achievement.category),
-    external_url: 'https://last-rally.game',
+    external_url: 'https://yonkoo11.github.io/last-rally/',
     attributes: [
       {
         trait_type: 'Category',

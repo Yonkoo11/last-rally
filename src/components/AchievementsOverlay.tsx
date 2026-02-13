@@ -4,7 +4,6 @@ import { loadAchievements } from '../lib/storage';
 import { ACHIEVEMENTS } from '../data/achievements';
 import { playMenuSelect } from '../audio/sounds';
 import { useMintAchievement, useHasAchievementOnChain, useIsMintingAvailable } from '../lib/nft';
-import { getContractAddress, getTransactionUrl } from '../lib/contracts';
 import './AchievementsOverlay.css';
 
 interface AchievementsOverlayProps {
@@ -15,7 +14,7 @@ type Category = 'all' | 'victory' | 'skill' | 'progression' | 'secret';
 
 // Mint button component for individual achievements
 function MintButton({ achievementId, isUnlocked }: { achievementId: string; isUnlocked: boolean }) {
-  const { address, chainId } = useAccount();
+  const { address } = useAccount();
   const isMintingAvailable = useIsMintingAvailable();
   const { hasMinted, isLoading: checkingMinted } = useHasAchievementOnChain(achievementId);
   const { mintAchievement, mintState, reset } = useMintAchievement();

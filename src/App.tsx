@@ -18,7 +18,6 @@ import { CosmeticSelect } from './components/CosmeticSelect';
 import { StatsOverlay } from './components/StatsOverlay';
 import { AchievementsOverlay } from './components/AchievementsOverlay';
 import { AboutOverlay } from './components/AboutOverlay';
-import { WalletConnect } from './components/WalletConnect';
 import { processMatchResult } from './lib/stats';
 import { loadCosmetics, loadPlayerName } from './lib/storage';
 import { getQuestById } from './data/quests';
@@ -144,7 +143,6 @@ function AppContent() {
       case 'modeSelect':
         return (
           <ModeSelect
-            onSelectMode={() => {}} // Not used in new flow
             onBack={handleBackToTitle}
             onStartGame={handleStartGame}
           />
@@ -157,6 +155,7 @@ function AppContent() {
             config={gameConfig}
             onMatchEnd={handleMatchEnd}
             onQuit={handleQuit}
+            onViewAchievements={() => setShowAchievements(true)}
           />
         );
 

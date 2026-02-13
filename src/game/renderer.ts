@@ -168,9 +168,6 @@ export function renderGame(
   // Render court-specific markings
   renderCourtMarkings(ctx, courtStyle, theme);
 
-  // Draw scores
-  renderScores(ctx, leftScore, rightScore, colors.text);
-
   // Draw trail
   renderTrail(ctx, ball.trail, theme);
 
@@ -193,16 +190,6 @@ export function renderGame(
 // Re-export clearWeather for cleanup
 export { clearWeather };
 
-
-function renderScores(
-  _ctx: CanvasRenderingContext2D,
-  _leftScore: number,
-  _rightScore: number,
-  _color: string
-): void {
-  // Scores are now rendered externally in the HUD
-  // Keep this function but don't render anything on canvas
-}
 
 function renderPaddle(
   ctx: CanvasRenderingContext2D,
@@ -412,26 +399,4 @@ export function renderPausedOverlay(
   ctx.font = '500 16px "Inter", sans-serif';
   ctx.fillStyle = 'rgba(161, 161, 170, 0.8)';
   ctx.fillText('Press ESC to resume', CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2 + 20);
-}
-
-export function renderNames(
-  ctx: CanvasRenderingContext2D,
-  leftName: string,
-  rightName: string,
-  _theme: ArenaTheme
-): void {
-  ctx.font = '500 13px "Inter", sans-serif';
-  ctx.globalAlpha = 0.85;
-
-  // Left player (cyan)
-  ctx.textAlign = 'left';
-  ctx.fillStyle = PLAYER_COLORS.player1;
-  ctx.fillText(leftName.toUpperCase(), 20, CANVAS_HEIGHT - 15);
-
-  // Right player (red)
-  ctx.textAlign = 'right';
-  ctx.fillStyle = PLAYER_COLORS.player2;
-  ctx.fillText(rightName.toUpperCase(), CANVAS_WIDTH - 20, CANVAS_HEIGHT - 15);
-
-  ctx.globalAlpha = 1;
 }

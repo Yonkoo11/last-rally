@@ -1,7 +1,7 @@
 // Contract addresses for different networks
 export const CONTRACT_ADDRESSES = {
   // Avalanche Fuji Testnet
-  43113: (import.meta.env.VITE_NFT_CONTRACT_FUJI as string) || '',
+  43113: (import.meta.env.VITE_NFT_CONTRACT_FUJI as string) || '0x6b413bDFA822c84Bfe50BFc4dca062CdbecB1cf9',
   // Avalanche Mainnet
   43114: (import.meta.env.VITE_NFT_CONTRACT_MAINNET as string) || '',
 } as const;

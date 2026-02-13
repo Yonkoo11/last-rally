@@ -85,7 +85,7 @@ export function AboutOverlay({ onClose }: AboutOverlayProps) {
               <li>
                 <span className="feature-icon">🏆</span>
                 <div>
-                  <strong>22 Achievements</strong>
+                  <strong>21 Achievements</strong>
                   <span>Mint them as soul-bound NFTs</span>
                 </div>
               </li>

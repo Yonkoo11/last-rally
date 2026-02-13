@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useAccount, useWriteContract, useWaitForTransactionReceipt, useReadContract } from 'wagmi';
 import { LAST_RALLY_NFT_ABI, getContractAddress, getTransactionUrl } from './contracts';
 import { generateAchievementMetadata, metadataToDataUri, getNumericAchievementId } from './metadata';
@@ -62,18 +62,35 @@ export function usePlayerAchievementsOnChain() {
 export function useMintAchievement() {
   const { address, chainId } = useAccount();
   const contractAddress = chainId ? getContractAddress(chainId) : undefined;
-  const [mintState, setMintState] = useState<MintState>({ status: 'idle' });
+  const [manualState, setManualState] = useState<MintState>({ status: 'idle' });
 
-  const { writeContract, data: hash, isPending, error: writeError } = useWriteContract();
+  const { writeContract, data: hash, isPending, error: writeError, reset: resetWrite } = useWriteContract();
 
   const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({
     hash,
   });
 
+  // Derive mint status from wagmi hook state + manual state (no useEffect needed)
+  const mintState = useMemo<MintState>(() => {
+    if (writeError && manualState.status !== 'idle') {
+      return { status: 'error', error: writeError.message || 'Transaction failed' };
+    }
+    if (hash && isSuccess) {
+      return { status: 'success', txHash: hash, explorerUrl: chainId ? getTransactionUrl(chainId, hash) : undefined };
+    }
+    if (hash && isConfirming) {
+      return { status: 'minting', txHash: hash, explorerUrl: chainId ? getTransactionUrl(chainId, hash) : undefined };
+    }
+    if (isPending) {
+      return { status: 'confirming' };
+    }
+    return manualState;
+  }, [writeError, hash, isSuccess, isConfirming, isPending, chainId, manualState]);
+
   const mintAchievement = useCallback(
     async (achievementId: string) => {
       if (!address || !chainId || !contractAddress) {
-        setMintState({
+        setManualState({
           status: 'error',
           error: 'Please connect your wallet first',
         });
@@ -81,16 +98,14 @@ export function useMintAchievement() {
       }
 
       try {
-        setMintState({ status: 'preparing' });
+        setManualState({ status: 'preparing' });
 
         // Generate metadata
         const metadata = generateAchievementMetadata(achievementId);
         const metadataUri = metadataToDataUri(metadata);
         const numericId = getNumericAchievementId(achievementId);
 
-        setMintState({ status: 'confirming' });
-
-        // Call the contract
+        // Call the contract - isPending will drive 'confirming' state
         writeContract({
           address: contractAddress as `0x${string}`,
           abi: LAST_RALLY_NFT_ABI,
@@ -98,7 +113,7 @@ export function useMintAchievement() {
           args: [BigInt(numericId), metadataUri],
         });
       } catch (err) {
-        setMintState({
+        setManualState({
           status: 'error',
           error: err instanceof Error ? err.message : 'Failed to mint achievement',
         });
@@ -107,39 +122,10 @@ export function useMintAchievement() {
     [address, chainId, contractAddress, writeContract]
   );
 
-  // Update state based on transaction status
-  if (isPending && mintState.status === 'confirming') {
-    // Transaction is being confirmed in wallet
-  }
-
-  if (hash && mintState.status !== 'success' && mintState.status !== 'error') {
-    if (isConfirming) {
-      setMintState({
-        status: 'minting',
-        txHash: hash,
-        explorerUrl: chainId ? getTransactionUrl(chainId, hash) : undefined,
-      });
-    }
-
-    if (isSuccess) {
-      setMintState({
-        status: 'success',
-        txHash: hash,
-        explorerUrl: chainId ? getTransactionUrl(chainId, hash) : undefined,
-      });
-    }
-  }
-
-  if (writeError && mintState.status !== 'error') {
-    setMintState({
-      status: 'error',
-      error: writeError.message || 'Transaction failed',
-    });
-  }
-
   const reset = useCallback(() => {
-    setMintState({ status: 'idle' });
-  }, []);
+    setManualState({ status: 'idle' });
+    resetWrite();
+  }, [resetWrite]);
 
   return {
     mintAchievement,
