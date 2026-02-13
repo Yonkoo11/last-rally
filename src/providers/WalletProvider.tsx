@@ -8,7 +8,7 @@ import '@rainbow-me/rainbowkit/styles.css';
 // Configure chains - Fuji for testnet, Avalanche for mainnet
 const config = getDefaultConfig({
   appName: 'Last Rally',
-  projectId: 'last-rally-pong', // WalletConnect project ID (get from cloud.walletconnect.com)
+  projectId: '414cde2e1b60012cfb428ceff08653c9',
   chains: [avalancheFuji, avalanche],
   transports: {
     [avalancheFuji.id]: http('https://api.avax-test.network/ext/bc/C/rpc'),
