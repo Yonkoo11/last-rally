@@ -76,11 +76,6 @@
   color: var(--text-primary, #fff);
 }
 
-.wager-menu-card:hover {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(20, 241, 149, 0.3);
-  transform: translateY(-2px);
-}
 
 .wager-menu-icon {
   color: var(--color-solana);
@@ -120,10 +115,6 @@
   color: var(--text-primary, #fff);
 }
 
-.wager-preset:hover:not(.disabled) {
-  border-color: rgba(20, 241, 149, 0.4);
-  background: rgba(20, 241, 149, 0.05);
-}
 
 .wager-preset.selected {
   border-color: var(--color-solana);
@@ -255,10 +246,6 @@
   text-align: left;
 }
 
-.wager-match-card:hover {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(20, 241, 149, 0.3);
-}
 
 .match-card-top {
   display: flex;
@@ -338,9 +325,6 @@
   transition: all 0.2s;
 }
 
-.wager-lobby .btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.08);
-}
 
 @media (max-width: 480px) {
   .wager-menu-grid {
@@ -348,5 +332,28 @@
   }
   .wager-presets {
     grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* ========== HOVER STATES (TOUCH DEVICE SAFE) ========== */
+@media (hover: hover) {
+  .wager-menu-card:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(20, 241, 149, 0.3);
+    transform: translateY(-2px);
+  }
+
+  .wager-preset:hover:not(.disabled) {
+    border-color: rgba(20, 241, 149, 0.4);
+    background: rgba(20, 241, 149, 0.05);
+  }
+
+  .wager-match-card:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(20, 241, 149, 0.3);
+  }
+
+  .wager-lobby .btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.08);
   }
 }

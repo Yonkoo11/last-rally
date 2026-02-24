@@ -278,10 +278,6 @@
               transform var(--duration-normal) var(--ease-out);
 }
 
-.card:hover {
-  background: var(--bg-subtle);
-  border-color: var(--border-default);
-}
 
 /* Button Base */
 .btn {
@@ -306,10 +302,6 @@
   color: #1a1a1a;
 }
 
-.btn-primary:hover {
-  background: linear-gradient(135deg, #FFE44D 0%, #FFAA00 100%);
-  box-shadow: 0 6px 30px rgba(255, 170, 0, 0.5);
-}
 
 .btn-secondary {
   background: transparent;
@@ -317,11 +309,6 @@
   color: var(--text-secondary);
 }
 
-.btn-secondary:hover {
-  border-color: var(--border-strong);
-  color: var(--text-primary);
-  background: var(--bg-subtle);
-}
 
 .btn-ghost {
   background: transparent;
@@ -330,10 +317,6 @@
   padding: var(--space-2) var(--space-3);
 }
 
-.btn-ghost:hover {
-  color: var(--text-primary);
-  background: var(--bg-subtle);
-}
 
 .btn-large {
   padding: var(--space-5) var(--space-10);
@@ -354,10 +337,6 @@
               background-color var(--duration-fast) var(--ease-out);
 }
 
-.btn-back:hover {
-  color: var(--text-primary);
-  background: var(--bg-subtle);
-}
 
 /* Settings Icon Button */
 .btn-settings {
@@ -378,11 +357,6 @@
   z-index: var(--z-elevated);
 }
 
-.btn-settings:hover {
-  background: var(--bg-subtle);
-  border-color: var(--border-default);
-  color: var(--text-primary);
-}
 
 .btn-settings svg {
   width: 20px;
@@ -439,9 +413,6 @@
   transition: color var(--duration-fast) var(--ease-out);
 }
 
-.modal-close:hover {
-  color: var(--text-primary);
-}
 
 /* Input Base */
 .input {
@@ -465,4 +436,43 @@
 
 .input::placeholder {
   color: var(--text-disabled);
+}
+
+/* ========== HOVER STATES (TOUCH DEVICE SAFE) ========== */
+@media (hover: hover) {
+  .card:hover {
+    background: var(--bg-subtle);
+    border-color: var(--border-default);
+  }
+
+  .btn-primary:hover {
+    background: linear-gradient(135deg, #FFE44D 0%, #FFAA00 100%);
+    box-shadow: 0 6px 30px rgba(255, 170, 0, 0.5);
+  }
+
+  .btn-secondary:hover {
+    border-color: var(--border-strong);
+    color: var(--text-primary);
+    background: var(--bg-subtle);
+  }
+
+  .btn-ghost:hover {
+    color: var(--text-primary);
+    background: var(--bg-subtle);
+  }
+
+  .btn-back:hover {
+    color: var(--text-primary);
+    background: var(--bg-subtle);
+  }
+
+  .btn-settings:hover {
+    background: var(--bg-subtle);
+    border-color: var(--border-default);
+    color: var(--text-primary);
+  }
+
+  .modal-close:hover {
+    color: var(--text-primary);
+  }
 }

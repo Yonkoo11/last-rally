@@ -440,3 +440,23 @@
     opacity: 0;
   }
 }
+
+/* ========== HOVER STATES (TOUCH DEVICE SAFE) ========== */
+@media (hover: hover) {
+  .cta-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 40px rgba(255, 170, 0, 0.6);
+  }
+
+  .secondary-cta:hover {
+    background: var(--bg-subtle);
+    border-color: var(--border-default);
+    color: var(--text-primary);
+  }
+
+  .feature-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(255, 215, 0, 0.3);
+    box-shadow: 0 0 30px rgba(255, 170, 0, 0.15);
+  }
+}

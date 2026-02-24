@@ -113,9 +113,6 @@ button:disabled {
   transition: opacity var(--duration-normal) ease;
 }
 
-.neon-border:hover::before {
-  opacity: 1;
-}
 
 /* Glow text */
 .glow-text-red {
@@ -213,5 +210,12 @@ button:disabled {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+/* ========== HOVER STATES (TOUCH DEVICE SAFE) ========== */
+@media (hover: hover) {
+  .neon-border:hover::before {
+    opacity: 1;
   }
 }

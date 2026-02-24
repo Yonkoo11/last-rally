@@ -205,11 +205,6 @@
   transition: all 0.2s var(--ease-out);
 }
 
-.mint-btn:hover {
-  background: rgba(20, 241, 149, 0.15);
-  border-color: rgba(20, 241, 149, 0.5);
-  box-shadow: 0 0 12px rgba(20, 241, 149, 0.2);
-}
 
 .mint-btn--retry {
   color: var(--color-gold);
@@ -217,10 +212,6 @@
   border-color: rgba(255, 215, 0, 0.3);
 }
 
-.mint-btn--retry:hover {
-  background: rgba(255, 215, 0, 0.15);
-  border-color: rgba(255, 215, 0, 0.5);
-}
 
 .mint-pending {
   font-family: var(--font-mono);
@@ -278,5 +269,19 @@
 
   .achievement-card__desc {
     font-size: var(--text-xs);
+  }
+}
+
+/* ========== HOVER STATES (TOUCH DEVICE SAFE) ========== */
+@media (hover: hover) {
+  .mint-btn:hover {
+    background: rgba(20, 241, 149, 0.15);
+    border-color: rgba(20, 241, 149, 0.5);
+    box-shadow: 0 0 12px rgba(20, 241, 149, 0.2);
+  }
+
+  .mint-btn--retry:hover {
+    background: rgba(255, 215, 0, 0.15);
+    border-color: rgba(255, 215, 0, 0.5);
   }
 }

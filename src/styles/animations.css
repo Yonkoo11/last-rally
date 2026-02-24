@@ -571,6 +571,10 @@
   50% { transform: translateY(-3px); }
 }
 
-.hover-bounce:hover {
-  animation: iconBounce 400ms var(--ease-out);
+
+/* ========== HOVER STATES (TOUCH DEVICE SAFE) ========== */
+@media (hover: hover) {
+  .hover-bounce:hover {
+    animation: hoverBounce 0.6s ease-in-out;
+  }
 }

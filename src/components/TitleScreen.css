@@ -178,12 +178,6 @@
   transition: transform 0.3s var(--ease-out), box-shadow 0.3s var(--ease-out);
 }
 
-.preview-container:hover canvas {
-  transform: scale(1.02);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5),
-              0 0 0 1px rgba(255, 255, 255, 0.1),
-              0 0 30px rgba(255, 170, 0, 0.15);
-}
 
 .preview-hint {
   position: absolute;
@@ -197,9 +191,6 @@
   transition: opacity 0.2s var(--ease-out);
 }
 
-.preview-container:hover .preview-hint {
-  opacity: 1;
-}
 
 /* CTAs */
 .cta-section {
@@ -239,11 +230,6 @@
   50% { box-shadow: 0 4px 24px rgba(255, 170, 0, 0.4); }
 }
 
-.btn-play-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 30px rgba(255, 170, 0, 0.5);
-  animation: none; /* Stop pulse on hover */
-}
 
 .btn-play-primary:active {
   transform: translateY(0);
@@ -278,11 +264,6 @@
               color 0.2s var(--ease-out);
 }
 
-.btn-secondary:hover {
-  background: var(--bg-subtle);
-  border-color: var(--border-default);
-  color: var(--text-primary);
-}
 
 .press-hint {
   font-family: var(--font-ui);
@@ -417,10 +398,6 @@
   transition: color 0.2s var(--ease-out), background-color 0.2s var(--ease-out);
 }
 
-.bottom-btn:hover {
-  color: var(--text-primary);
-  background: var(--bg-subtle);
-}
 
 .bottom-btn svg {
   width: 20px;
@@ -544,5 +521,33 @@
   .title-screen.entering .bg-gradient,
   .title-screen.entering .preview-container {
     animation: none !important;
+  }
+}
+
+/* ========== HOVER STATES (TOUCH DEVICE SAFE) ========== */
+@media (hover: hover) {
+  .preview-container:hover canvas {
+    transform: scale(1.02);
+  }
+
+  .preview-container:hover .preview-hint {
+    opacity: 1;
+  }
+
+  .btn-play-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 30px rgba(255, 170, 0, 0.5);
+    animation: none;
+  }
+
+  .btn-secondary:hover {
+    background: var(--bg-subtle);
+    border-color: var(--border-default);
+    color: var(--text-primary);
+  }
+
+  .bottom-btn:hover {
+    color: var(--text-primary);
+    background: var(--bg-subtle);
   }
 }
