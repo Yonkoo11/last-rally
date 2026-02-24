@@ -156,6 +156,28 @@ export function renderGame(
   ctx.fillStyle = colors.background;
   ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
+  // BONK theme: warm amber vignette
+  if (theme === 'bonk') {
+    const bonkGlow = ctx.createRadialGradient(
+      CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, 0,
+      CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, CANVAS_WIDTH * 0.5
+    );
+    bonkGlow.addColorStop(0, 'rgba(249, 115, 22, 0.06)');
+    bonkGlow.addColorStop(0.5, 'rgba(249, 115, 22, 0.02)');
+    bonkGlow.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    ctx.fillStyle = bonkGlow;
+    ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
+    // BONK text watermark at center
+    ctx.save();
+    ctx.font = 'bold 120px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = 'rgba(249, 115, 22, 0.04)';
+    ctx.fillText('BONK', CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2);
+    ctx.restore();
+  }
+
   // Render premium court elements
   renderCourtBackground(ctx, colors);
   renderGoalZones(ctx);
@@ -476,14 +498,14 @@ function renderPaddle(
   const baseColor = usePlayerColor ? playerColor : skinColor;
 
   if (Array.isArray(baseColor)) {
-    // Rainbow effect
+    // Gradient effect (rainbow, bonk)
     const gradient = ctx.createLinearGradient(x, y, x, y + height);
     baseColor.forEach((c, i) => {
       gradient.addColorStop(i / (baseColor.length - 1), c);
     });
     ctx.fillStyle = gradient;
-    ctx.shadowColor = baseColor[2];
-    ctx.shadowBlur = 25;
+    ctx.shadowColor = paddle.skin === 'bonk' ? '#F97316' : baseColor[2];
+    ctx.shadowBlur = paddle.skin === 'bonk' ? 35 : 25;
   } else {
     ctx.fillStyle = baseColor;
     // Layer 1: Glow effect

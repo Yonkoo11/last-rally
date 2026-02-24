@@ -319,7 +319,7 @@ export function predictBallY(
 ): number {
   let x = ball.x;
   let y = ball.y;
-  let vx = ball.velocity.x;
+  const vx = ball.velocity.x;
   let vy = ball.velocity.y;
 
   for (let i = 0; i < maxIterations; i++) {

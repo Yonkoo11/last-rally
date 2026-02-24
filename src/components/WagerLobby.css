@@ -1,0 +1,352 @@
+/* WagerLobby - Matches ModeSelect cinematic style */
+
+.wager-lobby {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--bg-base);
+  padding: var(--space-10);
+  animation: pageEnter 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  position: relative;
+  overflow: hidden;
+}
+
+.wager-lobby::before {
+  content: '';
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 800px;
+  height: 800px;
+  background: radial-gradient(circle, rgba(20, 241, 149, 0.06) 0%, transparent 70%);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.wager-lobby > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Balance */
+.wager-balance {
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--text-secondary, #888);
+  margin-bottom: var(--space-8);
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+}
+
+/* Connect prompt */
+.wager-connect-prompt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-6);
+  padding: var(--space-12) 0;
+  text-align: center;
+  color: var(--text-secondary, #888);
+}
+
+.wager-icon-large {
+  opacity: 0.4;
+}
+
+/* Main menu grid */
+.wager-menu-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.wager-menu-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-8) var(--space-6);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--text-primary, #fff);
+}
+
+.wager-menu-card:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(20, 241, 149, 0.3);
+  transform: translateY(-2px);
+}
+
+.wager-menu-icon {
+  color: #14f195;
+}
+
+.wager-menu-title {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.wager-menu-desc {
+  font-size: 0.75rem;
+  color: var(--text-secondary, #888);
+  text-align: center;
+}
+
+/* Wager presets */
+.wager-presets {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+  max-width: 400px;
+  margin: 0 auto var(--space-6);
+}
+
+.wager-preset {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: var(--space-4) var(--space-3);
+  background: rgba(255, 255, 255, 0.03);
+  border: 2px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--text-primary, #fff);
+}
+
+.wager-preset:hover:not(.disabled) {
+  border-color: rgba(20, 241, 149, 0.4);
+  background: rgba(20, 241, 149, 0.05);
+}
+
+.wager-preset.selected {
+  border-color: #14f195;
+  background: rgba(20, 241, 149, 0.1);
+}
+
+.wager-preset.disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.preset-amount {
+  font-size: 1.1rem;
+  font-weight: 700;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+}
+
+.preset-tier {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-secondary, #888);
+}
+
+/* Summary */
+.wager-summary {
+  max-width: 400px;
+  margin: 0 auto var(--space-6);
+  padding: var(--space-4);
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  padding: var(--space-2) 0;
+  font-size: 0.9rem;
+  color: var(--text-secondary, #888);
+}
+
+.summary-row.highlight {
+  color: #14f195;
+  font-weight: 600;
+  font-size: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  margin-top: var(--space-2);
+  padding-top: var(--space-3);
+}
+
+/* Waiting state */
+.wager-waiting {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-6);
+  padding: var(--space-12) 0;
+}
+
+.wager-spinner {
+  width: 48px;
+  height: 48px;
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-top-color: #14f195;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.wager-amount-display {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text-primary, #fff);
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+}
+
+.wager-pot-label {
+  font-size: 0.9rem;
+  color: #14f195;
+}
+
+.wager-match-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.wager-hint {
+  font-size: 0.8rem;
+  color: var(--text-secondary, #888);
+  text-align: center;
+  max-width: 300px;
+}
+
+.wager-match-id {
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 0.8rem;
+  color: var(--text-secondary, #888);
+  background: rgba(255, 255, 255, 0.03);
+  padding: var(--space-2) var(--space-4);
+  border-radius: 6px;
+}
+
+/* Match list (browse) */
+.wager-match-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.wager-match-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-5);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--text-primary, #fff);
+  text-align: left;
+}
+
+.wager-match-card:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(20, 241, 149, 0.3);
+}
+
+.match-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.match-creator {
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 0.85rem;
+  color: var(--text-secondary, #888);
+}
+
+.match-wager {
+  font-weight: 700;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+}
+
+.match-card-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.match-pot {
+  font-size: 0.8rem;
+  color: #14f195;
+}
+
+.match-join-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #14f195;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Empty state */
+.wager-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-6);
+  padding: var(--space-12) 0;
+  color: var(--text-secondary, #888);
+}
+
+/* Error */
+.wager-error {
+  max-width: 400px;
+  margin: var(--space-4) auto 0;
+  padding: var(--space-3) var(--space-4);
+  background: rgba(255, 50, 50, 0.1);
+  border: 1px solid rgba(255, 50, 50, 0.2);
+  border-radius: 8px;
+  color: #ff6b6b;
+  font-size: 0.85rem;
+  text-align: center;
+  cursor: pointer;
+}
+
+/* Buttons in wager lobby context */
+.wager-lobby .btn-primary {
+  max-width: 400px;
+  margin: 0 auto;
+  display: block;
+  width: 100%;
+}
+
+.wager-lobby .btn-secondary {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-secondary, #888);
+  padding: var(--space-3) var(--space-6);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.wager-lobby .btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+@media (max-width: 480px) {
+  .wager-menu-grid {
+    grid-template-columns: 1fr;
+  }
+  .wager-presets {
+    grid-template-columns: 1fr 1fr;
+  }
+}

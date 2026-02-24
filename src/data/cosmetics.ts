@@ -70,6 +70,15 @@ export const PADDLE_SKINS: Cosmetic[] = [
       description: 'Win 50 matches',
     },
   },
+  {
+    id: 'bonk',
+    name: 'BONK Doge',
+    type: 'paddle',
+    unlockCondition: {
+      type: 'default',
+      description: 'Available with wallet connected',
+    },
+  },
 ];
 
 export const BALL_TRAILS: Cosmetic[] = [
@@ -121,6 +130,15 @@ export const BALL_TRAILS: Cosmetic[] = [
       description: 'Achieve a 50-hit rally',
     },
   },
+  {
+    id: 'bonk',
+    name: 'BONK Trail',
+    type: 'trail',
+    unlockCondition: {
+      type: 'default',
+      description: 'Available with wallet connected',
+    },
+  },
 ];
 
 export const ARENA_THEMES: Cosmetic[] = [
@@ -163,6 +181,15 @@ export const ARENA_THEMES: Cosmetic[] = [
       description: 'Win 10 matches in a row',
     },
   },
+  {
+    id: 'bonk',
+    name: 'BONK Arena',
+    type: 'theme',
+    unlockCondition: {
+      type: 'default',
+      description: 'Available with wallet connected',
+    },
+  },
 ];
 
 // Color schemes for cosmetics
@@ -174,6 +201,7 @@ export const PADDLE_COLORS: Record<PaddleSkin, string | string[]> = {
   rainbow: ['#EF4444', '#F59E0B', '#10B981', '#3B82F6', '#8B5CF6'],
   neon: '#00FFFF',
   retro: '#00FF00',
+  bonk: ['#F97316', '#FBBF24', '#F97316'],
 };
 
 // Player-specific colors (used when skin is default)
@@ -188,6 +216,7 @@ export const TRAIL_COLORS: Record<TrailType, string | string[]> = {
   fire: ['#EF4444', '#F59E0B', '#FCD34D'],
   rainbow: ['#EF4444', '#F59E0B', '#10B981', '#3B82F6', '#8B5CF6'],
   pixel: '#00FF00',
+  bonk: ['#F97316', '#FBBF24', '#FDE68A'],
 };
 
 export const THEME_COLORS: Record<
@@ -227,6 +256,13 @@ export const THEME_COLORS: Record<
     ball: '#00FF00',
     text: '#00FF00',
     accent: '#00AA00',
+  },
+  bonk: {
+    background: '#0C0800',  // Warm dark amber
+    lines: '#F97316',
+    ball: '#FBBF24',
+    text: '#FDE68A',
+    accent: '#F97316',
   },
 };
 

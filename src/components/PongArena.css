@@ -470,3 +470,80 @@
     -webkit-user-select: none;
   }
 }
+
+/* ============================================
+   WAGER BAR & VICTORY WAGER
+   ============================================ */
+
+.wager-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4, 16px);
+  padding: var(--space-2, 8px) var(--space-4, 16px);
+  background: rgba(20, 241, 149, 0.08);
+  border-bottom: 1px solid rgba(20, 241, 149, 0.15);
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: var(--text-sm, 14px);
+  position: relative;
+  z-index: 10;
+}
+
+.wager-bar-label {
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(20, 241, 149, 0.6);
+  font-size: 0.7rem;
+}
+
+.wager-bar-amount {
+  color: #14f195;
+  font-weight: 700;
+}
+
+.wager-bar-pot {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.75rem;
+}
+
+.victory-wager {
+  margin: var(--space-2, 8px) 0 var(--space-6, 24px);
+  opacity: 0;
+  animation: staggerFadeUp 0.4s var(--ease-out-expo) 0.65s forwards;
+}
+
+.wager-settling {
+  color: rgba(20, 241, 149, 0.7);
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: var(--text-base, 1rem);
+  animation: pulse 1.5s ease-in-out infinite;
+  margin: 0;
+}
+
+.wager-won {
+  color: #14f195;
+  font-family: var(--font-display, "Space Grotesk", sans-serif);
+  font-size: var(--text-3xl, 2.5rem);
+  font-weight: 800;
+  text-shadow: 0 0 20px rgba(20, 241, 149, 0.4);
+  margin: 0;
+}
+
+.wager-lost {
+  color: #ff6b6b;
+  font-family: var(--font-display, "Space Grotesk", sans-serif);
+  font-size: var(--text-3xl, 2.5rem);
+  font-weight: 800;
+  margin: 0;
+}
+
+.wager-error {
+  color: #ff6b6b;
+  font-size: var(--text-sm, 14px);
+  margin: 0;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}

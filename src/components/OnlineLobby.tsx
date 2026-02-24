@@ -22,8 +22,14 @@ export function OnlineLobby({ onGameStart, onBack }: OnlineLobbyProps) {
 
   const playerIdRef = useRef<1 | 2 | null>(null);
   const onGameStartRef = useRef(onGameStart);
-  playerIdRef.current = playerId;
-  onGameStartRef.current = onGameStart;
+
+  useEffect(() => {
+    playerIdRef.current = playerId;
+  }, [playerId]);
+
+  useEffect(() => {
+    onGameStartRef.current = onGameStart;
+  }, [onGameStart]);
 
   useEffect(() => {
     multiplayer.setCallbacks({

@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState, useCallback } from 'react';
+import React, { useRef, useEffect, useState, useCallback, useMemo } from 'react';
 import {
   GameConfig,
   GamePhase,
@@ -7,6 +7,7 @@ import {
   QuestModifiers,
   BallWithPitch,
   PitchType,
+  WagerInfo,
 } from '../types';
 import {
   createBall,
@@ -54,6 +55,7 @@ interface PongArenaProps {
   config: GameConfig;
   onMatchEnd: (result: MatchResult) => void;
   onQuit: () => void;
+  settlementStatus?: 'settling' | 'settled' | 'error';
 }
 
 interface KeyState {
@@ -65,7 +67,7 @@ interface KeyState {
   arrowdown: boolean;
 }
 
-export function PongArena({ config, onMatchEnd, onQuit }: PongArenaProps) {
+export function PongArena({ config, onMatchEnd, onQuit, settlementStatus }: PongArenaProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const gameLoopRef = useRef<number | undefined>(undefined);
   const lastTimeRef = useRef<number>(0);
@@ -92,7 +94,7 @@ export function PongArena({ config, onMatchEnd, onQuit }: PongArenaProps) {
   const leftScoreRef = useRef(0);
   const rightScoreRef = useRef(0);
 
-  const modifiers: QuestModifiers = config.modifiers || {};
+  const modifiers = useMemo<QuestModifiers>(() => config.modifiers || {}, [config.modifiers]);
   const winScore = modifiers.winScore || WIN_SCORE;
 
   // Touch controls
@@ -420,7 +422,7 @@ export function PongArena({ config, onMatchEnd, onQuit }: PongArenaProps) {
         gameLoopRef.current = requestAnimationFrame(gameLoop);
       }
     },
-    [config, modifiers, countdown, handleScore]
+    [config, modifiers, countdown, handleScore, touchEnabled]
   );
 
   // Start/stop game loop
@@ -459,6 +461,14 @@ export function PongArena({ config, onMatchEnd, onQuit }: PongArenaProps) {
   return (
     <div className={`pong-arena ${touchEnabled ? 'touch-enabled' : ''}`}>
       <button className="quit-btn" onClick={onQuit}>QUIT</button>
+
+      {config.wagerInfo && (
+        <div className="wager-bar">
+          <span className="wager-bar-label">WAGER</span>
+          <span className="wager-bar-amount">{(config.wagerInfo.wagerAmount / 1e9).toFixed(2)} SOL</span>
+          <span className="wager-bar-pot">POT: {(config.wagerInfo.wagerAmount * 2 / 1e9).toFixed(2)} SOL</span>
+        </div>
+      )}
 
       <div className="game-layout">
         {/* Header */}
@@ -514,6 +524,8 @@ export function PongArena({ config, onMatchEnd, onQuit }: PongArenaProps) {
               player1Name={config.player1Name}
               player2Name={config.player2Name}
               isPlayerWin={winner === 'left'}
+              wagerInfo={config.wagerInfo}
+              settlementStatus={settlementStatus}
               onRematch={() => {
                 setPhase('countdown');
                 setCountdown(COUNTDOWN_SECONDS);
@@ -533,7 +545,6 @@ export function PongArena({ config, onMatchEnd, onQuit }: PongArenaProps) {
                 clearTrail();
                 clearParticles();
                 resetAIState();
-                gameLoopRef.current = requestAnimationFrame(gameLoop);
               }}
               onQuit={onQuit}
             />
@@ -570,6 +581,8 @@ interface VictoryOverlayProps {
   isPlayerWin: boolean;
   onRematch: () => void;
   onQuit: () => void;
+  wagerInfo?: WagerInfo;
+  settlementStatus?: 'settling' | 'settled' | 'error';
 }
 
 function VictoryOverlay({
@@ -581,8 +594,12 @@ function VictoryOverlay({
   isPlayerWin,
   onRematch,
   onQuit,
+  wagerInfo,
+  settlementStatus,
 }: VictoryOverlayProps) {
   const winnerName = winner === 'left' ? player1Name : player2Name;
+  const isWagerMatch = !!wagerInfo;
+  const potSOL = wagerInfo ? (wagerInfo.wagerAmount * 2 / 1e9).toFixed(2) : '0';
 
   return (
     <div className="victory-overlay">
@@ -595,12 +612,31 @@ function VictoryOverlay({
           {leftScore} - {rightScore}
         </p>
 
+        {isWagerMatch && (
+          <div className="victory-wager">
+            {settlementStatus === 'settling' && (
+              <p className="wager-settling">Settling on Solana...</p>
+            )}
+            {settlementStatus === 'settled' && isPlayerWin && (
+              <p className="wager-won">+{potSOL} SOL</p>
+            )}
+            {settlementStatus === 'settled' && !isPlayerWin && (
+              <p className="wager-lost">-{(wagerInfo!.wagerAmount / 1e9).toFixed(2)} SOL</p>
+            )}
+            {settlementStatus === 'error' && (
+              <p className="wager-error">Settlement failed</p>
+            )}
+          </div>
+        )}
+
         <div className="victory-buttons">
-          <button className="btn btn-primary" onClick={onRematch}>
-            Rematch
-          </button>
-          <button className="btn btn-secondary" onClick={onQuit}>
-            Quit
+          {!isWagerMatch && (
+            <button className="btn btn-primary" onClick={onRematch}>
+              Rematch
+            </button>
+          )}
+          <button className={`btn ${isWagerMatch ? 'btn-primary' : 'btn-secondary'}`} onClick={onQuit}>
+            {isWagerMatch ? 'Back to Lobby' : 'Quit'}
           </button>
         </div>
       </div>

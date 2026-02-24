@@ -1,78 +1,76 @@
-# Last Rally - Session Progress
+# Last Rally v4 - Progress
 
-## Current Session: Jan 19, 2026
+## Session: Feb 22, 2026 (Day 1-4)
 
-### Completed Today
-- [x] Visual QA of page transitions (Landing → Dashboard)
-- [x] Verified ball acceleration and warm glow during exit
-- [x] Created ai/ directory with memory files
-- [x] **Mobile Touch Controls Implementation:**
-  - Created `src/game/touch.ts` - TouchController class
-  - Integrated touch events in PongArena.tsx
-  - Touch Y position maps directly to paddle Y
-  - Left half = Player 1, Right half = Player 2 (PvP)
-  - Touch hint overlay for first-time mobile users
-  - Auto-detect touch devices in settings
-  - CSS optimizations for touch devices
-- [x] **Transition Sound Effects:**
-  - `playTransitionOut()` - Rising filtered noise whoosh (0.2s)
-  - `playTransitionIn()` - Descending sine tone (0.15s)
-  - Integrated into LandingPage and TitleScreen
-- [x] Build passes with no errors
-- [x] **AI Wording Cleanup:**
-  - Replaced all user-facing "AI" text with friendlier alternatives
-  - Opponent personas: ROOKIE, RIVAL, ACE, CHAMPION (instead of EASY AI, etc.)
-  - "Challenge the AI" → "Test your skills"
-  - "Beat Easy AI" → "Win matches on Easy"
-  - Updated: ModeSelect.tsx, App.tsx, achievements.ts, cosmetics.ts, quests.ts, TitleScreen.tsx, usePlayerData.ts, GamePreviewCanvas.tsx, ModeSelect.css
+### COMPLETED
 
-### Blockers
-None.
+#### Day 1 - Solana Wallet Integration
+- Installed @solana/wallet-adapter-*, @coral-xyz/anchor, buffer
+- Created `src/providers/WalletProvider.tsx` (Phantom + Solflare)
+- Created `src/components/WalletConnect.tsx` (custom arcade-themed button)
+- Created `src/lib/solana.ts` (connection config, token mints, wager tiers)
+- Buffer polyfill in vite.config.ts and main.tsx
+- Ported fire landing page from v1 with Solana branding
+- Fixed OnlineLobby ref mutations, PongArena stale refs, multiplayer timeout
+- Added ErrorBoundary component
 
-### Files Modified
-- `src/game/touch.ts` (NEW)
-- `src/game/ai.ts` (OPPONENT_NAMES added)
-- `src/components/PongArena.tsx`
-- `src/components/PongArena.css`
-- `src/components/ModeSelect.tsx`
-- `src/components/ModeSelect.css`
-- `src/components/TitleScreen.tsx`
-- `src/components/GamePreviewCanvas.tsx`
-- `src/lib/storage.ts`
-- `src/audio/sounds.ts`
-- `src/components/LandingPage.tsx`
-- `src/data/achievements.ts`
-- `src/data/cosmetics.ts`
-- `src/data/quests.ts`
-- `src/hooks/usePlayerData.ts`
-- `src/App.tsx`
+#### Day 2 - Anchor Program
+- Created `programs/last-rally/src/lib.rs` with full wager logic
+- Structs: MatchAccount (140 bytes), PlayerProfile (69 bytes)
+- 5 instructions: initialize_player, create_match, join_match, settle_match, cancel_match
+- cancel_match uses `close = player1` to return rent
+- Program ID: `AKPb5mB3Yn94QHUQrsQTSjDYUAgKqxPhZSUvUbkXgtaq`
+- Fixed ESM/CJS conflict: `tests/package.json` with `{"type": "commonjs"}`
+- ALL 7 TESTS PASSING on localnet via `anchor test`
 
----
+#### Day 3 - Frontend Wager Integration + Code Quality
+- Created `src/lib/anchor.ts` - Anchor provider, program init, PDA helpers
+- Created `src/hooks/useWager.ts` - Full match lifecycle hook
+- Created `src/components/WagerLobby.tsx` + CSS - Create/Browse match UI
+- Added 'wager' GameMode, 'wagerLobby' ViewState, WagerInfo type
+- Added Wager Match card to ModeSelect (green $ icon)
+- Wired WagerLobby into App.tsx routing
+- Settlement flow: wager bar during match, auto-settle on victory, show winnings
+- Full codebase audit: fixed 2 critical, 4 high, 8 medium issues
+- Deleted 7 dead legacy files (lib/quests.ts, lib/achievements.ts, etc.)
+- Fixed PongArena useMemo for modifiers, lexical switch declarations, const fixes
+- BONK cosmetics: paddle (orange gradient), trail (amber), arena (warm vignette + BONK watermark)
+- Fixed storage.ts VALID_* arrays to include 'bonk'
+- BONK theme VERIFIED working in gameplay
 
-## Previous Sessions
+#### Day 4 - Achievement NFTs + Polyfills
+- Created `src/lib/metadata.ts` - SVG generation + Metaplex-compatible metadata
+- Created `src/hooks/useMintAchievement.ts` - Mint via Metaplex UMI + createNft
+- Updated `src/components/AchievementsScreen.tsx` - Added mint buttons, state machine
+- Installed @metaplex-foundation/umi, umi-bundle-defaults, umi-signer-wallet-adapters, mpl-token-metadata
+- Installed vite-plugin-node-polyfills (fixed stream/crypto missing for Metaplex in browser)
+- Updated vite.config.ts with nodePolyfills plugin (buffer, crypto, stream, util, process, events)
+- Achievements screen shows "Connect wallet to mint" for unlocked achievements
+- When wallet connected, shows green "Mint as NFT" button with state machine (preparing -> confirming -> minting -> success)
+- BUILD PASSING, VISUALLY VERIFIED
 
-### Jan 18-19, 2026
-- Implemented "Connected & Alive" page transitions
-- Ball accelerates 3x during exit with warm gold glow
-- Dashboard preview reveals from center with blur fade
-- Build passes, code ready
+### BLOCKED
+- **Devnet deployment**: Need 1.776 SOL, have 1.609 SOL (0.167 short). Faucet rate-limited.
+  - Wallet: `FV3vJxFDbusRKefLmRaXStzfyi5yzf6JiTVPcZYpiKo9`
+  - User needs to manually request airdrop at https://faucet.solana.com (CAPTCHA required)
 
-### Prior Work
-- Full game implementation with 13 quests, 22 achievements
-- 4 AI difficulty levels
-- Local PvP mode
-- 16 cosmetics (paddle skins, ball trails, arena themes)
-- Daily challenge system
+### NEXT UP (Priority order)
+1. **Deploy Anchor program to devnet** (blocked on SOL)
+2. Test full wager flow end-to-end on devnet
+3. BONK/USDC SPL token support in Anchor program
+4. MagicBlock ER integration (if time permits)
+5. Deploy frontend to Vercel
+6. Record demo video + submit
 
----
-
-## Resume Commands
-```bash
-cd /Users/yonko/Projects/last-rally
-pnpm dev  # Runs on next available port (5177+)
-```
-
-## Key Files for Touch Controls
-- `src/components/PongArena.tsx` - Main game component, needs touch event handlers
-- `src/lib/storage.ts` - Has `touchControls` setting (line 367)
-- `src/game/touch.ts` - NEW file to create for touch controller
+### KEY FILES
+- `programs/last-rally/src/lib.rs` - Anchor program (wager logic)
+- `src/lib/anchor.ts` - Frontend Anchor client
+- `src/lib/metadata.ts` - NFT SVG + metadata generation
+- `src/hooks/useWager.ts` - Match lifecycle hook
+- `src/hooks/useMintAchievement.ts` - NFT minting hook
+- `src/components/WagerLobby.tsx` - Wager lobby UI
+- `src/components/AchievementsScreen.tsx` - Achievements + mint buttons
+- `src/components/PongArena.tsx` - Game arena (wager bar + settlement)
+- `src/App.tsx` - Main app routing
+- `src/types/index.ts` - WagerInfo, bonk cosmetics, wager mode
+- `vite.config.ts` - Node polyfills for Metaplex browser compat

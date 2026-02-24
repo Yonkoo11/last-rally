@@ -3,7 +3,6 @@ import {
   MatchResult,
   Difficulty,
   Achievement,
-  GameMode,
 } from '../types';
 import {
   loadStats as loadStatsFromStorage,
@@ -185,7 +184,7 @@ function checkAchievements(
           result.duration <= (achievement.condition.value || 0);
         break;
 
-      case 'difficulty':
+      case 'difficulty': {
         const requiredWins = achievement.condition.value || 1;
         switch (achievement.condition.difficulty) {
           case 'easy':
@@ -202,6 +201,7 @@ function checkAchievements(
             break;
         }
         break;
+      }
 
       case 'quest':
         earned =

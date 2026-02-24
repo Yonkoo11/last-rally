@@ -8,6 +8,7 @@ import {
   NextUnlockCard,
 } from './home';
 import { playTransitionIn } from '../audio/sounds';
+import { WalletConnect } from './WalletConnect';
 import './TitleScreen.css';
 
 interface TitleScreenProps {
@@ -62,12 +63,15 @@ export function TitleScreen({ onQuickPlay, onPlayNow, onSettings, onStats, onAch
           </div>
           <span className="logo-text">LAST RALLY</span>
         </div>
-        {!isNewPlayer && (
-          <div className="player-info">
-            <span className="player-name">{name}</span>
-            <span className="player-wins">{stats.totalWins}W</span>
-          </div>
-        )}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          {!isNewPlayer && (
+            <div className="player-info">
+              <span className="player-name">{name}</span>
+              <span className="player-wins">{stats.totalWins}W</span>
+            </div>
+          )}
+          <WalletConnect compact />
+        </div>
       </header>
 
       {/* Main Content - Two Zone Layout */}

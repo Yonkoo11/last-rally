@@ -11,6 +11,7 @@ interface ModeSelectProps {
   onSelectMode: (mode: GameMode, difficulty?: Difficulty, quest?: Quest) => void;
   onBack: () => void;
   onStartGame: (player1Name: string, player2Name: string, mode: GameMode, difficulty?: Difficulty, quest?: Quest) => void;
+  onWager?: () => void;
 }
 
 type SubView = 'main' | 'difficulty' | 'quest' | 'nameInput';
@@ -21,7 +22,7 @@ interface PendingGame {
   quest?: Quest;
 }
 
-export function ModeSelect({ onBack, onStartGame }: ModeSelectProps) {
+export function ModeSelect({ onBack, onStartGame, onWager }: ModeSelectProps) {
   const [subView, setSubView] = useState<SubView>('main');
   const [hoveredDifficulty, setHoveredDifficulty] = useState<Difficulty | null>(null);
   const [pendingGame, setPendingGame] = useState<PendingGame | null>(null);
@@ -352,6 +353,24 @@ export function ModeSelect({ onBack, onStartGame }: ModeSelectProps) {
             {questProgress.completedQuests.length}/{QUESTS.length} completed
           </span>
         </button>
+
+        {onWager && (
+          <button
+            className="mode-card mode-wager"
+            onClick={onWager}
+            aria-label="Wager Match: Bet SOL on your game"
+          >
+            <div className="mode-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="12" cy="12" r="10" />
+                <path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8" />
+                <path d="M12 18V6" />
+              </svg>
+            </div>
+            <span className="mode-name">Wager Match</span>
+            <span className="mode-desc">Bet SOL on your game</span>
+          </button>
+        )}
       </div>
     </div>
   );

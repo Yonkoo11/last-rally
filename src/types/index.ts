@@ -4,7 +4,7 @@
 
 // ---- Game State Types ----
 
-export type GameMode = 'ai' | 'pvp' | 'quest' | 'online';
+export type GameMode = 'ai' | 'pvp' | 'quest' | 'online' | 'wager';
 export type Difficulty = 'easy' | 'medium' | 'hard' | 'impossible';
 export type ViewState =
   | 'landing'
@@ -16,6 +16,7 @@ export type ViewState =
   | 'pong'
   | 'cosmetics'
   | 'onlineLobby'
+  | 'wagerLobby'
   | 'stats'
   | 'achievements';
 
@@ -60,6 +61,14 @@ export interface GameState {
 
 // ---- Config Types ----
 
+export interface WagerInfo {
+  matchPDA: string;       // Base58 encoded
+  matchId: string;        // BN as string
+  player1: string;        // Base58 encoded
+  player2: string;        // Base58 encoded
+  wagerAmount: number;    // lamports
+}
+
 export interface GameConfig {
   mode: GameMode;
   difficulty?: Difficulty;
@@ -68,6 +77,7 @@ export interface GameConfig {
   questId?: number;
   modifiers?: QuestModifiers;
   arenaTheme: ArenaTheme;
+  wagerInfo?: WagerInfo;
 }
 
 export interface QuestModifiers {
@@ -163,20 +173,23 @@ export type PaddleSkin =
   | 'gold'
   | 'rainbow'
   | 'neon'
-  | 'retro';
+  | 'retro'
+  | 'bonk';
 
 export type TrailType =
   | 'none'
   | 'classic'
   | 'fire'
   | 'rainbow'
-  | 'pixel';
+  | 'pixel'
+  | 'bonk';
 
 export type ArenaTheme =
   | 'classic'
   | 'neon'
   | 'minimal-dark'
-  | 'retro';
+  | 'retro'
+  | 'bonk';
 
 export interface Cosmetic {
   id: string;

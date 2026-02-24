@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import {
   ViewState,
   GameConfig,
@@ -6,6 +6,7 @@ import {
   Difficulty,
   Quest,
   MatchResult,
+  WagerInfo,
 } from './types';
 import { ToastProvider, useToast } from './hooks/useToast';
 import { ToastContainer } from './components/ToastContainer';
@@ -16,18 +17,27 @@ import { PongArena } from './components/PongArena';
 import { CosmeticSelect } from './components/CosmeticSelect';
 import { StatsScreen } from './components/StatsScreen';
 import { AchievementsScreen } from './components/AchievementsScreen';
+import { WagerLobby } from './components/WagerLobby';
 import { processMatchResult } from './lib/stats';
 import { loadCosmetics, loadPlayerName } from './lib/storage';
 import { getQuestById } from './data/quests';
 import { playVictory, playDefeat, playAchievement } from './audio/sounds';
+import { WalletProvider } from './providers/WalletProvider';
+import { ErrorBoundary } from './components/ErrorBoundary';
+import { truncateAddress } from './lib/solana';
+import { useWager } from './hooks/useWager';
+import { PublicKey } from '@solana/web3.js';
 import './App.css';
 
 function AppContent() {
   const [view, setView] = useState<ViewState>('landing');
   const [gameConfig, setGameConfig] = useState<GameConfig | null>(null);
   const [showSettings, setShowSettings] = useState(false);
+  const [settlementStatus, setSettlementStatus] = useState<'settling' | 'settled' | 'error' | undefined>();
+  const settlingRef = useRef(false);
 
   const { showAchievement, showQuestComplete } = useToast();
+  const { settleMatch } = useWager();
 
   // Quick Play handler - Direct to easy game
   const handleQuickPlay = useCallback(() => {
@@ -93,13 +103,52 @@ function AppContent() {
           showQuestComplete(quest.name, nextQuest?.name);
         }
       }
+
+      // Settle wager match on-chain
+      if (gameConfig?.wagerInfo && !settlingRef.current) {
+        settlingRef.current = true;
+        setSettlementStatus('settling');
+        const wager = gameConfig.wagerInfo;
+        const winnerKey = result.winner === 'left'
+          ? new PublicKey(wager.player1)
+          : new PublicKey(wager.player2);
+
+        settleMatch(
+          new PublicKey(wager.matchPDA),
+          winnerKey,
+          new PublicKey(wager.player1),
+          new PublicKey(wager.player2),
+          result.leftScore,
+          result.rightScore
+        ).then((success) => {
+          setSettlementStatus(success ? 'settled' : 'error');
+          settlingRef.current = false;
+        });
+      }
     },
-    [showAchievement, showQuestComplete]
+    [showAchievement, showQuestComplete, gameConfig, settleMatch]
   );
+
+  // Wager match ready - both players deposited, start the game
+  const handleWagerMatchReady = useCallback((wagerInfo: WagerInfo) => {
+    const cosmetics = loadCosmetics();
+    const playerName = loadPlayerName();
+
+    setGameConfig({
+      mode: 'wager',
+      player1Name: playerName || 'PLAYER 1',
+      player2Name: truncateAddress(wagerInfo.player2, 4),
+      arenaTheme: cosmetics.selectedArenaTheme,
+      wagerInfo,
+    });
+    setView('pong');
+  }, []);
 
   // Navigation handlers
   const handleQuit = useCallback(() => {
     setGameConfig(null);
+    setSettlementStatus(undefined);
+    settlingRef.current = false;
     setView('modeSelect');
   }, []);
 
@@ -127,9 +176,18 @@ function AppContent() {
       case 'modeSelect':
         return (
           <ModeSelect
-            onSelectMode={() => {}} // Not used in new flow
+            onSelectMode={() => {}}
             onBack={handleBackToTitle}
             onStartGame={handleStartGame}
+            onWager={() => setView('wagerLobby')}
+          />
+        );
+
+      case 'wagerLobby':
+        return (
+          <WagerLobby
+            onBack={() => setView('modeSelect')}
+            onMatchReady={handleWagerMatchReady}
           />
         );
 
@@ -140,6 +198,7 @@ function AppContent() {
             config={gameConfig}
             onMatchEnd={handleMatchEnd}
             onQuit={handleQuit}
+            settlementStatus={settlementStatus}
           />
         );
 
@@ -172,9 +231,13 @@ function AppContent() {
 
 function App() {
   return (
-    <ToastProvider>
-      <AppContent />
-    </ToastProvider>
+    <ErrorBoundary>
+      <WalletProvider>
+        <ToastProvider>
+          <AppContent />
+        </ToastProvider>
+      </WalletProvider>
+    </ErrorBoundary>
   );
 }
 

@@ -71,23 +71,38 @@ class MultiplayerClient {
 
       this.setConnectionState('connecting');
 
+      // Timeout after 5 seconds
+      const timeout = setTimeout(() => {
+        if (this.ws) {
+          this.ws.close();
+          this.ws = null;
+        }
+        this.setConnectionState('disconnected');
+        this.callbacks.onError?.('Server unavailable. Online play requires a running game server.');
+        reject(new Error('Connection timeout'));
+      }, 5000);
+
       try {
         this.ws = new WebSocket(SERVER_URL);
 
         this.ws.onopen = () => {
+          clearTimeout(timeout);
           this.setConnectionState('connected');
           resolve();
         };
 
         this.ws.onclose = () => {
+          clearTimeout(timeout);
           this.setConnectionState('disconnected');
           this._roomCode = null;
           this._playerId = null;
         };
 
-        this.ws.onerror = (error) => {
-          this.callbacks.onError?.('Connection failed');
-          reject(error);
+        this.ws.onerror = () => {
+          clearTimeout(timeout);
+          this.setConnectionState('disconnected');
+          this.callbacks.onError?.('Failed to connect to game server');
+          reject(new Error('Connection failed'));
         };
 
         this.ws.onmessage = (event) => {
@@ -99,6 +114,7 @@ class MultiplayerClient {
           }
         };
       } catch (error) {
+        clearTimeout(timeout);
         this.setConnectionState('disconnected');
         reject(error);
       }

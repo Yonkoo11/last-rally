@@ -177,7 +177,7 @@ function calculateProgress(
         description: `Win ${value} in a row`,
       };
 
-    case 'quest':
+    case 'quest': {
       const questId = value as number;
       const completed = questProgress.completedQuests.includes(questId);
       return {
@@ -185,6 +185,7 @@ function calculateProgress(
         target: questId,
         description: `Complete Quest #${questId}`,
       };
+    }
 
     case 'difficulty':
       switch (value) {

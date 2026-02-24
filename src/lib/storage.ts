@@ -11,9 +11,9 @@ import {
 } from '../types';
 
 // Type guards for cosmetics
-const VALID_PADDLE_SKINS: PaddleSkin[] = ['default', 'green', 'purple', 'gold', 'rainbow', 'neon', 'retro'];
-const VALID_TRAILS: TrailType[] = ['none', 'classic', 'fire', 'rainbow', 'pixel'];
-const VALID_THEMES: ArenaTheme[] = ['classic', 'neon', 'minimal-dark', 'retro'];
+const VALID_PADDLE_SKINS: PaddleSkin[] = ['default', 'green', 'purple', 'gold', 'rainbow', 'neon', 'retro', 'bonk'];
+const VALID_TRAILS: TrailType[] = ['none', 'classic', 'fire', 'rainbow', 'pixel', 'bonk'];
+const VALID_THEMES: ArenaTheme[] = ['classic', 'neon', 'minimal-dark', 'retro', 'bonk'];
 
 function isPaddleSkin(id: string): id is PaddleSkin {
   return VALID_PADDLE_SKINS.includes(id as PaddleSkin);
