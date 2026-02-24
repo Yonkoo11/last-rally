@@ -104,7 +104,7 @@
   cursor: pointer;
   padding: var(--space-2) var(--space-3);
   border-radius: var(--radius-md);
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .btn-back svg {
@@ -160,7 +160,7 @@
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-2xl);
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   text-align: center;
   position: relative;
   overflow: hidden;
@@ -198,7 +198,7 @@
   width: 56px;
   height: 56px;
   color: var(--text-secondary);
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
   z-index: 1;
 }
@@ -215,7 +215,7 @@
   color: var(--text-primary);
   position: relative;
   z-index: 1;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .mode-desc {
@@ -329,7 +329,7 @@
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-xl);
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   text-align: left;
   position: relative;
   overflow: hidden;
@@ -508,7 +508,7 @@
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-xl);
   cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
   animation: questEnter 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
   animation-delay: calc(var(--quest-index, 0) * 0.05s);
@@ -640,7 +640,7 @@
   color: var(--text-primary);
   text-transform: uppercase;
   letter-spacing: 1px;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .input-group .input:focus {
