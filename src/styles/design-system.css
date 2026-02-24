@@ -24,6 +24,9 @@
   --color-primary-light: #33FFBB;
   --color-primary-dark: #00CC88;
   --color-primary-muted: rgba(0, 255, 170, 0.15);
+  --color-solana: #14f195;
+  --color-solana-hover: #3ffaa8;
+  --color-solana-muted: rgba(20, 241, 149, 0.15);
 
   /* Semantic Tokens (60-30-10 rule) */
   --color-cta: var(--color-primary);

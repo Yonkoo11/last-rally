@@ -1,73 +1,88 @@
-# React + TypeScript + Vite
+# Last Rally - Solana
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Crypto gaming died. Last Rally financializes it properly.**
 
-Currently, two official plugins are available:
+A fast-paced arcade Pong game built on Solana with token wagers, soul-bound achievement NFTs, and 60+ features.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
 
-## React Compiler
+### Core Gameplay
+- **4 Difficulty Levels**: Easy → Medium → Hard → Impossible
+- **13 Quest Challenges**: Modifiers that change game rules
+- **Local PVP**: 2-player battles
+- **Unlockable Cosmetics**: Paddle skins, ball trails, arena themes (including BONK-themed)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Solana Integration
+- **SOL Wager Matches**: Create and join matches with SOL stakes
+- **On-Chain Settlement**: Winners automatically receive payouts
+- **Achievement NFTs**: Mint your achievements as soul-bound NFTs via Metaplex
+- **Wallet Support**: Phantom + Solflare
 
-## Expanding the ESLint configuration
+### Tech Stack
+- **Frontend**: React + TypeScript + Vite
+- **Blockchain**: Solana (Anchor 0.32.1)
+- **NFTs**: Metaplex Token Metadata
+- **Wallets**: @solana/wallet-adapter
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Development
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Prerequisites
+- Node.js 18+
+- Rust 1.92+
+- Solana CLI 2.2.12+
+- Anchor 0.32.1
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### Installation
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Run Dev Server
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm run dev
 ```
+
+### Build for Production
+
+```bash
+npm run build
+```
+
+### Test Anchor Program
+
+```bash
+anchor test
+```
+
+## Anchor Program
+
+**Program ID**: `AKPb5mB3Yn94QHUQrsQTSjDYUAgKqxPhZSUvUbkXgtaq`
+
+### Instructions
+1. `initialize_player` - Create player profile
+2. `create_match` - Create wager match with SOL stake
+3. `join_match` - Join an open match
+4. `settle_match` - Settle match and distribute winnings
+5. `cancel_match` - Cancel match and refund stake
+
+### Accounts
+- **MatchAccount**: Match state (140 bytes)
+- **PlayerProfile**: Player stats (69 bytes)
+
+## Deployment
+
+- **Live URL**: https://yonkoo11.github.io/last-rally/
+- **Network**: Solana Devnet
+
+## License
+
+MIT
+
+## Built for
+
+Solana Graveyard Hackathon (Feb 12-27, 2026)
+- MagicBlock Gaming Track
+- BONK Artwork Track
+- Overall Track

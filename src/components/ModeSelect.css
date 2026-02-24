@@ -288,7 +288,7 @@
   }
 
   .mode-wager:hover {
-    border-color: #14f195;
+    border-color: var(--color-solana);
     box-shadow:
       0 20px 40px rgba(0, 0, 0, 0.3),
       0 0 40px rgba(20, 241, 149, 0.2);
@@ -297,7 +297,7 @@
     background: radial-gradient(circle at 50% 0%, rgba(20, 241, 149, 0.15) 0%, transparent 70%);
   }
   .mode-wager:hover .mode-icon {
-    color: #14f195;
+    color: var(--color-solana);
     filter: drop-shadow(0 0 12px rgba(20, 241, 149, 0.6));
   }
 }

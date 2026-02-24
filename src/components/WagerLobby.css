@@ -83,7 +83,7 @@
 }
 
 .wager-menu-icon {
-  color: #14f195;
+  color: var(--color-solana);
 }
 
 .wager-menu-title {
@@ -126,7 +126,7 @@
 }
 
 .wager-preset.selected {
-  border-color: #14f195;
+  border-color: var(--color-solana);
   background: rgba(20, 241, 149, 0.1);
 }
 
@@ -167,7 +167,7 @@
 }
 
 .summary-row.highlight {
-  color: #14f195;
+  color: var(--color-solana);
   font-weight: 600;
   font-size: 1rem;
   border-top: 1px solid rgba(255, 255, 255, 0.05);
@@ -188,7 +188,7 @@
   width: 48px;
   height: 48px;
   border: 3px solid rgba(255, 255, 255, 0.1);
-  border-top-color: #14f195;
+  border-top-color: var(--color-solana);
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -206,7 +206,7 @@
 
 .wager-pot-label {
   font-size: 0.9rem;
-  color: #14f195;
+  color: var(--color-solana);
 }
 
 .wager-match-info {
@@ -285,13 +285,13 @@
 
 .match-pot {
   font-size: 0.8rem;
-  color: #14f195;
+  color: var(--color-solana);
 }
 
 .match-join-label {
   font-size: 0.8rem;
   font-weight: 600;
-  color: #14f195;
+  color: var(--color-solana);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }

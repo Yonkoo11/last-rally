@@ -63,8 +63,8 @@ function ToastItem({ toast, onClose }: { toast: ToastType; onClose: () => void }
           flex: 1,
           margin: 0,
           fontSize: 14,
-          color: '#c0a080',
-          fontFamily: 'serif',
+          color: 'var(--text-secondary)',
+          fontFamily: 'var(--font-ui)',
           lineHeight: 1.4,
         }}
       >

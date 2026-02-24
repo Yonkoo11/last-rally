@@ -197,7 +197,7 @@
   font-size: var(--text-xs);
   font-weight: var(--font-semibold);
   letter-spacing: 0.05em;
-  color: #14f195;
+  color: var(--color-solana);
   background: rgba(20, 241, 149, 0.08);
   border: 1px solid rgba(20, 241, 149, 0.3);
   border-radius: var(--radius-md);
@@ -225,7 +225,7 @@
 .mint-pending {
   font-family: var(--font-mono);
   font-size: var(--text-xs);
-  color: #14f195;
+  color: var(--color-solana);
   animation: pulse-mint 1.5s ease-in-out infinite;
 }
 
@@ -237,7 +237,7 @@
 .mint-success {
   font-family: var(--font-mono);
   font-size: var(--text-xs);
-  color: #14f195;
+  color: var(--color-solana);
 }
 
 .mint-error-row {
