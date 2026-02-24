@@ -455,7 +455,7 @@
 .animate-pulse { animation: pulse 2s ease-in-out infinite; }
 .animate-glowPulse { animation: glowPulse 2s ease-in-out infinite; }
 .animate-float { animation: float 4s ease-in-out infinite; }
-.animate-spin { animation: spin 1s linear infinite; }
+.animate-spin { animation: spin 1s ease-in-out infinite; }
 .animate-bounce { animation: bounce 1s ease-in-out infinite; }
 
 /* ========== STAGGER ENTRANCE SYSTEM (Hades-style) ========== */

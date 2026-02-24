@@ -56,7 +56,8 @@ export function useWager() {
     }
     const program = getProgram(anchorWallet);
     const [playerPDA] = getPlayerPDA(publicKey);
-    program.account.playerProfile
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (program.account as any).playerProfile
       .fetch(playerPDA)
       .then(() => setPlayerInitialized(true))
       .catch(() => setPlayerInitialized(false));
@@ -174,7 +175,7 @@ export function useWager() {
 
         // Fetch updated match data
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const data = await program.account.matchAccount.fetch(matchPDA) as any;
+        const data = await (program.account as any).matchAccount.fetch(matchPDA);
         setCurrentMatch({
           matchId: data.matchId,
           matchPDA,
@@ -294,14 +295,16 @@ export function useWager() {
     try {
       const program = getProgram(anchorWallet);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const accounts = await program.account.matchAccount.all() as any[];
+      const accounts = await (program.account as any).matchAccount.all();
 
       return accounts
-        .filter((a) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .filter((a: any) => {
           const status = a.account.status;
           return status.waiting !== undefined;
         })
-        .map((a) => ({
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .map((a: any) => ({
           matchId: a.account.matchId,
           matchPDA: a.publicKey,
           player1: a.account.player1,

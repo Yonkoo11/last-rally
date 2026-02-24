@@ -570,7 +570,7 @@
 }
 
 @keyframes checkPop {
-  from { transform: scale(0); }
+  from { transform: scale(0.93); }
   to { transform: scale(1); }
 }
 

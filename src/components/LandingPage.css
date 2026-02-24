@@ -268,7 +268,7 @@
   padding: var(--space-2, 8px) var(--space-4, 16px);
   background: rgba(0, 255, 163, 0.08);
   border: 1px solid rgba(0, 255, 163, 0.15);
-  border-radius: 9999px;
+  border-radius: var(--radius-full);
   color: rgba(255, 255, 255, 0.6);
   font-family: var(--font-ui, 'Inter', sans-serif);
   font-size: 0.75rem;

@@ -272,6 +272,7 @@ function TrailPreview({ type }: { type: TrailType }) {
     fire: ['#EF4444', '#F59E0B', '#FCD34D'],
     rainbow: ['#EF4444', '#F59E0B', '#10B981', '#3B82F6', '#8B5CF6'],
     pixel: ['#00FF00', '#00DD00', '#00BB00'],
+    bonk: ['#FF8C00', '#FFAA00', '#FFD700'],
   };
 
   const trailColors = colors[type];
