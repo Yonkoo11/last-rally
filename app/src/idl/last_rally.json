@@ -1,0 +1,397 @@
+{
+  "version": "0.1.0",
+  "name": "last_rally",
+  "instructions": [
+    {
+      "name": "initializePlayer",
+      "accounts": [
+        {
+          "name": "playerProfile",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "player",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "createMatch",
+      "accounts": [
+        {
+          "name": "matchAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "player1",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "mint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "escrowTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "player1TokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "matchId",
+          "type": "u64"
+        },
+        {
+          "name": "wagerAmount",
+          "type": "u64"
+        },
+        {
+          "name": "tokenMint",
+          "type": "publicKey"
+        }
+      ]
+    },
+    {
+      "name": "joinMatch",
+      "accounts": [
+        {
+          "name": "matchAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "player2",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "mint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "escrowTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "player2TokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "settleMatch",
+      "accounts": [
+        {
+          "name": "matchAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "caller",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "player1",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "player2",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "player1Profile",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "player2Profile",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "mint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "escrowTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "player1TokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "player2TokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "winner",
+          "type": "publicKey"
+        },
+        {
+          "name": "player1Score",
+          "type": "u8"
+        },
+        {
+          "name": "player2Score",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "cancelMatch",
+      "accounts": [
+        {
+          "name": "matchAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "player1",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "mint",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "escrowTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "player1TokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    }
+  ],
+  "accounts": [
+    {
+      "name": "MatchAccount",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "player1",
+            "type": "publicKey"
+          },
+          {
+            "name": "player2",
+            "type": "publicKey"
+          },
+          {
+            "name": "tokenMint",
+            "type": "publicKey"
+          },
+          {
+            "name": "wagerAmount",
+            "type": "u64"
+          },
+          {
+            "name": "status",
+            "type": {
+              "defined": "MatchStatus"
+            }
+          },
+          {
+            "name": "winner",
+            "type": "publicKey"
+          },
+          {
+            "name": "player1Score",
+            "type": "u8"
+          },
+          {
+            "name": "player2Score",
+            "type": "u8"
+          },
+          {
+            "name": "createdAt",
+            "type": "i64"
+          },
+          {
+            "name": "settledAt",
+            "type": "i64"
+          },
+          {
+            "name": "matchId",
+            "type": "u64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "PlayerProfile",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "wallet",
+            "type": "publicKey"
+          },
+          {
+            "name": "totalWins",
+            "type": "u32"
+          },
+          {
+            "name": "totalLosses",
+            "type": "u32"
+          },
+          {
+            "name": "totalWagered",
+            "type": "u64"
+          },
+          {
+            "name": "totalEarned",
+            "type": "u64"
+          },
+          {
+            "name": "matchesPlayed",
+            "type": "u32"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    }
+  ],
+  "types": [
+    {
+      "name": "MatchStatus",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Waiting"
+          },
+          {
+            "name": "Active"
+          },
+          {
+            "name": "Settled"
+          },
+          {
+            "name": "Cancelled"
+          }
+        ]
+      }
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "InvalidMatchStatus",
+      "msg": "Match is not in the expected status"
+    },
+    {
+      "code": 6001,
+      "name": "UnauthorizedCancel",
+      "msg": "Only the match creator can cancel"
+    },
+    {
+      "code": 6002,
+      "name": "NotParticipant",
+      "msg": "Cannot settle: not a participant"
+    },
+    {
+      "code": 6003,
+      "name": "InvalidWinner",
+      "msg": "Winner must be a match participant"
+    },
+    {
+      "code": 6004,
+      "name": "ZeroWager",
+      "msg": "Wager amount must be greater than zero"
+    },
+    {
+      "code": 6005,
+      "name": "InsufficientFunds",
+      "msg": "Insufficient funds for wager"
+    },
+    {
+      "code": 6006,
+      "name": "SelfMatch",
+      "msg": "Cannot join your own match"
+    }
+  ]
+}

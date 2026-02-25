@@ -357,3 +357,54 @@
     background: rgba(255, 255, 255, 0.08);
   }
 }
+
+/* Token selector */
+.token-selector {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.token-selector-label {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  font-weight: var(--font-semibold);
+}
+
+.token-buttons {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.token-btn {
+  padding: var(--space-2) var(--space-5);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-base);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-weight: var(--font-semibold);
+  font-family: var(--font-mono);
+  cursor: pointer;
+  transition: all var(--duration-normal) var(--ease-out);
+}
+
+.token-btn:hover {
+  border-color: var(--color-primary);
+  color: var(--text-primary);
+  transform: translateY(-1px);
+}
+
+.token-btn.selected {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--bg-base);
+  box-shadow: 0 0 20px rgba(20, 241, 149, 0.3);
+}
+
+.token-btn.selected:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 30px rgba(20, 241, 149, 0.4);
+}

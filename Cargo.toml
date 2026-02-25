@@ -4,6 +4,11 @@ members = [
 ]
 resolver = "2"
 
+[patch.crates-io]
+# Patch problematic edition2024 crates
+constant_time_eq = { git = "https://github.com/cesarb/constant_time_eq", tag = "0.3.1" }
+blake3 = { git = "https://github.com/BLAKE3-team/BLAKE3", tag = "1.5.4" }
+
 [profile.release]
 overflow-checks = true
 lto = "fat"

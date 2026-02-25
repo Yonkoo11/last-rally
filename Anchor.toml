@@ -3,10 +3,10 @@ seeds = false
 skip-lint = false
 
 [programs.localnet]
-last_rally = "AKPb5mB3Yn94QHUQrsQTSjDYUAgKqxPhZSUvUbkXgtaq"
+last_rally = "BUVQGteCL1j5mSrmpNXv5bpFqDrbVZ7fww12FXd7w4XG"
 
 [programs.devnet]
-last_rally = "AKPb5mB3Yn94QHUQrsQTSjDYUAgKqxPhZSUvUbkXgtaq"
+last_rally = "BUVQGteCL1j5mSrmpNXv5bpFqDrbVZ7fww12FXd7w4XG"
 
 [registry]
 url = "https://api.apr.dev"

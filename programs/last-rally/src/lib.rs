@@ -1,7 +1,8 @@
 use anchor_lang::prelude::*;
 use anchor_lang::system_program;
+use anchor_spl::token::{self, Token, TokenAccount, Mint, Transfer};
 
-declare_id!("AKPb5mB3Yn94QHUQrsQTSjDYUAgKqxPhZSUvUbkXgtaq");
+declare_id!("BUVQGteCL1j5mSrmpNXv5bpFqDrbVZ7fww12FXd7w4XG");
 
 // Match status enum
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, Copy, PartialEq, Eq)]
@@ -17,6 +18,7 @@ pub enum MatchStatus {
 pub struct MatchAccount {
     pub player1: Pubkey,
     pub player2: Pubkey,
+    pub token_mint: Pubkey,  // System Program = SOL, otherwise = SPL token mint
     pub wager_amount: u64,
     pub status: MatchStatus,
     pub winner: Pubkey,
@@ -32,6 +34,7 @@ impl MatchAccount {
     pub const SIZE: usize = 8  // discriminator
         + 32  // player1
         + 32  // player2
+        + 32  // token_mint
         + 8   // wager_amount
         + 1   // status (enum)
         + 32  // winner
@@ -41,6 +44,10 @@ impl MatchAccount {
         + 8   // settled_at
         + 8   // match_id
         + 1;  // bump
+
+    pub fn is_spl_token(&self) -> bool {
+        self.token_mint != system_program::ID
+    }
 }
 
 // Player profile - tracks stats per wallet
@@ -102,29 +109,19 @@ pub mod last_rally {
         Ok(())
     }
 
-    /// Create a new match with SOL wager. Player 1 deposits wager into the match PDA.
+    /// Create a new match with SOL or SPL token wager. Player 1 deposits wager into escrow.
     pub fn create_match(
         ctx: Context<CreateMatch>,
         match_id: u64,
         wager_amount: u64,
+        token_mint: Pubkey,
     ) -> Result<()> {
         require!(wager_amount > 0, LastRallyError::ZeroWager);
-
-        // Transfer SOL from player1 to match PDA (escrow)
-        system_program::transfer(
-            CpiContext::new(
-                ctx.accounts.system_program.to_account_info(),
-                system_program::Transfer {
-                    from: ctx.accounts.player1.to_account_info(),
-                    to: ctx.accounts.match_account.to_account_info(),
-                },
-            ),
-            wager_amount,
-        )?;
 
         let match_account = &mut ctx.accounts.match_account;
         match_account.player1 = ctx.accounts.player1.key();
         match_account.player2 = Pubkey::default();
+        match_account.token_mint = token_mint;
         match_account.wager_amount = wager_amount;
         match_account.status = MatchStatus::Waiting;
         match_account.winner = Pubkey::default();
@@ -134,6 +131,34 @@ pub mod last_rally {
         match_account.settled_at = 0;
         match_account.match_id = match_id;
         match_account.bump = ctx.bumps.match_account;
+
+        // Transfer wager based on token type
+        if token_mint == system_program::ID {
+            // Native SOL transfer to match PDA
+            system_program::transfer(
+                CpiContext::new(
+                    ctx.accounts.system_program.to_account_info(),
+                    system_program::Transfer {
+                        from: ctx.accounts.player1.to_account_info(),
+                        to: match_account.to_account_info(),
+                    },
+                ),
+                wager_amount,
+            )?;
+        } else {
+            // SPL token transfer to escrow token account
+            token::transfer(
+                CpiContext::new(
+                    ctx.accounts.token_program.to_account_info(),
+                    Transfer {
+                        from: ctx.accounts.player1_token_account.to_account_info(),
+                        to: ctx.accounts.escrow_token_account.to_account_info(),
+                        authority: ctx.accounts.player1.to_account_info(),
+                    },
+                ),
+                wager_amount,
+            )?;
+        }
 
         Ok(())
     }
@@ -151,17 +176,35 @@ pub mod last_rally {
             LastRallyError::SelfMatch
         );
 
-        // Transfer matching wager from player2 to match PDA
-        system_program::transfer(
-            CpiContext::new(
-                ctx.accounts.system_program.to_account_info(),
-                system_program::Transfer {
-                    from: ctx.accounts.player2.to_account_info(),
-                    to: match_account.to_account_info(),
-                },
-            ),
-            match_account.wager_amount,
-        )?;
+        let wager = match_account.wager_amount;
+
+        // Transfer matching wager based on token type
+        if match_account.token_mint == system_program::ID {
+            // Native SOL transfer to match PDA
+            system_program::transfer(
+                CpiContext::new(
+                    ctx.accounts.system_program.to_account_info(),
+                    system_program::Transfer {
+                        from: ctx.accounts.player2.to_account_info(),
+                        to: match_account.to_account_info(),
+                    },
+                ),
+                wager,
+            )?;
+        } else {
+            // SPL token transfer to escrow
+            token::transfer(
+                CpiContext::new(
+                    ctx.accounts.token_program.to_account_info(),
+                    Transfer {
+                        from: ctx.accounts.player2_token_account.to_account_info(),
+                        to: ctx.accounts.escrow_token_account.to_account_info(),
+                        authority: ctx.accounts.player2.to_account_info(),
+                    },
+                ),
+                wager,
+            )?;
+        }
 
         match_account.player2 = ctx.accounts.player2.key();
         match_account.status = MatchStatus::Active;
@@ -198,17 +241,49 @@ pub mod last_rally {
             LastRallyError::NotParticipant
         );
 
-        // Transfer full pot (2x wager) to winner
         let pot = match_account.wager_amount * 2;
-        let match_info = match_account.to_account_info();
+        let match_id = match_account.match_id;
+        let is_spl = match_account.is_spl_token();
 
-        // Debit from PDA
-        **match_info.try_borrow_mut_lamports()? -= pot;
-        // Credit to winner
-        if winner == match_account.player1 {
-            **ctx.accounts.player1.to_account_info().try_borrow_mut_lamports()? += pot;
+        // Transfer pot to winner based on token type
+        if is_spl {
+            // SPL token transfer from escrow to winner's token account
+            let winner_token_account = if winner == match_account.player1 {
+                &ctx.accounts.player1_token_account
+            } else {
+                &ctx.accounts.player2_token_account
+            };
+
+            let match_id_bytes = match_id.to_le_bytes();
+            let seeds = &[
+                b"match".as_ref(),
+                match_id_bytes.as_ref(),
+                &[match_account.bump],
+            ];
+            let signer = &[&seeds[..]];
+
+            token::transfer(
+                CpiContext::new_with_signer(
+                    ctx.accounts.token_program.to_account_info(),
+                    Transfer {
+                        from: ctx.accounts.escrow_token_account.to_account_info(),
+                        to: winner_token_account.to_account_info(),
+                        authority: match_account.to_account_info(),
+                    },
+                    signer,
+                ),
+                pot,
+            )?;
         } else {
-            **ctx.accounts.player2.to_account_info().try_borrow_mut_lamports()? += pot;
+            // Native SOL transfer from match PDA to winner
+            let match_info = match_account.to_account_info();
+            **match_info.try_borrow_mut_lamports()? -= pot;
+
+            if winner == match_account.player1 {
+                **ctx.accounts.player1.to_account_info().try_borrow_mut_lamports()? += pot;
+            } else {
+                **ctx.accounts.player2.to_account_info().try_borrow_mut_lamports()? += pot;
+            }
         }
 
         match_account.winner = winner;
@@ -239,7 +314,7 @@ pub mod last_rally {
         Ok(())
     }
 
-    /// Cancel a match (only if still Waiting). Closes account, refunds wager + rent to player 1.
+    /// Cancel a match (only if still Waiting). Refunds wager + closes account.
     pub fn cancel_match(ctx: Context<CancelMatch>) -> Result<()> {
         let match_account = &ctx.accounts.match_account;
 
@@ -252,7 +327,33 @@ pub mod last_rally {
             LastRallyError::UnauthorizedCancel
         );
 
-        // Account closed via `close = player1` constraint — all lamports (wager + rent) returned
+        // Refund wager based on token type
+        if match_account.is_spl_token() {
+            // SPL token refund from escrow to player1
+            let match_id = match_account.match_id;
+            let match_id_bytes = match_id.to_le_bytes();
+            let seeds = &[
+                b"match".as_ref(),
+                match_id_bytes.as_ref(),
+                &[match_account.bump],
+            ];
+            let signer = &[&seeds[..]];
+
+            token::transfer(
+                CpiContext::new_with_signer(
+                    ctx.accounts.token_program.to_account_info(),
+                    Transfer {
+                        from: ctx.accounts.escrow_token_account.to_account_info(),
+                        to: ctx.accounts.player1_token_account.to_account_info(),
+                        authority: match_account.to_account_info(),
+                    },
+                    signer,
+                ),
+                match_account.wager_amount,
+            )?;
+        }
+        // For SOL, account close via `close = player1` returns all lamports (wager + rent)
+
         Ok(())
     }
 }
@@ -277,7 +378,7 @@ pub struct InitializePlayer<'info> {
 }
 
 #[derive(Accounts)]
-#[instruction(match_id: u64)]
+#[instruction(match_id: u64, wager_amount: u64, token_mint: Pubkey)]
 pub struct CreateMatch<'info> {
     #[account(
         init,
@@ -289,7 +390,16 @@ pub struct CreateMatch<'info> {
     pub match_account: Account<'info, MatchAccount>,
     #[account(mut)]
     pub player1: Signer<'info>,
+
+    // SPL token accounts (only used for SPL tokens, must exist)
+    pub mint: Account<'info, Mint>,
+    #[account(mut)]
+    pub escrow_token_account: Account<'info, TokenAccount>,
+    #[account(mut)]
+    pub player1_token_account: Account<'info, TokenAccount>,
+
     pub system_program: Program<'info, System>,
+    pub token_program: Program<'info, Token>,
 }
 
 #[derive(Accounts)]
@@ -298,7 +408,16 @@ pub struct JoinMatch<'info> {
     pub match_account: Account<'info, MatchAccount>,
     #[account(mut)]
     pub player2: Signer<'info>,
+
+    // SPL token accounts (only used for SPL tokens, must exist)
+    pub mint: Account<'info, Mint>,
+    #[account(mut)]
+    pub escrow_token_account: Account<'info, TokenAccount>,
+    #[account(mut)]
+    pub player2_token_account: Account<'info, TokenAccount>,
+
     pub system_program: Program<'info, System>,
+    pub token_program: Program<'info, Token>,
 }
 
 #[derive(Accounts)]
@@ -325,7 +444,18 @@ pub struct SettleMatch<'info> {
         bump = player2_profile.bump,
     )]
     pub player2_profile: Account<'info, PlayerProfile>,
+
+    // SPL token accounts (only used for SPL tokens)
+    pub mint: Account<'info, Mint>,
+    #[account(mut)]
+    pub escrow_token_account: Account<'info, TokenAccount>,
+    #[account(mut)]
+    pub player1_token_account: Account<'info, TokenAccount>,
+    #[account(mut)]
+    pub player2_token_account: Account<'info, TokenAccount>,
+
     pub system_program: Program<'info, System>,
+    pub token_program: Program<'info, Token>,
 }
 
 #[derive(Accounts)]
@@ -334,5 +464,14 @@ pub struct CancelMatch<'info> {
     pub match_account: Account<'info, MatchAccount>,
     #[account(mut)]
     pub player1: Signer<'info>,
+
+    // SPL token accounts (only used for SPL tokens)
+    pub mint: Account<'info, Mint>,
+    #[account(mut)]
+    pub escrow_token_account: Account<'info, TokenAccount>,
+    #[account(mut)]
+    pub player1_token_account: Account<'info, TokenAccount>,
+
     pub system_program: Program<'info, System>,
+    pub token_program: Program<'info, Token>,
 }

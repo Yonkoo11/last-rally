@@ -2,9 +2,9 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useWalletModal } from '@solana/wallet-adapter-react-ui';
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
-import { useWager, OnChainMatch } from '../hooks/useWager';
+import { useWager, OnChainMatch, TokenType } from '../hooks/useWager';
 import { WagerInfo } from '../types';
-import { truncateAddress, formatTokenAmount } from '../lib/solana';
+import { truncateAddress, formatTokenAmount, WAGER_TIERS, TOKEN_DECIMALS } from '../lib/solana';
 import './WagerLobby.css';
 
 interface WagerLobbyProps {
@@ -12,12 +12,31 @@ interface WagerLobbyProps {
   onMatchReady: (wagerInfo: WagerInfo) => void;
 }
 
-const WAGER_PRESETS = [
-  { label: '0.01 SOL', lamports: 0.01 * LAMPORTS_PER_SOL, tier: 'casual' },
-  { label: '0.05 SOL', lamports: 0.05 * LAMPORTS_PER_SOL, tier: 'standard' },
-  { label: '0.1 SOL', lamports: 0.1 * LAMPORTS_PER_SOL, tier: 'standard' },
-  { label: '0.5 SOL', lamports: 0.5 * LAMPORTS_PER_SOL, tier: 'high' },
-];
+const getWagerPresets = (token: TokenType) => {
+  const tiers = WAGER_TIERS[token];
+  if (token === 'SOL') {
+    return [
+      { label: '0.01 SOL', amount: tiers.casual, tier: 'casual' },
+      { label: '0.05 SOL', amount: 0.05e9, tier: 'standard' },
+      { label: '0.1 SOL', amount: tiers.standard, tier: 'standard' },
+      { label: '0.5 SOL', amount: tiers.high, tier: 'high' },
+    ];
+  } else if (token === 'USDC') {
+    return [
+      { label: '1 USDC', amount: tiers.casual, tier: 'casual' },
+      { label: '5 USDC', amount: tiers.standard, tier: 'standard' },
+      { label: '10 USDC', amount: 10e6, tier: 'standard' },
+      { label: '25 USDC', amount: tiers.high, tier: 'high' },
+    ];
+  } else { // BONK
+    return [
+      { label: '10K BONK', amount: tiers.casual, tier: 'casual' },
+      { label: '50K BONK', amount: 50_000e5, tier: 'standard' },
+      { label: '100K BONK', amount: tiers.standard, tier: 'standard' },
+      { label: '500K BONK', amount: tiers.high, tier: 'high' },
+    ];
+  }
+};
 
 export function WagerLobby({ onBack, onMatchReady }: WagerLobbyProps) {
   const { publicKey, connected } = useWallet();
@@ -27,6 +46,7 @@ export function WagerLobby({ onBack, onMatchReady }: WagerLobbyProps) {
     error,
     currentMatch,
     balanceSOL,
+    tokenBalances,
     createMatch,
     joinMatch,
     cancelMatch,
@@ -34,10 +54,16 @@ export function WagerLobby({ onBack, onMatchReady }: WagerLobbyProps) {
     clearError,
   } = useWager();
 
-  const [selectedWager, setSelectedWager] = useState(WAGER_PRESETS[0].lamports);
+  const [selectedToken, setSelectedToken] = useState<TokenType>('SOL');
+  const [selectedWager, setSelectedWager] = useState<number>(WAGER_TIERS.SOL.casual);
   const [openMatches, setOpenMatches] = useState<OnChainMatch[]>([]);
   const [view, setView] = useState<'menu' | 'create' | 'browse'>('menu');
   const [polling, setPolling] = useState(false);
+
+  // Update selected wager when token changes
+  useEffect(() => {
+    setSelectedWager(WAGER_TIERS[selectedToken].casual);
+  }, [selectedToken]);
 
   // Poll for opponent when waiting
   useEffect(() => {
@@ -77,11 +103,11 @@ export function WagerLobby({ onBack, onMatchReady }: WagerLobbyProps) {
 
   const handleCreateMatch = useCallback(async () => {
     clearError();
-    const match = await createMatch(selectedWager);
+    const match = await createMatch(selectedWager, selectedToken);
     if (match) {
       setPolling(true);
     }
-  }, [selectedWager, createMatch, clearError]);
+  }, [selectedWager, selectedToken, createMatch, clearError]);
 
   const handleJoinMatch = useCallback(
     async (match: OnChainMatch) => {
@@ -147,10 +173,10 @@ export function WagerLobby({ onBack, onMatchReady }: WagerLobbyProps) {
           <div className="wager-spinner" />
           <div className="wager-match-info">
             <span className="wager-amount-display">
-              {formatTokenAmount(currentMatch.wagerAmount, 'SOL')} SOL
+              {formatTokenAmount(currentMatch.wagerAmount, currentMatch.token)} {currentMatch.token}
             </span>
             <span className="wager-pot-label">
-              Pot: {formatTokenAmount(currentMatch.wagerAmount * 2, 'SOL')} SOL
+              Pot: {formatTokenAmount(currentMatch.wagerAmount * 2, currentMatch.token)} {currentMatch.token}
             </span>
           </div>
           <p className="wager-hint">Share your match ID with an opponent, or wait for someone to join.</p>
@@ -208,12 +234,12 @@ export function WagerLobby({ onBack, onMatchReady }: WagerLobbyProps) {
                     {truncateAddress(match.player1.toBase58())}
                   </span>
                   <span className="match-wager">
-                    {formatTokenAmount(match.wagerAmount, 'SOL')} SOL
+                    {formatTokenAmount(match.wagerAmount, match.token)} {match.token}
                   </span>
                 </div>
                 <div className="match-card-bottom">
                   <span className="match-pot">
-                    Win: {formatTokenAmount(match.wagerAmount * 2, 'SOL')} SOL
+                    Win: {formatTokenAmount(match.wagerAmount * 2, match.token)} {match.token}
                   </span>
                   <span className="match-join-label">
                     {status === 'joining' ? 'Joining...' : 'Join'}
@@ -248,17 +274,35 @@ export function WagerLobby({ onBack, onMatchReady }: WagerLobbyProps) {
         </div>
 
         <div className="wager-balance">
-          Balance: {balanceSOL.toFixed(4)} SOL
+          {selectedToken === 'SOL' && `Balance: ${balanceSOL.toFixed(4)} SOL`}
+          {selectedToken === 'USDC' && `Balance: ${formatTokenAmount(tokenBalances.USDC, 'USDC')} USDC`}
+          {selectedToken === 'BONK' && `Balance: ${formatTokenAmount(tokenBalances.BONK, 'BONK')} BONK`}
+        </div>
+
+        <div className="token-selector">
+          <span className="token-selector-label">Token:</span>
+          <div className="token-buttons">
+            {(['SOL', 'USDC', 'BONK'] as TokenType[]).map((token) => (
+              <button
+                key={token}
+                className={`token-btn ${selectedToken === token ? 'selected' : ''}`}
+                onClick={() => setSelectedToken(token)}
+              >
+                {token}
+              </button>
+            ))}
+          </div>
         </div>
 
         <div className="wager-presets">
-          {WAGER_PRESETS.map((preset) => {
-            const canAfford = balanceSOL >= preset.lamports / LAMPORTS_PER_SOL;
+          {getWagerPresets(selectedToken).map((preset) => {
+            const currentBalance = tokenBalances[selectedToken];
+            const canAfford = currentBalance >= preset.amount;
             return (
               <button
                 key={preset.label}
-                className={`wager-preset ${selectedWager === preset.lamports ? 'selected' : ''} ${!canAfford ? 'disabled' : ''}`}
-                onClick={() => canAfford && setSelectedWager(preset.lamports)}
+                className={`wager-preset ${selectedWager === preset.amount ? 'selected' : ''} ${!canAfford ? 'disabled' : ''}`}
+                onClick={() => canAfford && setSelectedWager(preset.amount)}
                 disabled={!canAfford}
               >
                 <span className="preset-amount">{preset.label}</span>
@@ -271,18 +315,18 @@ export function WagerLobby({ onBack, onMatchReady }: WagerLobbyProps) {
         <div className="wager-summary">
           <div className="summary-row">
             <span>Your wager</span>
-            <span>{formatTokenAmount(selectedWager, 'SOL')} SOL</span>
+            <span>{formatTokenAmount(selectedWager, selectedToken)} {selectedToken}</span>
           </div>
           <div className="summary-row highlight">
             <span>Winner gets</span>
-            <span>{formatTokenAmount(selectedWager * 2, 'SOL')} SOL</span>
+            <span>{formatTokenAmount(selectedWager * 2, selectedToken)} {selectedToken}</span>
           </div>
         </div>
 
         <button
           className="btn btn-primary btn-large"
           onClick={handleCreateMatch}
-          disabled={status === 'creating' || balanceSOL < selectedWager / LAMPORTS_PER_SOL}
+          disabled={status === 'creating' || tokenBalances[selectedToken] < selectedWager}
         >
           {status === 'creating' ? 'Creating Match...' : 'Create Match'}
         </button>

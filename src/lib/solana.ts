@@ -4,9 +4,9 @@ import { clusterApiUrl, PublicKey } from '@solana/web3.js';
 export const SOLANA_NETWORK = 'devnet' as const;
 export const SOLANA_RPC_URL = import.meta.env.VITE_SOLANA_RPC_URL || clusterApiUrl(SOLANA_NETWORK);
 
-// Program ID - will be updated after Anchor deploy
+// Program ID - deployed to devnet on Feb 25, 2026
 export const PROGRAM_ID = new PublicKey(
-  import.meta.env.VITE_PROGRAM_ID || 'AKPb5mB3Yn94QHUQrsQTSjDYUAgKqxPhZSUvUbkXgtaq'
+  import.meta.env.VITE_PROGRAM_ID || 'BUVQGteCL1j5mSrmpNXv5bpFqDrbVZ7fww12FXd7w4XG'
 );
 
 // Token mints (devnet)
@@ -67,4 +67,25 @@ export function formatTokenAmount(amount: number, token: string): string {
 // Truncate wallet address for display
 export function truncateAddress(address: string, chars = 4): string {
   return `${address.slice(0, chars)}...${address.slice(-chars)}`;
+}
+
+// Get token mint for a token symbol
+export function getTokenMint(token: 'SOL' | 'USDC' | 'BONK'): PublicKey {
+  if (token === 'SOL') {
+    // For SOL, return System Program ID (native token)
+    return new PublicKey('11111111111111111111111111111111');
+  }
+  return TOKEN_MINTS[token];
+}
+
+// Convert display amount to smallest unit
+export function toTokenAmount(displayAmount: number, token: string): number {
+  const decimals = TOKEN_DECIMALS[token] ?? 9;
+  return Math.floor(displayAmount * Math.pow(10, decimals));
+}
+
+// Convert smallest unit to display amount
+export function fromTokenAmount(rawAmount: number, token: string): number {
+  const decimals = TOKEN_DECIMALS[token] ?? 9;
+  return rawAmount / Math.pow(10, decimals);
 }

@@ -9,8 +9,11 @@ import {
   BN,
   SystemProgram,
 } from '../lib/anchor';
-import { SOLANA_RPC_URL } from '../lib/solana';
+import { SOLANA_RPC_URL, getTokenMint, TOKEN_MINTS } from '../lib/solana';
 import { Connection } from '@solana/web3.js';
+import { getAssociatedTokenAddressSync, TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID } from '@solana/spl-token';
+
+export type TokenType = 'SOL' | 'USDC' | 'BONK';
 
 export type WagerStatus =
   | 'idle'
@@ -25,6 +28,8 @@ export interface OnChainMatch {
   matchPDA: PublicKey;
   player1: PublicKey;
   player2: PublicKey;
+  tokenMint: PublicKey;
+  token: TokenType;
   wagerAmount: number;
   status: 'waiting' | 'active' | 'settled' | 'cancelled';
 }
@@ -37,15 +42,55 @@ export function useWager() {
   const [currentMatch, setCurrentMatch] = useState<OnChainMatch | null>(null);
   const [playerInitialized, setPlayerInitialized] = useState(false);
   const [balance, setBalance] = useState<number>(0);
+  const [tokenBalances, setTokenBalances] = useState<Record<TokenType, number>>({
+    SOL: 0,
+    USDC: 0,
+    BONK: 0,
+  });
 
-  // Fetch balance
+  // Fetch balances (SOL + SPL tokens)
   useEffect(() => {
     if (!publicKey) {
       setBalance(0);
+      setTokenBalances({ SOL: 0, USDC: 0, BONK: 0 });
       return;
     }
+
     const connection = new Connection(SOLANA_RPC_URL, 'confirmed');
-    connection.getBalance(publicKey).then(setBalance);
+
+    const fetchBalances = async () => {
+      // Fetch SOL balance
+      const solBalance = await connection.getBalance(publicKey);
+      setBalance(solBalance);
+
+      const balances: Record<TokenType, number> = {
+        SOL: solBalance,
+        USDC: 0,
+        BONK: 0,
+      };
+
+      // Fetch USDC balance
+      try {
+        const usdcAta = getAssociatedTokenAddressSync(TOKEN_MINTS.USDC, publicKey);
+        const usdcAccount = await connection.getTokenAccountBalance(usdcAta);
+        balances.USDC = Number(usdcAccount.value.amount);
+      } catch {
+        balances.USDC = 0;
+      }
+
+      // Fetch BONK balance
+      try {
+        const bonkAta = getAssociatedTokenAddressSync(TOKEN_MINTS.BONK, publicKey);
+        const bonkAccount = await connection.getTokenAccountBalance(bonkAta);
+        balances.BONK = Number(bonkAccount.value.amount);
+      } catch {
+        balances.BONK = 0;
+      }
+
+      setTokenBalances(balances);
+    };
+
+    fetchBalances();
   }, [publicKey]);
 
   // Check if player profile exists
@@ -91,7 +136,7 @@ export function useWager() {
 
   // Create a wagered match
   const createMatch = useCallback(
-    async (wagerLamports: number): Promise<OnChainMatch | null> => {
+    async (wagerAmount: number, token: TokenType = 'SOL'): Promise<OnChainMatch | null> => {
       if (!publicKey || !anchorWallet) {
         setError('Wallet not connected');
         return null;
@@ -109,13 +154,31 @@ export function useWager() {
         const program = getProgram(anchorWallet);
         const matchId = generateMatchId();
         const [matchPDA] = getMatchPDA(matchId);
+        const tokenMint = getTokenMint(token);
+
+        // Get token accounts for SPL tokens
+        let mint = tokenMint;
+        let escrowTokenAccount = matchPDA; // Placeholder for SOL
+        let player1TokenAccount = publicKey; // Placeholder for SOL
+
+        if (token !== 'SOL') {
+          const tokenMintPubkey = TOKEN_MINTS[token];
+          mint = tokenMintPubkey;
+          escrowTokenAccount = getAssociatedTokenAddressSync(tokenMintPubkey, matchPDA, true);
+          player1TokenAccount = getAssociatedTokenAddressSync(tokenMintPubkey, publicKey);
+        }
 
         await program.methods
-          .createMatch(matchId, new BN(wagerLamports))
+          .createMatch(matchId, new BN(wagerAmount), tokenMint)
           .accounts({
             matchAccount: matchPDA,
             player1: publicKey,
+            mint,
+            escrowTokenAccount,
+            player1TokenAccount,
             systemProgram: SystemProgram.programId,
+            tokenProgram: TOKEN_PROGRAM_ID,
+            associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
           })
           .rpc();
 
@@ -124,7 +187,9 @@ export function useWager() {
           matchPDA,
           player1: publicKey,
           player2: PublicKey.default,
-          wagerAmount: wagerLamports,
+          tokenMint,
+          token,
+          wagerAmount,
           status: 'waiting',
         };
 
@@ -164,23 +229,47 @@ export function useWager() {
 
         const program = getProgram(anchorWallet);
 
+        // Fetch match data to get token mint
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const matchData = await (program.account as any).matchAccount.fetch(matchPDA);
+        const tokenMint = matchData.tokenMint as PublicKey;
+        const isSol = tokenMint.equals(getTokenMint('SOL'));
+
+        // Get token accounts for SPL tokens
+        const mint = isSol ? getTokenMint('SOL') : tokenMint;
+        let escrowTokenAccount = matchPDA;
+        let player2TokenAccount = publicKey;
+
+        if (!isSol) {
+          escrowTokenAccount = getAssociatedTokenAddressSync(tokenMint, matchPDA, true);
+          player2TokenAccount = getAssociatedTokenAddressSync(tokenMint, publicKey);
+        }
+
         await program.methods
           .joinMatch()
           .accounts({
             matchAccount: matchPDA,
             player2: publicKey,
+            mint,
+            escrowTokenAccount,
+            player2TokenAccount,
             systemProgram: SystemProgram.programId,
+            tokenProgram: TOKEN_PROGRAM_ID,
+            associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
           })
           .rpc();
 
         // Fetch updated match data
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const data = await (program.account as any).matchAccount.fetch(matchPDA);
+        const token: TokenType = isSol ? 'SOL' : (tokenMint.equals(TOKEN_MINTS.USDC) ? 'USDC' : 'BONK');
+
         setCurrentMatch({
           matchId: data.matchId,
           matchPDA,
           player1: data.player1,
           player2: publicKey,
+          tokenMint,
+          token,
           wagerAmount: data.wagerAmount.toNumber(),
           status: 'active',
         });
@@ -221,6 +310,24 @@ export function useWager() {
         const [player1PDA] = getPlayerPDA(player1Key);
         const [player2PDA] = getPlayerPDA(player2Key);
 
+        // Fetch match data to get token mint
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const matchData = await (program.account as any).matchAccount.fetch(matchPDA);
+        const tokenMint = matchData.tokenMint as PublicKey;
+        const isSol = tokenMint.equals(getTokenMint('SOL'));
+
+        // Get token accounts for SPL tokens
+        const mint = isSol ? getTokenMint('SOL') : tokenMint;
+        let escrowTokenAccount = matchPDA;
+        let player1TokenAccount = player1Key;
+        let player2TokenAccount = player2Key;
+
+        if (!isSol) {
+          escrowTokenAccount = getAssociatedTokenAddressSync(tokenMint, matchPDA, true);
+          player1TokenAccount = getAssociatedTokenAddressSync(tokenMint, player1Key);
+          player2TokenAccount = getAssociatedTokenAddressSync(tokenMint, player2Key);
+        }
+
         await program.methods
           .settleMatch(winner, p1Score, p2Score)
           .accounts({
@@ -230,7 +337,12 @@ export function useWager() {
             player2: player2Key,
             player1Profile: player1PDA,
             player2Profile: player2PDA,
+            mint,
+            escrowTokenAccount,
+            player1TokenAccount,
+            player2TokenAccount,
             systemProgram: SystemProgram.programId,
+            tokenProgram: TOKEN_PROGRAM_ID,
           })
           .rpc();
 
@@ -262,12 +374,32 @@ export function useWager() {
       try {
         const program = getProgram(anchorWallet);
 
+        // Fetch match data to get token mint
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const matchData = await (program.account as any).matchAccount.fetch(matchPDA);
+        const tokenMint = matchData.tokenMint as PublicKey;
+        const isSol = tokenMint.equals(getTokenMint('SOL'));
+
+        // Get token accounts for SPL tokens
+        const mint = isSol ? getTokenMint('SOL') : tokenMint;
+        let escrowTokenAccount = matchPDA;
+        let player1TokenAccount = publicKey;
+
+        if (!isSol) {
+          escrowTokenAccount = getAssociatedTokenAddressSync(tokenMint, matchPDA, true);
+          player1TokenAccount = getAssociatedTokenAddressSync(tokenMint, publicKey);
+        }
+
         await program.methods
           .cancelMatch()
           .accounts({
             matchAccount: matchPDA,
             player1: publicKey,
+            mint,
+            escrowTokenAccount,
+            player1TokenAccount,
             systemProgram: SystemProgram.programId,
+            tokenProgram: TOKEN_PROGRAM_ID,
           })
           .rpc();
 
@@ -304,14 +436,22 @@ export function useWager() {
           return status.waiting !== undefined;
         })
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        .map((a: any) => ({
-          matchId: a.account.matchId,
-          matchPDA: a.publicKey,
-          player1: a.account.player1,
-          player2: a.account.player2,
-          wagerAmount: a.account.wagerAmount.toNumber(),
-          status: 'waiting' as const,
-        }));
+        .map((a: any) => {
+          const tokenMint = a.account.tokenMint as PublicKey;
+          const isSol = tokenMint.equals(getTokenMint('SOL'));
+          const token: TokenType = isSol ? 'SOL' : (tokenMint.equals(TOKEN_MINTS.USDC) ? 'USDC' : 'BONK');
+
+          return {
+            matchId: a.account.matchId,
+            matchPDA: a.publicKey,
+            player1: a.account.player1,
+            player2: a.account.player2,
+            tokenMint,
+            token,
+            wagerAmount: a.account.wagerAmount.toNumber(),
+            status: 'waiting' as const,
+          };
+        });
     } catch {
       return [];
     }
@@ -325,6 +465,7 @@ export function useWager() {
     playerInitialized,
     balance,
     balanceSOL: balance / LAMPORTS_PER_SOL,
+    tokenBalances,
 
     // Actions
     initializePlayer,
