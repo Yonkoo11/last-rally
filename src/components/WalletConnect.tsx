@@ -42,6 +42,7 @@ export function WalletConnect({ compact = false }: WalletConnectProps) {
       <button
         onClick={() => setVisible(true)}
         disabled={connecting}
+        aria-label={connecting ? "Connecting to wallet" : "Connect wallet"}
         style={{
           display: 'flex',
           alignItems: 'center',
@@ -98,6 +99,7 @@ export function WalletConnect({ compact = false }: WalletConnectProps) {
       {/* Address button */}
       <button
         onClick={disconnect}
+        aria-label={`Disconnect wallet ${truncateAddress(publicKey.toBase58())}`}
         style={{
           display: 'flex',
           alignItems: 'center',

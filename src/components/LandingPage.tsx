@@ -138,10 +138,10 @@ export function LandingPage({ onEnter }: LandingPageProps) {
         </div>
 
         {/* Split title */}
-        <div className="landing-title">
+        <h1 className="landing-title">
           <span className="landing-title-top">LAST</span>
           <span className="landing-title-bottom">RALLY</span>
-        </div>
+        </h1>
 
         {/* Tagline */}
         <p className="landing-tagline">FAST. FIERCE. FINAL.</p>
