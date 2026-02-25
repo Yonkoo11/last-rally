@@ -1,5 +1,21 @@
 /* WagerLobby - Matches ModeSelect cinematic style */
 
+/* Small spinner for button loading state */
+.spinner-small {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  margin-right: 8px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-top-color: #FFD700;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
 .wager-lobby {
   display: flex;
   flex-direction: column;

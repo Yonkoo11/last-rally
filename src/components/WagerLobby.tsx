@@ -39,7 +39,7 @@ const getWagerPresets = (token: TokenType) => {
 };
 
 export function WagerLobby({ onBack, onMatchReady }: WagerLobbyProps) {
-  const { publicKey, connected } = useWallet();
+  const { publicKey, connected, connecting } = useWallet();
   const { setVisible } = useWalletModal();
   const {
     status,
@@ -154,8 +154,19 @@ export function WagerLobby({ onBack, onMatchReady }: WagerLobbyProps) {
             </svg>
           </div>
           <p>Connect your wallet to wager SOL on matches</p>
-          <button className="btn btn-primary btn-large" onClick={() => setVisible(true)}>
-            Connect Wallet
+          <button
+            className="btn btn-primary btn-large"
+            onClick={() => setVisible(true)}
+            disabled={connecting}
+          >
+            {connecting ? (
+              <>
+                <span className="spinner-small" />
+                Opening wallet...
+              </>
+            ) : (
+              'Connect Wallet'
+            )}
           </button>
         </div>
       </div>

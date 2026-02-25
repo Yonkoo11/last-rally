@@ -436,7 +436,7 @@
 
 .cosmetic-unlock {
   font-size: var(--text-xs);
-  color: var(--text-muted);
+  color: rgba(255, 255, 255, 0.7); /* Increased from var(--text-muted) for better contrast */
   text-align: center;
   line-height: 1.4;
 }
