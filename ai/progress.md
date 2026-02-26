@@ -335,3 +335,96 @@ Friend has everything needed:
 3. Manual IDL creation is tedious but functional
 4. User skepticism saved us from false bug report
 5. Edition2024 issue was local (ancient Solana version), not global
+
+---
+
+## Session: Feb 25, 2026 Afternoon (UI/UX Polish)
+
+### ✅ COMPLETED
+
+#### Testing Documentation
+- Created `TESTING-GUIDE.md` - 438 lines, 7-phase testing workflow
+  - Prerequisites: wallet setup, browser setup, second wallet
+  - Phases: Basic connectivity, player profile, SOL wagers, full match flow, edge cases, SPL tokens, achievement NFTs
+  - Debugging commands and success criteria
+
+#### UI/UX Review
+- Created `UI-UX-REVIEW.md` - 394 lines, page-by-page analysis
+  - Overall grade: B+ (85/100)
+  - Found: 0 critical, 2 major, 5 minor, 3 accessibility issues
+  - Prioritized fixes in 3 tiers (before demo, before submission, post-hackathon)
+
+#### Priority 1 UI Fixes (Commit: 63af773)
+- ✅ Increased cosmetic unlock text contrast (0.5 → 0.7 opacity) - WCAG AA compliance
+- ✅ Added loading state to Connect Wallet button (spinner + "Opening wallet...")
+- ✅ Source code verified (Puppeteer couldn't test functional state)
+- Build: PASSING
+
+#### Priority 2 UI Fixes (Commit: 18c69d7)
+- ✅ Semantic HTML: Landing title changed `<div>` → `<h1>` (LandingPage.tsx)
+- ✅ ARIA labels: Added to wallet connect button ("Connect wallet" / "Connecting to wallet")
+- ✅ ARIA labels: Added to disconnect button with wallet address
+- ✅ ARIA labels: Added "Locked" to all cosmetic lock icons + `aria-hidden="true"` on SVGs
+- ✅ Mode cards already proper `<button>` elements with aria-labels (no change needed)
+- Build: PASSING (1m 6s)
+- Pushed to remote: origin/solana-v4
+
+### FILES MODIFIED (This Session)
+1. `src/components/CosmeticSelect.css` - Increased unlock text contrast
+2. `src/components/WagerLobby.tsx` - Added loading state for Connect Wallet
+3. `src/components/WagerLobby.css` - Added spinner animation CSS
+4. `src/components/LandingPage.tsx` - Changed title to `<h1>` element
+5. `src/components/WalletConnect.tsx` - Added ARIA labels to both buttons
+6. `src/components/CosmeticSelect.tsx` - Added ARIA labels to lock icons (3 instances)
+
+### CURRENT STATE
+- ✅ Program deployed to devnet (verified on-chain)
+- ✅ Frontend program ID constants updated
+- ✅ Priority 1 + Priority 2 UI fixes complete
+- ✅ Testing documentation created
+- ✅ UI/UX review complete
+- ⚠️ **Zero functional testing done yet** (requires real wallet)
+- ⚠️ Priority 3 UI fixes (code splitting, mobile) deferred to post-hackathon
+
+### NEXT STEPS (Priority Order)
+1. **Manual Testing Required** (cannot be automated):
+   - Connect Phantom wallet on devnet
+   - Test match creation (0.01 SOL)
+   - Test match joining (second wallet)
+   - Test match settlement
+   - Verify token transfers work correctly
+
+2. **Address Issues Found in Testing**:
+   - Fix any bugs discovered
+   - Handle edge cases (insufficient balance, RPC errors, etc.)
+
+3. **Friend's Feedback**:
+   - Get specific UI/UX issues they mentioned
+   - Address remaining visual flaws
+
+4. **Demo Video** (Feb 27):
+   - Record 3-minute demo following demo-script.md
+   - Show: game features, wager flow, settlement, achievements
+   - Highlight: Solana integration, real money games
+
+5. **Submission**:
+   - GitHub README with screenshots
+   - Submit to Solana Graveyard hackathon
+   - Submit to MagicBlock Gaming track
+
+### KNOWN UNKNOWNS
+- **Program functionality**: Zero on-chain testing
+  - Will wallet connection work?
+  - Will match creation succeed?
+  - Will token transfers execute?
+  - Are PDAs derived correctly?
+- **SPL tokens**: USDC/BONK flows untested
+- **Achievement NFTs**: Minting untested on devnet
+
+### TIME ESTIMATE TO COMPLETION
+- Manual testing + debugging: 4-6 hours
+- Bug fixes from testing: 2-4 hours
+- Friend feedback fixes: 1-2 hours
+- Demo video: 2-3 hours
+- Final polish + submission: 1-2 hours
+- **Total: ~12-18 hours over 2 days** (tight but feasible)
