@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #0A0A0C;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            color: #FAFAFA;
+        }
+        .container {
+            max-width: 1200px;
+            padding: 60px;
+        }
+        h1 {
+            font-size: 64px;
+            font-weight: 700;
+            margin-bottom: 60px;
+            color: #FF6B6B;
+        }
+        .problem {
+            font-size: 36px;
+            line-height: 1.6;
+            color: #B0B0B0;
+            margin-bottom: 40px;
+        }
+        .problem strong {
+            color: #FAFAFA;
+        }
+        .issues {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 30px;
+            margin-top: 60px;
+        }
+        .issue {
+            background: rgba(255, 107, 107, 0.05);
+            border: 2px solid rgba(255, 107, 107, 0.2);
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+        }
+        .issue-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        .issue-text {
+            font-size: 20px;
+            color: #FF6B6B;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>THE PROBLEM</h1>
+        <div class="problem">
+            Competitive gamers already wager <strong>$50-$500 per match</strong> through Discord and Venmo.
+        </div>
+
+        <div class="issues">
+            <div class="issue">
+                <div class="issue-icon">🤝</div>
+                <div class="issue-text">Trust Required</div>
+            </div>
+            <div class="issue">
+                <div class="issue-icon">⏱️</div>
+                <div class="issue-text">Payment Delays</div>
+            </div>
+            <div class="issue">
+                <div class="issue-icon">⚖️</div>
+                <div class="issue-text">Settlement Disputes</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

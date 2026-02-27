@@ -1,0 +1,108 @@
+# Last Rally - 60 Second Demo Script
+# Optimized for Quality Over Length
+# Based on 48sec Faktory success
+
+---
+
+[0:00 - 0:10] HOOK (10 seconds)
+
+This is a live wager match on Solana. 0.2 SOL pot. Winner takes all. Settlement happens on-chain the instant the game ends.
+
+---
+
+[0:10 - 0:25] PROBLEM (15 seconds)
+
+Competitive gamers already wager hundreds of dollars per match through Discord and Venmo. The problem? Trust. You need someone to hold the money. Settlement disputes. Payment delays.
+
+Solana fixes this.
+
+---
+
+[0:25 - 0:45] SOLUTION (20 seconds)
+
+Last Rally: arcade Pong with trustless wagers. Pick your token—SOL, BONK, or USDC. The Anchor program creates an escrow. Play your match. Winner gets the pot. Instant. Trustless. No intermediary.
+
+When you wager BONK, premium cosmetics unlock—orange paddle, amber particles, full visual overhaul. We're treating BONK like gold.
+
+---
+
+[0:45 - 1:00] TECH & CLOSE (15 seconds)
+
+Architecture built for MagicBlock Ephemeral Rollups. Phase one: Solana L1. Phase two: real-time multiplayer at 10 millisecond latency.
+
+Open source. Deployed to devnet. 450 commits. Built for Graveyard Hackathon.
+
+Thanks for watching.
+
+---
+
+TOTAL: 60 seconds
+WORD COUNT: ~165 words
+SPEAKING PACE: Natural (165 words/min)
+
+---
+
+EMPHASIS POINTS:
+- "Live wager match on Solana" (proof upfront)
+- "Solana fixes this" (clear value prop)
+- "Trustless. No intermediary." (key benefit)
+- "Treating BONK like gold" (Artwork track)
+- "MagicBlock Ephemeral Rollups" (Gaming track)
+- "Deployed to devnet" (working product)
+
+---
+
+REMOVED FROM 3:50 VERSION:
+❌ Detailed token amounts
+❌ Step-by-step create/join flow
+❌ Achievement NFTs
+❌ Full roadmap bullets
+❌ "Why this matters" explanations
+
+KEPT:
+✅ Working product proof
+✅ Problem statement
+✅ Solana solution
+✅ Multi-token (BONK emphasis)
+✅ MagicBlock integration path
+✅ Traction proof (450 commits, devnet)
+
+---
+
+WHY THIS WINS:
+
+1. **Fast hook** (10 sec) - judges see proof immediately
+2. **Clear problem** (15 sec) - relatable, quantified
+3. **Simple solution** (20 sec) - technical but accessible
+4. **Both tracks covered** (BONK + MagicBlock in 20 sec)
+5. **Credibility close** (15 sec) - open source, deployed
+6. **No filler** - every word earns its place
+7. **Professional pace** - not rushed, not slow
+8. **Easy to make perfect** - short = fewer chances for AI voice to sound robotic
+
+---
+
+VISUAL TIMELINE:
+
+0:00-0:10: Landing page → Game preview
+0:10-0:25: Mode select → Wallet modal
+0:25-0:35: Token selector (BONK highlighted)
+0:35-0:45: BONK cosmetics showcase
+0:45-0:55: Architecture diagram (ER flow)
+0:55-1:00: Title card: "LAST RALLY | Open Source"
+
+6 shots, 10 seconds each = smooth, professional pacing
+
+---
+
+PRODUCTION ADVANTAGE:
+- Single audio take (1 minute vs 4 minutes)
+- 6 screenshots vs 15+
+- Easier to perfect every frame
+- Less editing time (30 min vs 90 min)
+- Smaller file size (<20MB)
+- More rewatchable (judges might watch twice)
+
+---
+
+NEXT: Generate 60-second voiceover, assemble 6 screenshots, done in 1 hour total.

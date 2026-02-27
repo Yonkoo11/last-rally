@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #0A0A0C;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            color: #FAFAFA;
+        }
+        .container {
+            text-align: center;
+            max-width: 1000px;
+        }
+        h1 {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 80px;
+            letter-spacing: -1px;
+        }
+        .flow {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            align-items: center;
+        }
+        .node {
+            background: #1A1A1C;
+            border-radius: 12px;
+            padding: 30px 60px;
+            min-width: 500px;
+            text-align: center;
+            position: relative;
+        }
+        .node-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .node-desc {
+            font-size: 18px;
+            color: #B0B0B0;
+        }
+        .node.client {
+            border: 3px solid #00d4ff;
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.2);
+        }
+        .node.client .node-title { color: #00d4ff; }
+
+        .node.er {
+            border: 3px solid #ffaa00;
+            box-shadow: 0 0 30px rgba(255, 170, 0, 0.2);
+        }
+        .node.er .node-title { color: #ffaa00; }
+        .node.er .badge {
+            position: absolute;
+            top: -15px;
+            right: 20px;
+            background: #ffaa00;
+            color: #0A0A0C;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .node.l1 {
+            border: 3px solid #14f195;
+            box-shadow: 0 0 30px rgba(20, 241, 149, 0.2);
+        }
+        .node.l1 .node-title { color: #14f195; }
+        .node.l1 .badge {
+            position: absolute;
+            top: -15px;
+            right: 20px;
+            background: #14f195;
+            color: #0A0A0C;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .node.wallet {
+            border: 3px solid #00d4ff;
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.2);
+        }
+        .node.wallet .node-title { color: #00d4ff; }
+
+        .arrow {
+            font-size: 48px;
+            color: #666;
+            margin: -10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>MAGICBLOCK ER-READY ARCHITECTURE</h1>
+
+        <div class="flow">
+            <div class="node client">
+                <div class="node-title">Client</div>
+                <div class="node-desc">60fps React Canvas • Zero latency gameplay</div>
+            </div>
+
+            <div class="arrow">↓</div>
+
+            <div class="node er">
+                <div class="badge">Phase 2: Roadmap</div>
+                <div class="node-title">Ephemeral Rollup</div>
+                <div class="node-desc">MagicBlock ER • 10ms state updates</div>
+            </div>
+
+            <div class="arrow">↓</div>
+
+            <div class="node l1">
+                <div class="badge">Phase 1: Current</div>
+                <div class="node-title">Solana L1</div>
+                <div class="node-desc">Anchor Program • Trustless escrow • 400ms finality</div>
+            </div>
+
+            <div class="arrow">↓</div>
+
+            <div class="node wallet">
+                <div class="node-title">Winner Wallet</div>
+                <div class="node-desc">Instant payout • 0.2 SOL</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

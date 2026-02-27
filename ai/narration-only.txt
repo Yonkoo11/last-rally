@@ -1,0 +1,171 @@
+# Last Rally - Narration Script for Voice Generation
+# Duration: 3:50 (230 seconds)
+# Use: Feed this to Fish Audio S1, Cartesia, or ElevenLabs
+# Pace: Moderate speed, clear enunciation, confident tone
+
+---
+
+[0:00 - 0:20] SECTION 1: OPEN WITH THE DEMO (20 seconds)
+
+This is a 0.2 SOL wager match. Live on Solana devnet. Right now.
+
+Player 1—that's me—deposited 0.1 SOL. Opponent matched it. Winner takes the pot. Settlement happens on-chain the moment the score hits 7.
+
+Watch.
+
+---
+
+[0:20 - 0:50] SECTION 2: THE PROBLEM (30 seconds)
+
+Here's the problem we're solving.
+
+Competitive gamers already wager on matches—Discord, Venmo, handshake deals. $50 to $500 per game. Millions of dollars moving off-chain in informal bets.
+
+The friction: trust. You need an escrow. Someone to hold the money. Settlement disputes. Payment delays.
+
+Solana solves all of that. Atomic swaps. Instant settlement. No intermediary.
+
+Last Rally proves this model works for arcade games. Show up. Deposit. Play. Winner gets paid. 90 seconds start to finish.
+
+---
+
+[0:50 - 1:40] SECTION 3: THE FULL FLOW (50 seconds)
+
+Let me show you the complete flow.
+
+[pause] I create a match. 0.05 SOL wager. I'm choosing BONK instead of SOL—we support three tokens. The Anchor program creates an escrow PDA, locks my tokens.
+
+[pause] My opponent sees the open match. Joins. Deposits their 0.05 BONK. Escrow now holds the full pot.
+
+[pause] Match starts. AI opponent on Hard difficulty. This is a real game—13 quests, 23 achievements, 7 pitch types, full progression system. You can play for free offline. But right now, stakes are on.
+
+[pause] I win 7-4. The program settles immediately. Winner-takes-all transfer. Transaction confirms. 0.1 BONK in my wallet.
+
+No intermediary. No dispute. No delay.
+
+---
+
+[1:40 - 2:30] SECTION 4: MAGICBLOCK INTEGRATION PATH (50 seconds)
+
+Now here's why this matters for MagicBlock's vision.
+
+Right now, we settle on Solana L1. That's 400ms finality. Fine for a 90-second match.
+
+But what about real-time games? Frame-by-frame interactions? That needs MagicBlock's Ephemeral Rollups.
+
+Our architecture is ER-ready. Here's how it works:
+
+The game runs client-side—60fps Canvas rendering, zero latency. When you create a wager, we spin up an ephemeral session. Gameplay state updates at 10ms intervals in the ER environment. Only the final match result gets anchored to L1.
+
+Anchor program. PDA escrow. Multi-token support. SPL integration. Metaplex NFTs for achievements. All the primitives are there.
+
+Phase 1: we proved the model on L1. Phase 2: we port to Ephemeral Rollups and unlock real-time multiplayer at scale.
+
+This is the template. Pong today. Fighting games tomorrow. Any skill-based arcade game can use this escrow model.
+
+---
+
+[2:30 - 3:15] SECTION 5: BONK ARTWORK SHOWCASE (45 seconds)
+
+One more thing. The BONK Artwork integration.
+
+When you wager in BONK, the game transforms. Watch the cosmetics.
+
+[pause] BONK-themed paddle. Orange gradient, ember particle trail. Designed to feel premium, not meme-y.
+
+[pause] Amber particle trail. Warm glow that intensifies with velocity. Physics-based color mixing.
+
+[pause] Arena vignette shifts warm. BONK watermark on the court. Subtle, not obnoxious.
+
+This isn't a logo slapped on a UI. It's a complete visual overhaul. The art direction changes to celebrate BONK as a premium token, not a joke.
+
+When you win a BONK match, you unlock these cosmetics permanently. Achievement NFT mints on-chain via Metaplex. Soul-bound. Proof of skill.
+
+We're treating BONK like gold. The art reflects that.
+
+---
+
+[3:15 - 3:50] SECTION 6: CLOSE WITH TRACTION + NEXT STEPS (35 seconds)
+
+So. What's next.
+
+The code is open-source. Anchor program deployed to devnet. Frontend live on GitHub Pages. 450 commits in two weeks. We built this fast because the primitives are solid.
+
+Immediate roadmap:
+- MagicBlock Ephemeral Rollups integration for real-time multiplayer
+- Mainnet deployment with program audit
+- Ranked ladder with on-chain leaderboards
+- Tournament brackets with prize pools
+
+Long-term vision: this escrow model works for any arcade game. Street Fighter. Tetris. Geometry Wars. We're starting with Pong to prove the tech. But the infrastructure is composable.
+
+Last Rally. Skill-based wagers. Solana-native. Built for MagicBlock's gaming future.
+
+Thanks for watching.
+
+---
+
+# VOICE DIRECTION NOTES
+
+**Tone**: Confident but not arrogant, technical but accessible
+**Pace**: Moderate (140-160 words/min), slow down for technical terms
+**Emphasis Points**:
+- "0.2 SOL wager match. Live on Solana devnet. Right now." (proof upfront)
+- "Millions of dollars moving off-chain" (scale the problem)
+- "No intermediary. No dispute. No delay." (Solana benefit)
+- "MagicBlock's Ephemeral Rollups" (Gaming Track alignment)
+- "We're treating BONK like gold" (Artwork Track alignment)
+- "450 commits in two weeks" (credibility)
+
+**Pauses**:
+- Natural pauses at [pause] markers (1-2 seconds for screen transitions)
+- Brief pause after each roadmap bullet point
+- No pause at dashes in bullet points (read as continuous list)
+
+**Pronunciation Guide**:
+- "PDA" = P-D-A (spell out, not "puh-duh")
+- "Ephemeral Rollups" = eh-FEM-er-al roll-ups
+- "Metaplex" = MET-ah-plex (not meta-PLEX)
+- "BONK" = BONK (rhymes with "honk", not "bone-k")
+
+**Word Count**: ~520 words
+**Speaking Time**: ~3:40 at natural pace (allows 10sec buffer for pauses)
+**Character Count**: ~3,200 characters
+
+---
+
+# TTS SERVICE INSTRUCTIONS
+
+**Fish Audio S1** ($9.99/mo for 200min):
+1. Paste narration text above
+2. Select voice: "Professional Male" or "Confident Female"
+3. Speed: 1.0x (natural)
+4. Export: MP3, 128kbps
+
+**Cartesia**:
+1. Create new project
+2. Paste full narration
+3. Voice clone (optional): Upload 30sec sample of your voice
+4. Generate with emotion tags: [confident], [technical], [enthusiastic]
+
+**ElevenLabs** (if using):
+1. Use "Adam" voice (best for technical content)
+2. Stability: 60%, Similarity: 80%, Style: 30%
+3. Generate per section (6 sections) then concatenate
+
+---
+
+# VALIDATION CHECKLIST
+
+Before using generated audio:
+- [ ] Listen to full 3:50 duration
+- [ ] Verify all pauses are natural (not robotic)
+- [ ] Check pronunciation of technical terms (PDA, Ephemeral, Metaplex)
+- [ ] Confirm tone sounds confident (not salesy or monotone)
+- [ ] Test sync with video timing (each section matches screen actions)
+- [ ] Re-generate any awkward sections
+
+---
+
+Total file word count: 520 words
+Estimated TTS cost: $0.50 - $2.00 depending on service

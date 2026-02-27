@@ -1,0 +1,15 @@
+file 'frame-01-landing.png'
+duration 10.0
+file 'frame-02-problem.png'
+duration 15.0
+file 'frame-03-solution.png'
+duration 10.0
+file 'frame-04-bonk-selector.png'
+duration 5.0
+file 'frame-05-bonk-cosmetics.png'
+duration 5.0
+file 'frame-06-architecture.png'
+duration 10.0
+file 'frame-07-title-card.png'
+duration 5.0
+file 'frame-07-title-card.png'

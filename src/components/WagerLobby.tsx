@@ -329,7 +329,7 @@ export function WagerLobby({ onBack, onMatchReady }: WagerLobbyProps) {
             <span>{formatTokenAmount(selectedWager, selectedToken)} {selectedToken}</span>
           </div>
           <div className="summary-row highlight">
-            <span>Winner gets</span>
+            <span>Winner gets </span>
             <span>{formatTokenAmount(selectedWager * 2, selectedToken)} {selectedToken}</span>
           </div>
         </div>

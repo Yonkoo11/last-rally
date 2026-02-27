@@ -1,0 +1,14 @@
+file 'real-captures/01-landing.png'
+duration 8.0
+file 'real-captures/02-mode-select.png'
+duration 5.0
+file 'real-captures/03-wager-mode.png'
+duration 5.0
+file '/Users/yonko/Projects/goldcoin-pong/video/public/gameplay.mov'
+duration 12.0
+file 'text-slides/bonk-features.png'
+duration 10.0
+file 'text-slides/architecture.png'
+duration 10.0
+file 'text-slides/closing.png'
+duration 10.0

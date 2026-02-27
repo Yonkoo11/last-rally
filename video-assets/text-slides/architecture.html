@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+body {
+    margin: 0;
+    background: #0A0A0C;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    font-family: -apple-system, sans-serif;
+    color: #FAFAFA;
+}
+.container { text-align: center; }
+h1 { font-size: 56px; font-weight: 700; margin-bottom: 80px; }
+.flow {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    align-items: center;
+}
+.node {
+    background: #1A1A1C;
+    border-radius: 12px;
+    padding: 30px 60px;
+    min-width: 600px;
+    position: relative;
+}
+.node-title { font-size: 32px; font-weight: 700; margin-bottom: 8px; }
+.node-desc { font-size: 20px; color: #999; }
+.phase1 { border: 3px solid #14f195; }
+.phase1 .node-title { color: #14f195; }
+.phase1 .badge {
+    position: absolute;
+    top: -15px;
+    right: 20px;
+    background: #14f195;
+    color: #0A0A0C;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 700;
+}
+.phase2 { border: 3px solid #ffaa00; }
+.phase2 .node-title { color: #ffaa00; }
+.phase2 .badge {
+    position: absolute;
+    top: -15px;
+    right: 20px;
+    background: #ffaa00;
+    color: #0A0A0C;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 700;
+}
+.arrow { font-size: 48px; color: #666; }
+</style>
+</head>
+<body>
+<div class="container">
+    <h1>MAGICBLOCK ER-READY</h1>
+    <div class="flow">
+        <div class="node phase1">
+            <div class="badge">Phase 1: NOW</div>
+            <div class="node-title">Solana L1</div>
+            <div class="node-desc">Anchor escrow • 400ms finality</div>
+        </div>
+        <div class="arrow">↓</div>
+        <div class="node phase2">
+            <div class="badge">Phase 2: ROADMAP</div>
+            <div class="node-title">MagicBlock Ephemeral Rollup</div>
+            <div class="node-desc">Real-time multiplayer • 10ms latency</div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -169,7 +169,7 @@ export function useWager() {
         }
 
         await program.methods
-          .createMatch(matchId, new BN(wagerAmount), tokenMint)
+          .createMatch(matchId, new BN(wagerAmount))
           .accounts({
             matchAccount: matchPDA,
             player1: publicKey,

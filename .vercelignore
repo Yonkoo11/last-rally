@@ -1,0 +1,28 @@
+# Anchor / Solana build artifacts
+.anchor/
+target/
+programs/
+
+# Node modules
+node_modules/
+
+# Environment files
+.env
+.env.local
+
+# Git
+.git/
+
+# IDE
+.vscode/
+.idea/
+
+# Testing
+coverage/
+tests/
+
+# Documentation (not needed for deployment)
+ai/
+HANDOVER.md
+TESTING-GUIDE.md
+UI-UX-REVIEW.md
