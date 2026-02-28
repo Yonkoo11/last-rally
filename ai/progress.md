@@ -20,10 +20,25 @@
 - `ephemeral-rollups-sdk` crate is incompatible with all current Solana build tools
 - Implemented delegation CPI manually via `invoke_signed` to avoid SDK dependency
 
+### PDA SEED FIXES (Feb 28, continued)
+- Verified PDA seeds against `@magicblock-labs/ephemeral-rollups-sdk` npm source
+- **Buffer PDA**: Fixed `getDelegationBufferPDA()` to use owner program (our game program) instead of delegation program
+- **Delegation Record PDA**: `["delegation", account]` from DELEGATION_PROGRAM_ID - was correct
+- **Delegation Metadata PDA**: `["delegation-metadata", account]` from DELEGATION_PROGRAM_ID - was correct
+- **Undelegate approach**: Fixed to use `MAGIC_PROGRAM_ID` via ER router (not our program's CPI)
+  - SDK shows undelegation goes through `Magic11111111111111111111111111111111111111`
+  - Instruction data: `[2, 0, 0, 0]` (uint32 LE = 2 = commit and undelegate)
+  - Sent via MagicBlock router endpoint, not L1 RPC
+- Added `MAGIC_PROGRAM_ID` and `MAGIC_CONTEXT_ID` constants to anchor.ts
+- Added `createCommitAndUndelegateInstruction()` helper
+- Delegate discriminator in Rust verified correct: `[0,0,0,0,0,0,0,0]` matches SDK
+- Frontend build passing after all fixes
+- Added "Play Free" button to WagerLobby (for users without wallet)
+
 ### NOT DONE
-- Delegation PDA seed derivation on frontend may not match actual delegation program PDAs
 - Zero on-chain testing of delegate/undelegate flow
 - No testing on MagicBlock devnet ER validator
+- Rust `undelegate_match` instruction is deployed but unused (frontend uses Magic program directly)
 
 ---
 

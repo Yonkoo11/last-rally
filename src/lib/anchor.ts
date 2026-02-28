@@ -1,11 +1,13 @@
 import { Program, AnchorProvider, BN } from '@coral-xyz/anchor';
-import { Connection, PublicKey, SystemProgram } from '@solana/web3.js';
+import { Connection, PublicKey, SystemProgram, TransactionInstruction } from '@solana/web3.js';
 import { AnchorWallet } from '@solana/wallet-adapter-react';
 import { PROGRAM_ID, SOLANA_RPC_URL, MAGICBLOCK_ROUTER } from './solana';
 import idl from '../idl/last_rally.json';
 
-// MagicBlock Delegation Program ID
+// MagicBlock program IDs
 export const DELEGATION_PROGRAM_ID = new PublicKey('DELeGGvXpWV2fqJUhqcF5ZSYMS4JTLjteaAMARRSaeSh');
+export const MAGIC_PROGRAM_ID = new PublicKey('Magic11111111111111111111111111111111111111');
+export const MAGIC_CONTEXT_ID = new PublicKey('MagicContext1111111111111111111111111111111');
 
 // Singleton connection
 let _connection: Connection | null = null;
@@ -54,10 +56,11 @@ export function generateMatchId(): BN {
 }
 
 // MagicBlock delegation PDA helpers
-export function getDelegationBufferPDA(delegatedAccount: PublicKey): [PublicKey, number] {
+// Buffer PDA is derived from the OWNER program (our game), not the delegation program
+export function getDelegationBufferPDA(delegatedAccount: PublicKey, ownerProgram: PublicKey = PROGRAM_ID): [PublicKey, number] {
   return PublicKey.findProgramAddressSync(
     [Buffer.from('buffer'), delegatedAccount.toBuffer()],
-    DELEGATION_PROGRAM_ID
+    ownerProgram
   );
 }
 
@@ -82,6 +85,32 @@ export function getMagicConnection(): Connection {
     _magicConnection = new Connection(MAGICBLOCK_ROUTER, 'confirmed');
   }
   return _magicConnection;
+}
+
+// Create a commit-and-undelegate instruction for MagicBlock ER
+// This is sent to MAGIC_PROGRAM_ID via the ER router, not to our program
+export function createCommitAndUndelegateInstruction(
+  payer: PublicKey,
+  accountsToUndelegate: PublicKey[]
+): TransactionInstruction {
+  const keys = [
+    { pubkey: payer, isSigner: true, isWritable: true },
+    { pubkey: MAGIC_CONTEXT_ID, isSigner: false, isWritable: true },
+    ...accountsToUndelegate.map((account) => ({
+      pubkey: account,
+      isSigner: false,
+      isWritable: false,
+    })),
+  ];
+
+  const data = Buffer.alloc(4);
+  data.writeUInt32LE(2, 0); // instruction index 2 = commit and undelegate
+
+  return new TransactionInstruction({
+    keys,
+    programId: MAGIC_PROGRAM_ID,
+    data,
+  });
 }
 
 export { BN, SystemProgram };

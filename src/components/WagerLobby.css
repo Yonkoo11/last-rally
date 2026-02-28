@@ -108,6 +108,19 @@
   text-align: center;
 }
 
+/* Play Free divider */
+.wager-divider {
+  font-size: 0.8rem;
+  color: var(--text-secondary, #888);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* Free play card accent */
+.wager-menu-free .wager-menu-icon {
+  color: var(--text-secondary, #888);
+}
+
 /* Wager presets */
 .wager-presets {
   display: grid;

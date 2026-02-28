@@ -10,6 +10,7 @@ import './WagerLobby.css';
 interface WagerLobbyProps {
   onBack: () => void;
   onMatchReady: (wagerInfo: WagerInfo) => void;
+  onPlayFree: () => void;
 }
 
 const getWagerPresets = (token: TokenType) => {
@@ -38,7 +39,7 @@ const getWagerPresets = (token: TokenType) => {
   }
 };
 
-export function WagerLobby({ onBack, onMatchReady }: WagerLobbyProps) {
+export function WagerLobby({ onBack, onMatchReady, onPlayFree }: WagerLobbyProps) {
   const { publicKey, connected, connecting } = useWallet();
   const { setVisible } = useWalletModal();
   const {
@@ -167,6 +168,13 @@ export function WagerLobby({ onBack, onMatchReady }: WagerLobbyProps) {
             ) : (
               'Connect Wallet'
             )}
+          </button>
+          <div className="wager-divider">or</div>
+          <button
+            className="btn btn-secondary btn-large"
+            onClick={onPlayFree}
+          >
+            Play Free
           </button>
         </div>
       </div>
@@ -389,6 +397,16 @@ export function WagerLobby({ onBack, onMatchReady }: WagerLobbyProps) {
           </div>
           <span className="wager-menu-title">Browse Matches</span>
           <span className="wager-menu-desc">Join an open match</span>
+        </button>
+
+        <button className="wager-menu-card wager-menu-free" onClick={onPlayFree}>
+          <div className="wager-menu-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="32" height="32">
+              <polygon points="5,3 19,12 5,21" />
+            </svg>
+          </div>
+          <span className="wager-menu-title">Play Free</span>
+          <span className="wager-menu-desc">No wager, just play</span>
         </button>
       </div>
 

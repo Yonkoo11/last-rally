@@ -9,13 +9,15 @@ import {
   getDelegationBufferPDA,
   getDelegationRecordPDA,
   getDelegationMetadataPDA,
+  createCommitAndUndelegateInstruction,
+  getMagicConnection,
   DELEGATION_PROGRAM_ID,
   BN,
   SystemProgram,
 } from '../lib/anchor';
 import { PROGRAM_ID } from '../lib/solana';
 import { SOLANA_RPC_URL, getTokenMint, TOKEN_MINTS } from '../lib/solana';
-import { Connection } from '@solana/web3.js';
+import { Connection, Transaction } from '@solana/web3.js';
 import { getAssociatedTokenAddressSync, TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID } from '@solana/spl-token';
 
 export type TokenType = 'SOL' | 'USDC' | 'BONK';
@@ -468,6 +470,7 @@ export function useWager() {
   );
 
   // Undelegate match from MagicBlock ER back to L1
+  // Uses MAGIC_PROGRAM_ID via the ER router (not our program's instruction)
   const undelegateMatch = useCallback(
     async (matchPDA: PublicKey): Promise<boolean> => {
       if (!publicKey || !anchorWallet) return false;
@@ -476,24 +479,15 @@ export function useWager() {
       setError(null);
 
       try {
-        const program = getProgram(anchorWallet);
-        const [buffer] = getDelegationBufferPDA(matchPDA);
-        const [delegationRecord] = getDelegationRecordPDA(matchPDA);
-        const [delegationMetadata] = getDelegationMetadataPDA(matchPDA);
+        const magicConnection = getMagicConnection();
+        const ix = createCommitAndUndelegateInstruction(publicKey, [matchPDA]);
 
-        await program.methods
-          .undelegateMatch()
-          .accounts({
-            payer: publicKey,
-            matchAccount: matchPDA,
-            ownerProgram: PROGRAM_ID,
-            buffer,
-            delegationRecord,
-            delegationMetadata,
-            delegationProgram: DELEGATION_PROGRAM_ID,
-            systemProgram: SystemProgram.programId,
-          })
-          .rpc();
+        const tx = new Transaction().add(ix);
+        tx.feePayer = publicKey;
+        tx.recentBlockhash = (await magicConnection.getLatestBlockhash()).blockhash;
+
+        const signed = await anchorWallet.signTransaction(tx);
+        await magicConnection.sendRawTransaction(signed.serialize());
 
         setStatus('idle');
         return true;

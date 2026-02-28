@@ -188,6 +188,7 @@ function AppContent() {
           <WagerLobby
             onBack={() => setView('modeSelect')}
             onMatchReady={handleWagerMatchReady}
+            onPlayFree={handleQuickPlay}
           />
         );
 
