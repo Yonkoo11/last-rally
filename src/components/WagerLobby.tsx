@@ -263,7 +263,7 @@ export function WagerLobby({ onBack, onMatchReady, onPlayFree }: WagerLobbyProps
                     Win: {formatTokenAmount(match.wagerAmount * 2, match.token)} {match.token}
                   </span>
                   <span className="match-join-label">
-                    {status === 'joining' ? 'Joining...' : 'Join'}
+                    {status === 'joining' ? <><span className="spinner-small" /> Joining...</> : 'Join'}
                   </span>
                 </div>
               </button>
@@ -350,7 +350,9 @@ export function WagerLobby({ onBack, onMatchReady, onPlayFree }: WagerLobbyProps
           onClick={handleCreateMatch}
           disabled={status === 'creating' || tokenBalances[selectedToken] < selectedWager}
         >
-          {status === 'creating' ? 'Creating Match...' : 'Create Match'}
+          {status === 'creating' ? (
+            <><span className="spinner-small" /> Creating Match...</>
+          ) : 'Create Match'}
         </button>
 
         {tokenBalances[selectedToken] < selectedWager && status !== 'creating' && (

@@ -650,7 +650,9 @@ function VictoryOverlay({
         {isWagerMatch && (
           <div className="victory-wager">
             {settlementStatus === 'settling' && !timedOut && (
-              <p className="wager-settling">Settling on Solana...</p>
+              <p className="wager-settling">
+                <span className="settling-spinner" /> Settling on Solana...
+              </p>
             )}
             {settlementStatus === 'settling' && timedOut && (
               <div className="wager-timeout">
