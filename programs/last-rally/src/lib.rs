@@ -2,7 +2,7 @@ use anchor_lang::prelude::*;
 use anchor_lang::system_program;
 use anchor_lang::solana_program::instruction::{AccountMeta, Instruction};
 use anchor_lang::solana_program::program::invoke_signed;
-use anchor_spl::token::{self, Token, TokenAccount, Mint, Transfer};
+use anchor_spl::token::{self, Transfer};
 
 declare_id!("BUVQGteCL1j5mSrmpNXv5bpFqDrbVZ7fww12FXd7w4XG");
 
@@ -553,15 +553,18 @@ pub struct CreateMatch<'info> {
     #[account(mut)]
     pub player1: Signer<'info>,
 
-    // SPL token accounts (only used for SPL tokens, must exist)
-    pub mint: Account<'info, Mint>,
+    /// CHECK: SPL mint account - only validated for SPL token wagers, skipped for SOL
+    pub mint: UncheckedAccount<'info>,
+    /// CHECK: SPL escrow token account - only used for SPL token wagers
     #[account(mut)]
-    pub escrow_token_account: Account<'info, TokenAccount>,
+    pub escrow_token_account: UncheckedAccount<'info>,
+    /// CHECK: Player 1 token account - only used for SPL token wagers
     #[account(mut)]
-    pub player1_token_account: Account<'info, TokenAccount>,
+    pub player1_token_account: UncheckedAccount<'info>,
 
     pub system_program: Program<'info, System>,
-    pub token_program: Program<'info, Token>,
+    /// CHECK: Token program - passed for SPL wagers, can be any account for SOL wagers
+    pub token_program: UncheckedAccount<'info>,
 }
 
 #[derive(Accounts)]
@@ -571,15 +574,18 @@ pub struct JoinMatch<'info> {
     #[account(mut)]
     pub player2: Signer<'info>,
 
-    // SPL token accounts (only used for SPL tokens, must exist)
-    pub mint: Account<'info, Mint>,
+    /// CHECK: SPL mint account - only validated for SPL token wagers
+    pub mint: UncheckedAccount<'info>,
+    /// CHECK: SPL escrow token account - only used for SPL token wagers
     #[account(mut)]
-    pub escrow_token_account: Account<'info, TokenAccount>,
+    pub escrow_token_account: UncheckedAccount<'info>,
+    /// CHECK: Player 2 token account - only used for SPL token wagers
     #[account(mut)]
-    pub player2_token_account: Account<'info, TokenAccount>,
+    pub player2_token_account: UncheckedAccount<'info>,
 
     pub system_program: Program<'info, System>,
-    pub token_program: Program<'info, Token>,
+    /// CHECK: Token program - passed for SPL wagers
+    pub token_program: UncheckedAccount<'info>,
 }
 
 #[derive(Accounts)]
@@ -607,17 +613,21 @@ pub struct SettleMatch<'info> {
     )]
     pub player2_profile: Account<'info, PlayerProfile>,
 
-    // SPL token accounts (only used for SPL tokens)
-    pub mint: Account<'info, Mint>,
+    /// CHECK: SPL mint account - only validated for SPL token wagers
+    pub mint: UncheckedAccount<'info>,
+    /// CHECK: SPL escrow token account - only used for SPL token wagers
     #[account(mut)]
-    pub escrow_token_account: Account<'info, TokenAccount>,
+    pub escrow_token_account: UncheckedAccount<'info>,
+    /// CHECK: Player 1 token account - only used for SPL token wagers
     #[account(mut)]
-    pub player1_token_account: Account<'info, TokenAccount>,
+    pub player1_token_account: UncheckedAccount<'info>,
+    /// CHECK: Player 2 token account - only used for SPL token wagers
     #[account(mut)]
-    pub player2_token_account: Account<'info, TokenAccount>,
+    pub player2_token_account: UncheckedAccount<'info>,
 
     pub system_program: Program<'info, System>,
-    pub token_program: Program<'info, Token>,
+    /// CHECK: Token program - passed for SPL wagers
+    pub token_program: UncheckedAccount<'info>,
 }
 
 #[derive(Accounts)]
@@ -627,15 +637,18 @@ pub struct CancelMatch<'info> {
     #[account(mut)]
     pub player1: Signer<'info>,
 
-    // SPL token accounts (only used for SPL tokens)
-    pub mint: Account<'info, Mint>,
+    /// CHECK: SPL mint account - only validated for SPL token wagers
+    pub mint: UncheckedAccount<'info>,
+    /// CHECK: SPL escrow token account - only used for SPL token wagers
     #[account(mut)]
-    pub escrow_token_account: Account<'info, TokenAccount>,
+    pub escrow_token_account: UncheckedAccount<'info>,
+    /// CHECK: Player 1 token account - only used for SPL token wagers
     #[account(mut)]
-    pub player1_token_account: Account<'info, TokenAccount>,
+    pub player1_token_account: UncheckedAccount<'info>,
 
     pub system_program: Program<'info, System>,
-    pub token_program: Program<'info, Token>,
+    /// CHECK: Token program - passed for SPL wagers
+    pub token_program: UncheckedAccount<'info>,
 }
 
 // MagicBlock Ephemeral Rollup delegation context

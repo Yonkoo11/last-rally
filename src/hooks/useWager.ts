@@ -18,7 +18,7 @@ import {
 import { PROGRAM_ID } from '../lib/solana';
 import { SOLANA_RPC_URL, getTokenMint, TOKEN_MINTS } from '../lib/solana';
 import { Connection, Transaction } from '@solana/web3.js';
-import { getAssociatedTokenAddressSync, TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID } from '@solana/spl-token';
+import { getAssociatedTokenAddressSync, TOKEN_PROGRAM_ID } from '@solana/spl-token';
 
 export type TokenType = 'SOL' | 'USDC' | 'BONK';
 
@@ -185,7 +185,7 @@ export function useWager() {
         }
 
         await program.methods
-          .createMatch(matchId, new BN(wagerAmount))
+          .createMatch(matchId, new BN(wagerAmount), tokenMint)
           .accounts({
             matchAccount: matchPDA,
             player1: publicKey,
@@ -194,7 +194,6 @@ export function useWager() {
             player1TokenAccount,
             systemProgram: SystemProgram.programId,
             tokenProgram: TOKEN_PROGRAM_ID,
-            associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
           })
           .rpc();
 
@@ -269,7 +268,6 @@ export function useWager() {
             player2TokenAccount,
             systemProgram: SystemProgram.programId,
             tokenProgram: TOKEN_PROGRAM_ID,
-            associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
           })
           .rpc();
 
