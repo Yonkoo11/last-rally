@@ -101,6 +101,27 @@ Last Rally is:
 - **Finance second**: Wagers are optional, not required
 - **Trustless**: No intermediary, no rug pulls, pure Solana
 
+## MagicBlock Gaming Track Alignment
+
+### Problem: On-chain games have unacceptable latency
+Solana L1 block times (~400ms) create noticeable input lag for real-time games. Players feel the delay between action and response, breaking immersion.
+
+### Solution: MagicBlock Ephemeral Rollups
+Last Rally delegates match account PDAs to MagicBlock's ephemeral validator during active gameplay, reducing state access to ~10ms.
+
+### How it works in Last Rally
+1. **Match created on L1** - Wager escrowed in match PDA via Anchor program
+2. **PDA delegated to ER** - `delegate_match()` CPIs to MagicBlock's delegation program (`DELeGG...aeSh`)
+3. **Game plays at ER speed** - Match state accessible at ~10ms instead of ~400ms
+4. **State committed back to L1** - `scheduleCommitAndUndelegate` via Magic program returns state to Solana
+5. **Settlement on L1** - Winner receives pot, profiles updated, all verifiable on-chain
+
+### Implementation details
+- Manual CPI to delegation program (SDK had toolchain incompatibility, so we implemented the protocol directly)
+- Delegation discriminator: 8 zero bytes + Borsh-serialized `DelegateAccountArgs`
+- Undelegation via `MAGIC_PROGRAM_ID` (`Magic111...`) with instruction index 2
+- Graceful degradation: game continues on L1 if ER operations fail
+
 ### For Judges
 - **Functionality**: Full game + blockchain integration ✅
 - **Potential Impact**: Template for "arcade game + wagers" on Solana

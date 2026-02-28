@@ -12,9 +12,18 @@ interface StatsScreenProps {
   onBack: () => void;
 }
 
+function getPlayerTier(wins: number, winRate: number): { name: string; color: string } {
+  if (wins >= 100 && winRate >= 60) return { name: 'CHAMPION', color: '#FFD700' };
+  if (wins >= 50) return { name: 'VETERAN', color: '#A855F7' };
+  if (wins >= 20) return { name: 'CONTENDER', color: '#3B82F6' };
+  if (wins >= 5) return { name: 'RISING', color: '#22C55E' };
+  return { name: 'NEWCOMER', color: '#6B7280' };
+}
+
 export function StatsScreen({ onBack }: StatsScreenProps) {
   const stats = loadStats();
   const winRate = getWinRate(stats);
+  const tier = getPlayerTier(stats.totalWins, winRate);
 
   return (
     <div className="screen stats-screen">
@@ -42,6 +51,9 @@ export function StatsScreen({ onBack }: StatsScreenProps) {
             STATISTICS
           </h1>
           <p className="stats-subtitle">Your journey so far</p>
+          <div className="player-tier" style={{ color: tier.color }}>
+            <span className="player-tier__badge" style={{ borderColor: tier.color }}>{tier.name}</span>
+          </div>
         </div>
 
         {/* Overview Stats */}
