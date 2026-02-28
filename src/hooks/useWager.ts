@@ -6,9 +6,14 @@ import {
   getMatchPDA,
   getPlayerPDA,
   generateMatchId,
+  getDelegationBufferPDA,
+  getDelegationRecordPDA,
+  getDelegationMetadataPDA,
+  DELEGATION_PROGRAM_ID,
   BN,
   SystemProgram,
 } from '../lib/anchor';
+import { PROGRAM_ID } from '../lib/solana';
 import { SOLANA_RPC_URL, getTokenMint, TOKEN_MINTS } from '../lib/solana';
 import { Connection } from '@solana/web3.js';
 import { getAssociatedTokenAddressSync, TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID } from '@solana/spl-token';
@@ -21,6 +26,8 @@ export type WagerStatus =
   | 'joining'
   | 'settling'
   | 'cancelling'
+  | 'delegating'
+  | 'undelegating'
   | 'error';
 
 export interface OnChainMatch {
@@ -420,6 +427,86 @@ export function useWager() {
     [publicKey, anchorWallet]
   );
 
+  // Delegate match to MagicBlock Ephemeral Rollup
+  const delegateMatch = useCallback(
+    async (matchPDA: PublicKey): Promise<boolean> => {
+      if (!publicKey || !anchorWallet) return false;
+
+      setStatus('delegating');
+      setError(null);
+
+      try {
+        const program = getProgram(anchorWallet);
+        const [buffer] = getDelegationBufferPDA(matchPDA);
+        const [delegationRecord] = getDelegationRecordPDA(matchPDA);
+        const [delegationMetadata] = getDelegationMetadataPDA(matchPDA);
+
+        await program.methods
+          .delegateMatch()
+          .accounts({
+            payer: publicKey,
+            matchAccount: matchPDA,
+            ownerProgram: PROGRAM_ID,
+            buffer,
+            delegationRecord,
+            delegationMetadata,
+            delegationProgram: DELEGATION_PROGRAM_ID,
+            systemProgram: SystemProgram.programId,
+          })
+          .rpc();
+
+        setStatus('idle');
+        return true;
+      } catch (err: unknown) {
+        const msg = err instanceof Error ? err.message : 'Failed to delegate match';
+        setError(msg);
+        setStatus('error');
+        return false;
+      }
+    },
+    [publicKey, anchorWallet]
+  );
+
+  // Undelegate match from MagicBlock ER back to L1
+  const undelegateMatch = useCallback(
+    async (matchPDA: PublicKey): Promise<boolean> => {
+      if (!publicKey || !anchorWallet) return false;
+
+      setStatus('undelegating');
+      setError(null);
+
+      try {
+        const program = getProgram(anchorWallet);
+        const [buffer] = getDelegationBufferPDA(matchPDA);
+        const [delegationRecord] = getDelegationRecordPDA(matchPDA);
+        const [delegationMetadata] = getDelegationMetadataPDA(matchPDA);
+
+        await program.methods
+          .undelegateMatch()
+          .accounts({
+            payer: publicKey,
+            matchAccount: matchPDA,
+            ownerProgram: PROGRAM_ID,
+            buffer,
+            delegationRecord,
+            delegationMetadata,
+            delegationProgram: DELEGATION_PROGRAM_ID,
+            systemProgram: SystemProgram.programId,
+          })
+          .rpc();
+
+        setStatus('idle');
+        return true;
+      } catch (err: unknown) {
+        const msg = err instanceof Error ? err.message : 'Failed to undelegate match';
+        setError(msg);
+        setStatus('error');
+        return false;
+      }
+    },
+    [publicKey, anchorWallet]
+  );
+
   // Fetch open matches (status = Waiting)
   const fetchOpenMatches = useCallback(async (): Promise<OnChainMatch[]> => {
     if (!anchorWallet) return [];
@@ -473,6 +560,8 @@ export function useWager() {
     joinMatch,
     settleMatch,
     cancelMatch,
+    delegateMatch,
+    undelegateMatch,
     fetchOpenMatches,
     clearError: () => setError(null),
   };

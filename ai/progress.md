@@ -1,5 +1,32 @@
 # Last Rally v4 - Progress
 
+## Session: Feb 28, 2026 - MagicBlock ER Integration
+
+### COMPLETED
+- Added MagicBlock Ephemeral Rollup delegation to Anchor program
+- Two new instructions: `delegate_match` and `undelegate_match`
+- Manual CPI to MagicBlock delegation program (SDK has toolchain compatibility issues)
+- Delegation program ID: `DELeGGvXpWV2fqJUhqcF5ZSYMS4JTLjteaAMARRSaeSh`
+- Program redeployed to devnet: `BUVQGteCL1j5mSrmpNXv5bpFqDrbVZ7fww12FXd7w4XG`
+- Deploy tx: `2uaH27MEzgueb1JQigqQ3gBxEtYcYkSeaiPCmpZY625c6jJHijzkDF74CymcUaiQ2zdKHper3vVeZYrPxKeyym7W`
+- Updated IDL with new instructions
+- Updated frontend `useWager` hook with `delegateMatch()` and `undelegateMatch()`
+- Added delegation PDA derivation helpers to `anchor.ts`
+- Frontend builds successfully
+
+### TOOLCHAIN NOTES
+- Must use Solana edge toolchain (`agave-install init edge`) - platform-tools v1.53, Rust 1.89
+- Solana 2.x has Cargo 1.84 which can't build `constant_time_eq v0.4.2` (needs edition2024)
+- `ephemeral-rollups-sdk` crate is incompatible with all current Solana build tools
+- Implemented delegation CPI manually via `invoke_signed` to avoid SDK dependency
+
+### NOT DONE
+- Delegation PDA seed derivation on frontend may not match actual delegation program PDAs
+- Zero on-chain testing of delegate/undelegate flow
+- No testing on MagicBlock devnet ER validator
+
+---
+
 ## Session: Feb 22, 2026 (Day 1-4)
 
 ### COMPLETED

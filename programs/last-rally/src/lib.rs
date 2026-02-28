@@ -1,8 +1,23 @@
 use anchor_lang::prelude::*;
 use anchor_lang::system_program;
+use anchor_lang::solana_program::instruction::{AccountMeta, Instruction};
+use anchor_lang::solana_program::program::invoke_signed;
 use anchor_spl::token::{self, Token, TokenAccount, Mint, Transfer};
 
 declare_id!("BUVQGteCL1j5mSrmpNXv5bpFqDrbVZ7fww12FXd7w4XG");
+
+// MagicBlock Ephemeral Rollup constants
+pub mod delegation_program {
+    anchor_lang::declare_id!("DELeGGvXpWV2fqJUhqcF5ZSYMS4JTLjteaAMARRSaeSh");
+}
+
+// Borsh-serialized args for the delegation program's delegate instruction
+#[derive(AnchorSerialize)]
+pub struct DelegateAccountArgs {
+    pub commit_frequency_ms: u32,
+    pub seeds: Vec<Vec<u8>>,
+    pub validator: Option<Pubkey>,
+}
 
 // Match status enum
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, Copy, PartialEq, Eq)]
@@ -90,6 +105,10 @@ pub enum LastRallyError {
     InsufficientFunds,
     #[msg("Cannot join your own match")]
     SelfMatch,
+    #[msg("Invalid delegation program")]
+    InvalidDelegationProgram,
+    #[msg("Serialization error")]
+    SerializationError,
 }
 
 #[program]
@@ -356,6 +375,149 @@ pub mod last_rally {
 
         Ok(())
     }
+
+    /// Delegate match account to MagicBlock Ephemeral Rollup for low-latency gameplay.
+    /// Called after joinMatch when status is Active.
+    pub fn delegate_match(ctx: Context<DelegateMatch>) -> Result<()> {
+        let match_account = &ctx.accounts.match_account;
+
+        require!(
+            match_account.status == MatchStatus::Active,
+            LastRallyError::InvalidMatchStatus
+        );
+
+        // Caller must be a participant
+        let caller = ctx.accounts.payer.key();
+        require!(
+            caller == match_account.player1 || caller == match_account.player2,
+            LastRallyError::NotParticipant
+        );
+
+        // Validate delegation program
+        require!(
+            ctx.accounts.delegation_program.key() == delegation_program::ID,
+            LastRallyError::InvalidDelegationProgram
+        );
+
+        let match_id_bytes = match_account.match_id.to_le_bytes();
+
+        // Build delegation args
+        let args = DelegateAccountArgs {
+            commit_frequency_ms: 30_000,
+            seeds: vec![b"match".to_vec(), match_id_bytes.to_vec()],
+            validator: None,
+        };
+
+        // Serialize: 8-byte discriminator (0 = delegate) + borsh(args)
+        let mut instruction_data = vec![0u8; 8]; // discriminator = 0
+        args.serialize(&mut instruction_data)
+            .map_err(|_| error!(LastRallyError::SerializationError))?;
+
+        let delegation_ix = Instruction {
+            program_id: delegation_program::ID,
+            accounts: vec![
+                AccountMeta::new(ctx.accounts.payer.key(), true),
+                AccountMeta::new(ctx.accounts.match_account.key(), true),
+                AccountMeta::new_readonly(ctx.accounts.owner_program.key(), false),
+                AccountMeta::new(ctx.accounts.buffer.key(), false),
+                AccountMeta::new(ctx.accounts.delegation_record.key(), false),
+                AccountMeta::new(ctx.accounts.delegation_metadata.key(), false),
+                AccountMeta::new_readonly(ctx.accounts.system_program.key(), false),
+            ],
+            data: instruction_data,
+        };
+
+        // Sign with the match PDA seeds
+        let signer_seeds: &[&[&[u8]]] = &[&[
+            b"match",
+            match_id_bytes.as_ref(),
+            &[match_account.bump],
+        ]];
+
+        invoke_signed(
+            &delegation_ix,
+            &[
+                ctx.accounts.payer.to_account_info(),
+                ctx.accounts.match_account.to_account_info(),
+                ctx.accounts.owner_program.to_account_info(),
+                ctx.accounts.buffer.to_account_info(),
+                ctx.accounts.delegation_record.to_account_info(),
+                ctx.accounts.delegation_metadata.to_account_info(),
+                ctx.accounts.system_program.to_account_info(),
+            ],
+            signer_seeds,
+        )?;
+
+        msg!("Match {} delegated to MagicBlock ER", match_account.match_id);
+        Ok(())
+    }
+
+    /// Undelegate match account from Ephemeral Rollup back to Solana L1.
+    /// Called from within the ER before settleMatch to finalize state on-chain.
+    pub fn undelegate_match(ctx: Context<UndelegateMatch>) -> Result<()> {
+        let match_account = &ctx.accounts.match_account;
+
+        // Caller must be a participant
+        let caller = ctx.accounts.payer.key();
+        require!(
+            caller == match_account.player1 || caller == match_account.player2,
+            LastRallyError::NotParticipant
+        );
+
+        // Validate delegation program
+        require!(
+            ctx.accounts.delegation_program.key() == delegation_program::ID,
+            LastRallyError::InvalidDelegationProgram
+        );
+
+        let match_id_bytes = match_account.match_id.to_le_bytes();
+
+        // Build undelegate instruction (discriminator = 1)
+        let mut instruction_data = vec![0u8; 8];
+        instruction_data[0] = 1; // undelegate discriminator
+
+        // Serialize seeds for the undelegation
+        let seeds: Vec<Vec<u8>> = vec![b"match".to_vec(), match_id_bytes.to_vec()];
+        seeds.serialize(&mut instruction_data)
+            .map_err(|_| error!(LastRallyError::SerializationError))?;
+
+        let undelegate_ix = Instruction {
+            program_id: delegation_program::ID,
+            accounts: vec![
+                AccountMeta::new(ctx.accounts.payer.key(), true),
+                AccountMeta::new(ctx.accounts.match_account.key(), true),
+                AccountMeta::new_readonly(ctx.accounts.owner_program.key(), false),
+                AccountMeta::new(ctx.accounts.buffer.key(), false),
+                AccountMeta::new(ctx.accounts.delegation_record.key(), false),
+                AccountMeta::new(ctx.accounts.delegation_metadata.key(), false),
+                AccountMeta::new_readonly(ctx.accounts.system_program.key(), false),
+            ],
+            data: instruction_data,
+        };
+
+        let signer_seeds: &[&[&[u8]]] = &[&[
+            b"match",
+            match_id_bytes.as_ref(),
+            &[match_account.bump],
+        ]];
+
+        invoke_signed(
+            &undelegate_ix,
+            &[
+                ctx.accounts.payer.to_account_info(),
+                ctx.accounts.match_account.to_account_info(),
+                ctx.accounts.owner_program.to_account_info(),
+                ctx.accounts.buffer.to_account_info(),
+                ctx.accounts.delegation_record.to_account_info(),
+                ctx.accounts.delegation_metadata.to_account_info(),
+                ctx.accounts.system_program.to_account_info(),
+            ],
+            signer_seeds,
+        )?;
+
+        msg!("Match {} undelegated from MagicBlock ER", match_account.match_id);
+        Ok(())
+    }
 }
 
 // ============================================
@@ -474,4 +636,50 @@ pub struct CancelMatch<'info> {
 
     pub system_program: Program<'info, System>,
     pub token_program: Program<'info, Token>,
+}
+
+// MagicBlock Ephemeral Rollup delegation context
+#[derive(Accounts)]
+pub struct DelegateMatch<'info> {
+    #[account(mut)]
+    pub payer: Signer<'info>,
+    #[account(mut)]
+    pub match_account: Account<'info, MatchAccount>,
+    /// CHECK: This program's own ID, validated by delegation SDK
+    pub owner_program: AccountInfo<'info>,
+    /// CHECK: Delegation buffer PDA, derived from delegated account
+    #[account(mut)]
+    pub buffer: AccountInfo<'info>,
+    /// CHECK: Delegation record PDA, derived from delegated account
+    #[account(mut)]
+    pub delegation_record: AccountInfo<'info>,
+    /// CHECK: Delegation metadata PDA, derived from delegated account
+    #[account(mut)]
+    pub delegation_metadata: AccountInfo<'info>,
+    /// CHECK: MagicBlock delegation program
+    pub delegation_program: AccountInfo<'info>,
+    pub system_program: Program<'info, System>,
+}
+
+// MagicBlock Ephemeral Rollup undelegation context
+#[derive(Accounts)]
+pub struct UndelegateMatch<'info> {
+    #[account(mut)]
+    pub payer: Signer<'info>,
+    #[account(mut)]
+    pub match_account: Account<'info, MatchAccount>,
+    /// CHECK: This program's own ID
+    pub owner_program: AccountInfo<'info>,
+    /// CHECK: Delegation buffer PDA
+    #[account(mut)]
+    pub buffer: AccountInfo<'info>,
+    /// CHECK: Delegation record PDA
+    #[account(mut)]
+    pub delegation_record: AccountInfo<'info>,
+    /// CHECK: Delegation metadata PDA
+    #[account(mut)]
+    pub delegation_metadata: AccountInfo<'info>,
+    /// CHECK: MagicBlock delegation program
+    pub delegation_program: AccountInfo<'info>,
+    pub system_program: Program<'info, System>,
 }

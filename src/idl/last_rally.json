@@ -182,6 +182,88 @@
       "args": []
     },
     {
+      "name": "delegate_match",
+      "docs": [
+        "Delegate match account to MagicBlock Ephemeral Rollup for low-latency gameplay."
+      ],
+      "discriminator": [30, 116, 9, 69, 147, 61, 133, 238],
+      "accounts": [
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "match_account",
+          "writable": true
+        },
+        {
+          "name": "owner_program"
+        },
+        {
+          "name": "buffer",
+          "writable": true
+        },
+        {
+          "name": "delegation_record",
+          "writable": true
+        },
+        {
+          "name": "delegation_metadata",
+          "writable": true
+        },
+        {
+          "name": "delegation_program"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "undelegate_match",
+      "docs": [
+        "Undelegate match account from Ephemeral Rollup back to Solana L1."
+      ],
+      "discriminator": [142, 117, 126, 27, 242, 11, 103, 14],
+      "accounts": [
+        {
+          "name": "payer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "match_account",
+          "writable": true
+        },
+        {
+          "name": "owner_program"
+        },
+        {
+          "name": "buffer",
+          "writable": true
+        },
+        {
+          "name": "delegation_record",
+          "writable": true
+        },
+        {
+          "name": "delegation_metadata",
+          "writable": true
+        },
+        {
+          "name": "delegation_program"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
       "name": "settle_match",
       "docs": [
         "Settle the match: declare winner, transfer pot.",
@@ -348,6 +430,16 @@
       "code": 6006,
       "name": "SelfMatch",
       "msg": "Cannot join your own match"
+    },
+    {
+      "code": 6007,
+      "name": "InvalidDelegationProgram",
+      "msg": "Invalid delegation program"
+    },
+    {
+      "code": 6008,
+      "name": "SerializationError",
+      "msg": "Serialization error"
     }
   ],
   "types": [
