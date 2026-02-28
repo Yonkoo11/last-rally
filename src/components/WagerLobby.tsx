@@ -384,7 +384,9 @@ export function WagerLobby({ onBack, onMatchReady, onPlayFree }: WagerLobbyProps
       </div>
 
       <div className="wager-balance">
-        Balance: {balanceSOL.toFixed(4)} SOL
+        {balanceSOL.toFixed(4)} SOL
+        {tokenBalances.USDC > 0 && <> &middot; {formatTokenAmount(tokenBalances.USDC, 'USDC')} USDC</>}
+        {tokenBalances.BONK > 0 && <> &middot; {formatTokenAmount(tokenBalances.BONK, 'BONK')} BONK</>}
       </div>
 
       <div className="wager-menu-grid">
