@@ -4,47 +4,94 @@
       "id": "mobile-touch-controls",
       "title": "Mobile Touch Controls",
       "priority": "critical",
-      "status": "in_progress",
-      "description": "Implement touch controls for mobile gameplay. touchControls setting exists but is not wired up.",
+      "status": "completed",
+      "description": "Touch controls implemented in src/game/touch.ts. Wired into PongArena.",
       "files": [
-        "src/game/touch.ts (NEW)",
-        "src/components/PongArena.tsx",
-        "src/components/PongArena.css",
-        "src/lib/storage.ts"
+        "src/game/touch.ts",
+        "src/components/PongArena.tsx"
       ],
-      "notes": "Left half = P1 paddle, Right half = P2 paddle (PvP). Touch Y maps to paddle Y."
+      "notes": "Completed. Touch hint shown on mobile. Not tested on real device."
+    },
+    {
+      "id": "solana-wager-integration",
+      "title": "Solana Wager System",
+      "priority": "critical",
+      "status": "completed",
+      "description": "Full wager lifecycle: create/join/settle/cancel with SOL/USDC/BONK. Anchor program deployed to devnet.",
+      "files": [
+        "programs/last-rally/src/lib.rs",
+        "src/hooks/useWager.ts",
+        "src/lib/anchor.ts",
+        "src/lib/solana.ts",
+        "src/components/WagerLobby.tsx"
+      ],
+      "notes": "Code complete. Zero on-chain testing. Biggest risk area."
+    },
+    {
+      "id": "magicblock-er-integration",
+      "title": "MagicBlock Ephemeral Rollup Integration",
+      "priority": "high",
+      "status": "completed",
+      "description": "Delegate/undelegate match PDAs to MagicBlock ER for low-latency gameplay. Manual CPI in Anchor, JS SDK for frontend.",
+      "files": [
+        "programs/last-rally/src/lib.rs",
+        "src/hooks/useWager.ts",
+        "src/lib/anchor.ts",
+        "src/App.tsx"
+      ],
+      "notes": "Code complete. Non-blocking with graceful degradation. Not tested against real ER validator."
+    },
+    {
+      "id": "achievement-nfts",
+      "title": "Achievement NFT Minting",
+      "priority": "high",
+      "status": "completed",
+      "description": "Mint achievements as soul-bound tokens via Metaplex UMI. Links to Solana Explorer after mint.",
+      "files": [
+        "src/hooks/useMintAchievement.ts",
+        "src/lib/metadata.ts",
+        "src/components/AchievementsScreen.tsx"
+      ],
+      "notes": "Code complete. Not tested on devnet."
+    },
+    {
+      "id": "on-chain-testing",
+      "title": "End-to-End On-Chain Testing",
+      "priority": "critical",
+      "status": "pending",
+      "description": "Test full wager flow on devnet: create -> join -> play -> settle. Test ER delegation. Test NFT minting.",
+      "files": [],
+      "notes": "Requires real Phantom wallet on devnet with SOL. Manual testing only."
+    },
+    {
+      "id": "demo-video",
+      "title": "Demo Video (90 seconds)",
+      "priority": "critical",
+      "status": "pending",
+      "description": "Record demo video following ai/demo-script.md. Show gameplay + wager flow + settlement.",
+      "files": [],
+      "notes": "Script ready at ai/demo-script.md. 90-second format."
     },
     {
       "id": "transition-sounds",
       "title": "Page Transition Sound Effects",
       "priority": "low",
-      "status": "pending",
+      "status": "backlog",
       "description": "Add subtle whoosh/arrival sounds for page transitions.",
       "files": [
-        "src/audio/sounds.ts",
-        "src/components/LandingPage.tsx",
-        "src/components/TitleScreen.tsx"
+        "src/audio/sounds.ts"
       ],
-      "notes": "playTransitionOut: rising filtered noise sweep. playTransitionIn: descending sine."
+      "notes": "Post-hackathon."
     },
     {
       "id": "online-multiplayer",
       "title": "Online Multiplayer",
       "priority": "future",
       "status": "backlog",
-      "description": "Add real-time online multiplayer using WebSockets.",
+      "description": "Real-time online multiplayer using WebSockets.",
       "files": [],
-      "notes": "Would need a backend (WebSocket server). Consider Supabase Realtime or custom."
-    },
-    {
-      "id": "leaderboards",
-      "title": "Global Leaderboards",
-      "priority": "future",
-      "status": "backlog",
-      "description": "Track and display global high scores.",
-      "files": [],
-      "notes": "Requires backend. Could use Supabase."
+      "notes": "WebSocket server exists but not integrated with wager flow."
     }
   ],
-  "lastUpdated": "2026-01-19"
+  "lastUpdated": "2026-02-28"
 }

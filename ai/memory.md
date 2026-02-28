@@ -38,17 +38,30 @@
 - Dashboard entry: Content reveals from blur with scale animation
 - Exit duration: 400ms
 
+### Solana Integration (Feb 2026)
+- **Anchor 0.30.1** on Solana edge toolchain (platform-tools v1.53, Rust 1.89)
+- **Program ID:** `BUVQGteCL1j5mSrmpNXv5bpFqDrbVZ7fww12FXd7w4XG` (devnet)
+- **MagicBlock ER:** Manual CPI delegation (SDK crate incompatible). Buffer PDA uses owner program, NOT delegation program. Undelegation goes through MAGIC_PROGRAM_ID via ER router, not our program.
+- **IDL:** Manual JSON (Anchor IDL auto-gen broken for SPL types)
+- **Token support:** SOL native + USDC/BONK via SPL. ATAs must exist before instruction calls (init_if_needed removed due to circular dep).
+- **Code splitting:** Vite manualChunks for solana-core/anchor/metaplex. Main bundle ~830KB.
+
+### Deployment
+- **Frontend:** GitHub Pages via `npx gh-pages -d dist`. Base path `/last-rally/`.
+- **404.html:** SPA redirect for client-side routing on GitHub Pages.
+- **PWA:** manifest.json exists, no service worker.
+
 ## Known Gaps
 
 ### Critical
-- **Mobile Touch Controls:** `touchControls` setting exists but does NOTHING
-  - PongArena only accepts keyboard input
-  - This severely limits mobile audience
+- **Zero on-chain testing** of wager or ER flows. Code is correct by pattern but unverified.
+- **Mobile Touch Controls:** Touch controller exists in `src/game/touch.ts` (was fixed since original gap)
 
 ### Minor
 - Transition sound effects not implemented
 - Loading states for large assets could be improved
 - No haptic feedback on mobile
+- Rust `undelegate_match` is dead code (frontend undelegates via Magic program directly)
 
 ## Patterns
 

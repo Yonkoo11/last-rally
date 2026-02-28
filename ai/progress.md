@@ -1,70 +1,62 @@
 # Last Rally v4 - Progress
 
-## Session: Feb 28, 2026 - MagicBlock ER Integration
+## Last Session Summary
+- **Date:** Feb 28, 2026
+- **What was done:** MagicBlock ER integration + 14 polish commits (see below)
+- **What's next:** On-chain testing (manual, requires real wallet), demo video, submission
+- **Blockers/Issues:** Zero on-chain testing done. Wager flow is the biggest risk.
 
-### COMPLETED
-- Added MagicBlock Ephemeral Rollup delegation to Anchor program
-- Two new instructions: `delegate_match` and `undelegate_match`
-- Manual CPI to MagicBlock delegation program (SDK has toolchain compatibility issues)
-- Delegation program ID: `DELeGGvXpWV2fqJUhqcF5ZSYMS4JTLjteaAMARRSaeSh`
+## Handover Notes
+Everything is code-complete, deployed, and live at https://yonkoo11.github.io/last-rally/.
+The user is now doing manual on-chain testing with a real Phantom wallet on devnet.
+If bugs surface during testing, they'll need code fixes in `src/hooks/useWager.ts` or `src/lib/anchor.ts`.
+Demo script is at `ai/demo-script.md` (90-second format).
+
+---
+
+## Session: Feb 28, 2026 - MagicBlock ER Integration + Polish
+
+### COMPLETED (14 commits on solana-v4)
+
+**MagicBlock ER Integration:**
+- Added delegate_match/undelegate_match instructions to Anchor program
+- Manual CPI to delegation program (SDK crate incompatible with Solana build tools)
+- Fixed Buffer PDA derivation (uses owner program, not delegation program)
+- Fixed undelegate to use MAGIC_PROGRAM_ID via ER router (not our program's CPI)
+- Wired delegation into match lifecycle in App.tsx (non-blocking, graceful degradation)
 - Program redeployed to devnet: `BUVQGteCL1j5mSrmpNXv5bpFqDrbVZ7fww12FXd7w4XG`
-- Deploy tx: `2uaH27MEzgueb1JQigqQ3gBxEtYcYkSeaiPCmpZY625c6jJHijzkDF74CymcUaiQ2zdKHper3vVeZYrPxKeyym7W`
-- Updated IDL with new instructions
-- Updated frontend `useWager` hook with `delegateMatch()` and `undelegateMatch()`
-- Added delegation PDA derivation helpers to `anchor.ts`
-- Frontend builds successfully
 
-### TOOLCHAIN NOTES
-- Must use Solana edge toolchain (`agave-install init edge`) - platform-tools v1.53, Rust 1.89
-- Solana 2.x has Cargo 1.84 which can't build `constant_time_eq v0.4.2` (needs edition2024)
-- `ephemeral-rollups-sdk` crate is incompatible with all current Solana build tools
-- Implemented delegation CPI manually via `invoke_signed` to avoid SDK dependency
+**Hackathon Polish:**
+- Code splitting: main bundle 1.87MB -> 830KB (solana-core/anchor/metaplex separate chunks)
+- Settlement timeout: 30s warning with graceful messaging
+- Balance refresh: refetchBalances() updates ALL tokens (SOL/USDC/BONK) after every tx
+- Insufficient balance UX: disabled presets show "insufficient", button shows available balance
+- Loading spinners on all blockchain buttons (create, join, settle)
+- PWA manifest + apple-mobile-web-app meta tags
+- NFT mint success links to Solana Explorer (devnet)
+- Multi-token balance display on wager menu
+- Player skill tiers on stats screen (Newcomer -> Champion)
+- Keyboard shortcuts on victory overlay (Enter/Esc)
+- OG image updated with Solana/MagicBlock branding
+- README: Play Now + Explorer links at top for judges
+- 404.html for GitHub Pages SPA routing
+- Demo script rewritten for 90-second format
+- Removed unused vite.svg
 
-### PDA SEED FIXES (Feb 28, continued)
-- Verified PDA seeds against `@magicblock-labs/ephemeral-rollups-sdk` npm source
-- **Buffer PDA**: Fixed `getDelegationBufferPDA()` to use owner program (our game program) instead of delegation program
-- **Delegation Record PDA**: `["delegation", account]` from DELEGATION_PROGRAM_ID - was correct
-- **Delegation Metadata PDA**: `["delegation-metadata", account]` from DELEGATION_PROGRAM_ID - was correct
-- **Undelegate approach**: Fixed to use `MAGIC_PROGRAM_ID` via ER router (not our program's CPI)
-  - SDK shows undelegation goes through `Magic11111111111111111111111111111111111111`
-  - Instruction data: `[2, 0, 0, 0]` (uint32 LE = 2 = commit and undelegate)
-  - Sent via MagicBlock router endpoint, not L1 RPC
-- Added `MAGIC_PROGRAM_ID` and `MAGIC_CONTEXT_ID` constants to anchor.ts
-- Added `createCommitAndUndelegateInstruction()` helper
-- Delegate discriminator in Rust verified correct: `[0,0,0,0,0,0,0,0]` matches SDK
-- Frontend build passing after all fixes
-- Added "Play Free" button to WagerLobby (for users without wallet)
-
-### ER LIFECYCLE WIRING (Feb 28, continued)
-- Wired `delegateMatch()` into `handleWagerMatchReady` in App.tsx (called after both players deposit)
-- Wired `undelegateMatch()` into `handleMatchEnd` in App.tsx (called before settlement)
-- Both are non-blocking with graceful degradation (game continues on L1 if ER ops fail)
-- Updated README with MagicBlock ER integration details, architecture diagram, match lifecycle
-- Corrected all outdated status claims (build, deployment, ER integration)
-- 3 commits pushed: PDA fixes, lifecycle wiring, README update
-- Deployed to GitHub Pages: https://yonkoo11.github.io/last-rally/
-
-### HACKATHON POLISH (Feb 28, continued)
-- Code splitting: solana-core/anchor/metaplex in separate chunks, main bundle ~830KB (was ~1.87MB)
-- Settlement timeout: victory overlay shows timeout message after 30s with graceful fallback
-- Balance refresh: refetchBalances() now updates ALL token balances (SOL/USDC/BONK) after every tx
-- Insufficient balance UX: disabled presets show "insufficient", create button shows available balance
-- Loading spinners: added to Create Match, Join, and Settlement overlay
-- PWA manifest: manifest.json + apple-mobile-web-app meta tags for "Add to Home Screen"
-- Multi-token display: wager bar and victory overlay use correct token name/format
-- Keyboard shortcuts: Enter/Esc on victory overlay
-- Player skill tiers: Newcomer/Rising/Contender/Veteran/Champion on stats screen
-- Wager card text: "Bet SOL, USDC, or BONK" instead of just "SOL"
-- Meta/OG tags: Solana/MagicBlock hackathon context
-- 404.html: GitHub Pages SPA routing
-- All deployed to: https://yonkoo11.github.io/last-rally/
-- 10 commits pushed to solana-v4 branch
+### KEY CONSTANTS
+- Delegation Program: `DELeGGvXpWV2fqJUhqcF5ZSYMS4JTLjteaAMARRSaeSh`
+- Magic Program: `Magic11111111111111111111111111111111111111`
+- Magic Context: `MagicContext1111111111111111111111111111111`
+- ER Devnet: `https://devnet.magicblock.app/`
+- ER Router: `https://devnet-router.magicblock.app`
+- Solana edge toolchain required: `agave-install init edge`
 
 ### NOT DONE
-- Zero on-chain testing of delegate/undelegate flow
-- No testing on MagicBlock devnet ER validator
-- Rust `undelegate_match` instruction is deployed but unused (frontend uses Magic program directly)
-- No end-to-end wager flow tested on devnet
+- Zero on-chain testing of any wager/ER flow
+- No testing against real MagicBlock ER validator
+- Rust `undelegate_match` instruction deployed but unused (frontend uses Magic program directly)
+- No cross-browser or mobile device testing
+- No service worker (manifest only, not full PWA offline)
 
 ---
 
