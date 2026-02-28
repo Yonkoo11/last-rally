@@ -2,14 +2,67 @@
    STATS SCREEN
    ============================================ */
 
+/* ========== KEYFRAMES ========== */
+@keyframes statBoxEnter {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes tierBadgeGlow {
+  0%, 100% {
+    box-shadow: 0 0 8px currentColor;
+    filter: brightness(1);
+  }
+  50% {
+    box-shadow: 0 0 20px currentColor, 0 0 40px currentColor;
+    filter: brightness(1.1);
+  }
+}
+
+@keyframes streakFire {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(255, 100, 0, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(255, 100, 0, 0.4), 0 0 40px rgba(255, 200, 0, 0.2);
+  }
+}
+
+@keyframes rowSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ========== PAGE CONTAINER ========== */
 .stats-screen {
   min-height: 100vh;
   background: var(--bg-void);
   padding: var(--space-6);
+  position: relative;
+  overflow: hidden;
 }
 
+.stats-screen > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ========== HEADER ========== */
 .stats-header {
   margin-bottom: var(--space-8);
+  animation: fadeInDown 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .stats-subtitle {
@@ -19,6 +72,7 @@
   margin-top: var(--space-1);
 }
 
+/* ========== PLAYER TIER ========== */
 .player-tier {
   margin-top: var(--space-3);
 }
@@ -32,9 +86,11 @@
   padding: var(--space-1) var(--space-4);
   border: 1px solid;
   border-radius: var(--radius-full, 999px);
+  text-shadow: 0 0 10px currentColor;
+  animation: tierBadgeGlow 2.5s ease-in-out infinite;
 }
 
-/* Section */
+/* ========== SECTION ========== */
 .stats-section {
   margin-bottom: var(--space-6);
 }
@@ -48,7 +104,7 @@
   margin-bottom: var(--space-3);
 }
 
-/* Stats Grid */
+/* ========== STATS GRIDS ========== */
 .stats-grid-4 {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -70,14 +126,29 @@
   }
 }
 
-/* Stat Box */
+/* ========== STAT BOX ========== */
 .stat-box {
   padding: var(--space-4);
-  background: rgba(255, 255, 255, 0.02);
+  background: linear-gradient(135deg, var(--bg-elevated) 0%, var(--bg-surface) 100%);
   border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
   text-align: center;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: statBoxEnter 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
+
+/* Staggered entrances - grid 4 */
+.stats-grid-4 .stat-box:nth-child(1) { animation-delay: 0.05s; }
+.stats-grid-4 .stat-box:nth-child(2) { animation-delay: 0.1s; }
+.stats-grid-4 .stat-box:nth-child(3) { animation-delay: 0.15s; }
+.stats-grid-4 .stat-box:nth-child(4) { animation-delay: 0.2s; }
+
+/* Staggered entrances - grid 3 */
+.stats-grid-3 .stat-box:nth-child(1) { animation-delay: 0.25s; }
+.stats-grid-3 .stat-box:nth-child(2) { animation-delay: 0.3s; }
+.stats-grid-3 .stat-box:nth-child(3) { animation-delay: 0.35s; }
 
 .stat-box__value {
   display: block;
@@ -98,10 +169,10 @@
   margin-top: var(--space-2);
 }
 
-/* Stat Box Variants */
+/* ========== STAT BOX VARIANTS ========== */
 .stat-box--primary {
   border-color: rgba(0, 212, 255, 0.3);
-  background: rgba(0, 212, 255, 0.05);
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.06) 0%, var(--bg-elevated) 40%, var(--bg-surface) 100%);
 }
 
 .stat-box--primary .stat-box__value {
@@ -111,7 +182,7 @@
 
 .stat-box--highlight {
   border-color: rgba(0, 255, 170, 0.3);
-  background: rgba(0, 255, 170, 0.05);
+  background: linear-gradient(135deg, rgba(0, 255, 170, 0.06) 0%, var(--bg-elevated) 40%, var(--bg-surface) 100%);
 }
 
 .stat-box--highlight .stat-box__value {
@@ -121,7 +192,7 @@
 
 .stat-box--gold {
   border-color: rgba(255, 215, 0, 0.3);
-  background: rgba(255, 215, 0, 0.05);
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.06) 0%, var(--bg-elevated) 40%, var(--bg-surface) 100%);
 }
 
 .stat-box--gold .stat-box__value {
@@ -129,7 +200,7 @@
   text-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
 }
 
-/* Current Streak Banner */
+/* ========== CURRENT STREAK BANNER ========== */
 .current-streak {
   display: flex;
   align-items: center;
@@ -140,6 +211,7 @@
   border: 1px solid rgba(255, 150, 0, 0.3);
   border-radius: var(--radius-lg);
   margin-bottom: var(--space-6);
+  animation: streakFire 2s ease-in-out infinite;
 }
 
 .current-streak__icon {
@@ -154,7 +226,7 @@
   letter-spacing: 0.02em;
 }
 
-/* Mode Stats */
+/* ========== MODE STATS ========== */
 .mode-stats {
   display: flex;
   flex-direction: column;
@@ -166,10 +238,18 @@
   justify-content: space-between;
   align-items: center;
   padding: var(--space-3) var(--space-4);
-  background: rgba(255, 255, 255, 0.02);
+  background: linear-gradient(135deg, var(--bg-elevated) 0%, var(--bg-surface) 100%);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              background 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: rowSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
+
+.mode-stats .mode-stat-row:nth-child(1) { animation-delay: 0.4s; }
+.mode-stats .mode-stat-row:nth-child(2) { animation-delay: 0.46s; }
+.mode-stats .mode-stat-row:nth-child(3) { animation-delay: 0.52s; }
 
 .mode-stat-row__label {
   font-family: var(--font-display);
@@ -184,7 +264,7 @@
   color: var(--text-primary);
 }
 
-/* Difficulty Stats */
+/* ========== DIFFICULTY STATS ========== */
 .difficulty-stats {
   display: flex;
   flex-direction: column;
@@ -196,10 +276,19 @@
   justify-content: space-between;
   align-items: center;
   padding: var(--space-3) var(--space-4);
-  background: rgba(255, 255, 255, 0.02);
+  background: linear-gradient(135deg, var(--bg-elevated) 0%, var(--bg-surface) 100%);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              background 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: rowSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
+
+.difficulty-stats .difficulty-row:nth-child(1) { animation-delay: 0.55s; }
+.difficulty-stats .difficulty-row:nth-child(2) { animation-delay: 0.6s; }
+.difficulty-stats .difficulty-row:nth-child(3) { animation-delay: 0.65s; }
+.difficulty-stats .difficulty-row:nth-child(4) { animation-delay: 0.7s; }
 
 .difficulty-row__info {
   display: flex;
@@ -212,6 +301,7 @@
   height: 10px;
   border-radius: 50%;
   flex-shrink: 0;
+  box-shadow: 0 0 6px currentColor;
 }
 
 .difficulty-row__name {
@@ -241,7 +331,7 @@
   text-align: right;
 }
 
-/* Footer */
+/* ========== FOOTER ========== */
 .stats-footer {
   display: flex;
   justify-content: space-between;
@@ -258,5 +348,50 @@
     flex-direction: column;
     gap: var(--space-2);
     text-align: center;
+  }
+}
+
+/* ========== HOVER STATES (TOUCH DEVICE SAFE) ========== */
+@media (hover: hover) {
+  .stat-box:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+    border-color: var(--border-default, rgba(255, 255, 255, 0.1));
+  }
+
+  .stat-box--primary:hover {
+    border-color: rgba(0, 212, 255, 0.5);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2), 0 0 20px rgba(0, 212, 255, 0.15);
+  }
+
+  .stat-box--highlight:hover {
+    border-color: rgba(0, 255, 170, 0.5);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2), 0 0 20px rgba(0, 255, 170, 0.15);
+  }
+
+  .stat-box--gold:hover {
+    border-color: rgba(255, 215, 0, 0.5);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2), 0 0 20px rgba(255, 215, 0, 0.15);
+  }
+
+  .mode-stat-row:hover,
+  .difficulty-row:hover {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, var(--bg-elevated) 100%);
+    border-color: var(--border-default, rgba(255, 255, 255, 0.1));
+    transform: translateX(4px);
+  }
+}
+
+/* ========== REDUCED MOTION ========== */
+@media (prefers-reduced-motion: reduce) {
+  .stat-box,
+  .player-tier__badge,
+  .current-streak,
+  .mode-stat-row,
+  .difficulty-row,
+  .stats-header {
+    animation: none !important;
+    opacity: 1;
+    transform: none;
   }
 }

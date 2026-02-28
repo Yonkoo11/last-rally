@@ -482,6 +482,47 @@
    WAGER BAR & VICTORY WAGER
    ============================================ */
 
+@keyframes wagerWonReveal {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+    filter: blur(8px);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+    filter: blur(0);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes wagerWonGlow {
+  0%, 100% {
+    text-shadow: 0 0 20px rgba(20, 241, 149, 0.4), 0 0 40px rgba(20, 241, 149, 0.2);
+  }
+  50% {
+    text-shadow: 0 0 40px rgba(20, 241, 149, 0.6), 0 0 80px rgba(20, 241, 149, 0.3), 0 0 120px rgba(20, 241, 149, 0.15);
+  }
+}
+
+@keyframes wagerLostShake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50% { transform: translateX(-4px); }
+  20%, 40% { transform: translateX(4px); }
+  60% { transform: translateX(0); }
+}
+
+@keyframes wagerBarGlow {
+  0%, 100% {
+    box-shadow: 0 2px 10px rgba(20, 241, 149, 0.1);
+  }
+  50% {
+    box-shadow: 0 2px 20px rgba(20, 241, 149, 0.25);
+  }
+}
+
 .wager-bar {
   display: flex;
   align-items: center;
@@ -494,6 +535,7 @@
   font-size: var(--text-sm, 14px);
   position: relative;
   z-index: 10;
+  animation: wagerBarGlow 3s ease-in-out infinite;
 }
 
 .wager-bar-label {
@@ -506,6 +548,7 @@
 .wager-bar-amount {
   color: #14f195;
   font-weight: 700;
+  text-shadow: 0 0 10px rgba(20, 241, 149, 0.4);
 }
 
 .wager-bar-pot {
@@ -514,7 +557,7 @@
 }
 
 .victory-wager {
-  margin: var(--space-2, 8px) 0 var(--space-6, 24px);
+  margin: var(--space-4, 16px) 0 var(--space-8, 32px);
   opacity: 0;
   animation: staggerFadeUp 0.4s var(--ease-out-expo) 0.65s forwards;
 }
@@ -524,21 +567,22 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  color: rgba(20, 241, 149, 0.7);
+  color: rgba(20, 241, 149, 0.8);
   font-family: var(--font-mono, 'JetBrains Mono', monospace);
-  font-size: var(--text-base, 1rem);
+  font-size: var(--text-lg, 1.25rem);
   animation: pulse 1.5s ease-in-out infinite;
   margin: 0;
 }
 
 .settling-spinner {
   display: inline-block;
-  width: 16px;
-  height: 16px;
+  width: 20px;
+  height: 20px;
   border: 2px solid rgba(20, 241, 149, 0.2);
   border-top-color: #14f195;
   border-radius: 50%;
   animation: spin 0.6s linear infinite;
+  box-shadow: 0 0 10px rgba(20, 241, 149, 0.3);
 }
 
 @keyframes spin {
@@ -548,18 +592,21 @@
 .wager-won {
   color: #14f195;
   font-family: var(--font-display, "Space Grotesk", sans-serif);
-  font-size: var(--text-3xl, 2.5rem);
+  font-size: var(--text-4xl, 3rem);
   font-weight: 800;
-  text-shadow: 0 0 20px rgba(20, 241, 149, 0.4);
   margin: 0;
+  animation: wagerWonReveal 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) forwards,
+             wagerWonGlow 2.5s ease-in-out 0.7s infinite;
 }
 
 .wager-lost {
   color: #ff6b6b;
   font-family: var(--font-display, "Space Grotesk", sans-serif);
-  font-size: var(--text-3xl, 2.5rem);
+  font-size: var(--text-4xl, 3rem);
   font-weight: 800;
   margin: 0;
+  text-shadow: 0 0 30px rgba(255, 107, 107, 0.4);
+  animation: wagerLostShake 0.5s ease-in-out;
 }
 
 .wager-error {
@@ -588,4 +635,16 @@
 @keyframes pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.5; }
+}
+
+/* ========== REDUCED MOTION (WAGER) ========== */
+@media (prefers-reduced-motion: reduce) {
+  .wager-won,
+  .wager-lost,
+  .wager-bar,
+  .wager-settling {
+    animation: none !important;
+    opacity: 1;
+    transform: none;
+  }
 }

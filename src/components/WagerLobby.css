@@ -1,5 +1,50 @@
 /* WagerLobby - Matches ModeSelect cinematic style */
 
+/* ========== KEYFRAMES ========== */
+@keyframes wagerCardEnter {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes presetEnter {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes waitingPulse {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(20, 241, 149, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(20, 241, 149, 0.4);
+  }
+}
+
+@keyframes amountGlow {
+  0%, 100% {
+    text-shadow: 0 0 20px rgba(20, 241, 149, 0.3);
+  }
+  50% {
+    text-shadow: 0 0 40px rgba(20, 241, 149, 0.5), 0 0 60px rgba(20, 241, 149, 0.2);
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
 /* Small spinner for button loading state */
 .spinner-small {
   display: inline-block;
@@ -12,10 +57,7 @@
   animation: spin 0.6s linear infinite;
 }
 
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
+/* ========== PAGE CONTAINER ========== */
 .wager-lobby {
   display: flex;
   flex-direction: column;
@@ -40,12 +82,21 @@
   z-index: 0;
 }
 
+.wager-lobby::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 50%, rgba(0, 0, 0, 0.4) 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+
 .wager-lobby > * {
   position: relative;
   z-index: 1;
 }
 
-/* Balance */
+/* ========== BALANCE ========== */
 .wager-balance {
   text-align: center;
   font-size: 0.9rem;
@@ -54,7 +105,7 @@
   font-family: var(--font-mono, 'JetBrains Mono', monospace);
 }
 
-/* Connect prompt */
+/* ========== CONNECT PROMPT ========== */
 .wager-connect-prompt {
   display: flex;
   flex-direction: column;
@@ -69,7 +120,7 @@
   opacity: 0.4;
 }
 
-/* Main menu grid */
+/* ========== MAIN MENU GRID ========== */
 .wager-menu-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -84,22 +135,34 @@
   align-items: center;
   gap: var(--space-3);
   padding: var(--space-8) var(--space-6);
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: var(--radius-xl);
+  background: linear-gradient(135deg, var(--bg-elevated) 0%, var(--bg-surface) 100%);
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.06));
+  border-radius: var(--radius-2xl, 16px);
   cursor: pointer;
-  transition: transform 0.2s, background-color 0.2s, border-color 0.2s;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              background-color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   color: var(--text-primary, #fff);
+  position: relative;
+  overflow: hidden;
 }
 
+.wager-menu-card:nth-child(1) { animation: wagerCardEnter 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both; }
+.wager-menu-card:nth-child(2) { animation: wagerCardEnter 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.17s both; }
+.wager-menu-card:nth-child(3) { animation: wagerCardEnter 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.24s both; }
 
 .wager-menu-icon {
   color: var(--color-solana);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              filter 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .wager-menu-title {
   font-size: 1rem;
   font-weight: 600;
+  font-family: var(--font-display, 'Space Grotesk', sans-serif);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .wager-menu-desc {
@@ -121,7 +184,7 @@
   color: var(--text-secondary, #888);
 }
 
-/* Wager presets */
+/* ========== WAGER PRESETS ========== */
 .wager-presets {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -136,18 +199,26 @@
   align-items: center;
   gap: 4px;
   padding: var(--space-4) var(--space-3);
-  background: rgba(255, 255, 255, 0.03);
-  border: 2px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(135deg, var(--bg-elevated) 0%, var(--bg-surface) 100%);
+  border: 2px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
   border-radius: var(--radius-xl);
   cursor: pointer;
-  transition: transform 0.2s, background-color 0.2s, border-color 0.2s;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              background 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   color: var(--text-primary, #fff);
 }
 
+.wager-preset:nth-child(1) { animation: presetEnter 0.4s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both; }
+.wager-preset:nth-child(2) { animation: presetEnter 0.4s cubic-bezier(0.16, 1, 0.3, 1) 0.16s both; }
+.wager-preset:nth-child(3) { animation: presetEnter 0.4s cubic-bezier(0.16, 1, 0.3, 1) 0.22s both; }
+.wager-preset:nth-child(4) { animation: presetEnter 0.4s cubic-bezier(0.16, 1, 0.3, 1) 0.28s both; }
 
 .wager-preset.selected {
   border-color: var(--color-solana);
-  background: rgba(20, 241, 149, 0.1);
+  background: linear-gradient(135deg, rgba(20, 241, 149, 0.12) 0%, var(--bg-elevated) 100%);
+  box-shadow: 0 0 20px rgba(20, 241, 149, 0.2);
 }
 
 .wager-preset.disabled {
@@ -168,14 +239,15 @@
   color: var(--text-secondary, #888);
 }
 
-/* Summary */
+/* ========== SUMMARY ========== */
 .wager-summary {
   max-width: 400px;
   margin: 0 auto var(--space-6);
   padding: var(--space-4);
-  background: rgba(255, 255, 255, 0.02);
-  border-radius: var(--radius-lg);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: linear-gradient(135deg, var(--bg-elevated) 0%, var(--bg-surface) 100%);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.05));
+  animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
 }
 
 .summary-row {
@@ -195,13 +267,14 @@
   padding-top: var(--space-3);
 }
 
-/* Waiting state */
+/* ========== WAITING STATE ========== */
 .wager-waiting {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: var(--space-6);
   padding: var(--space-12) 0;
+  animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .wager-spinner {
@@ -211,10 +284,7 @@
   border-top-color: var(--color-solana);
   border-radius: 50%;
   animation: spin 1s ease-in-out infinite;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
+  box-shadow: 0 0 20px rgba(20, 241, 149, 0.2);
 }
 
 .wager-amount-display {
@@ -222,6 +292,7 @@
   font-weight: 800;
   color: var(--text-primary, #fff);
   font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  animation: amountGlow 2.5s ease-in-out infinite;
 }
 
 .wager-pot-label {
@@ -250,9 +321,32 @@
   background: rgba(255, 255, 255, 0.03);
   padding: var(--space-2) var(--space-4);
   border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-/* Match list (browse) */
+.wager-match-id.copyable {
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s;
+}
+
+.wager-match-id.copyable:hover {
+  color: var(--color-solana, #14f195);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.copy-hint {
+  font-size: 0.65rem;
+  color: var(--text-tertiary, #555);
+  transition: color 0.15s;
+}
+
+.wager-match-id.copyable:hover .copy-hint {
+  color: var(--color-solana, #14f195);
+}
+
+/* ========== MATCH LIST (BROWSE) ========== */
 .wager-match-list {
   display: flex;
   flex-direction: column;
@@ -266,15 +360,24 @@
   flex-direction: column;
   gap: var(--space-2);
   padding: var(--space-4) var(--space-5);
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: linear-gradient(135deg, var(--bg-elevated) 0%, var(--bg-surface) 100%);
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.06));
   border-radius: var(--radius-xl);
   cursor: pointer;
-  transition: transform 0.2s, background-color 0.2s, border-color 0.2s;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              background 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   color: var(--text-primary, #fff);
   text-align: left;
 }
 
+.wager-match-card:nth-child(1) { animation: wagerCardEnter 0.4s cubic-bezier(0.16, 1, 0.3, 1) 0.05s both; }
+.wager-match-card:nth-child(2) { animation: wagerCardEnter 0.4s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both; }
+.wager-match-card:nth-child(3) { animation: wagerCardEnter 0.4s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both; }
+.wager-match-card:nth-child(4) { animation: wagerCardEnter 0.4s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both; }
+.wager-match-card:nth-child(5) { animation: wagerCardEnter 0.4s cubic-bezier(0.16, 1, 0.3, 1) 0.25s both; }
+.wager-match-card:nth-child(6) { animation: wagerCardEnter 0.4s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both; }
 
 .match-card-top {
   display: flex;
@@ -312,7 +415,7 @@
   letter-spacing: 0.05em;
 }
 
-/* Empty state */
+/* ========== EMPTY STATE ========== */
 .wager-empty {
   display: flex;
   flex-direction: column;
@@ -322,7 +425,7 @@
   color: var(--text-secondary, #888);
 }
 
-/* Insufficient balance */
+/* ========== INSUFFICIENT BALANCE ========== */
 .wager-insufficient {
   max-width: 400px;
   margin: var(--space-2) auto 0;
@@ -331,7 +434,7 @@
   text-align: center;
 }
 
-/* Error */
+/* ========== ERROR ========== */
 .wager-error {
   max-width: 400px;
   margin: var(--space-4) auto 0;
@@ -345,7 +448,7 @@
   cursor: pointer;
 }
 
-/* Buttons in wager lobby context */
+/* ========== BUTTONS ========== */
 .wager-lobby .btn-primary {
   max-width: 400px;
   margin: 0 auto;
@@ -360,10 +463,12 @@
   padding: var(--space-3) var(--space-6);
   border-radius: var(--radius-lg);
   cursor: pointer;
-  transition: transform 0.2s, background-color 0.2s, border-color 0.2s;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              background-color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-
+/* ========== RESPONSIVE ========== */
 @media (max-width: 480px) {
   .wager-menu-grid {
     grid-template-columns: 1fr;
@@ -376,27 +481,44 @@
 /* ========== HOVER STATES (TOUCH DEVICE SAFE) ========== */
 @media (hover: hover) {
   .wager-menu-card:hover {
-    background: rgba(255, 255, 255, 0.06);
-    border-color: rgba(20, 241, 149, 0.3);
+    background: linear-gradient(135deg, rgba(20, 241, 149, 0.08) 0%, var(--bg-elevated) 40%, var(--bg-surface) 100%);
+    border-color: rgba(20, 241, 149, 0.4);
+    transform: translateY(-8px);
+    box-shadow:
+      0 20px 40px rgba(0, 0, 0, 0.3),
+      0 0 40px rgba(20, 241, 149, 0.15);
+  }
+
+  .wager-menu-card:hover .wager-menu-icon {
+    transform: scale(1.15);
+    filter: drop-shadow(0 0 12px rgba(20, 241, 149, 0.6));
+  }
+
+  .wager-menu-card:hover .wager-menu-title {
     transform: translateY(-2px);
   }
 
   .wager-preset:hover:not(.disabled) {
     border-color: rgba(20, 241, 149, 0.4);
-    background: rgba(20, 241, 149, 0.05);
+    background: linear-gradient(135deg, rgba(20, 241, 149, 0.06) 0%, var(--bg-elevated) 100%);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2), 0 0 20px rgba(20, 241, 149, 0.1);
   }
 
   .wager-match-card:hover {
-    background: rgba(255, 255, 255, 0.06);
+    background: linear-gradient(135deg, rgba(20, 241, 149, 0.06) 0%, var(--bg-elevated) 100%);
     border-color: rgba(20, 241, 149, 0.3);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2), 0 0 20px rgba(20, 241, 149, 0.08);
   }
 
   .wager-lobby .btn-secondary:hover {
     background: rgba(255, 255, 255, 0.08);
+    transform: translateY(-2px);
   }
 }
 
-/* Token selector */
+/* ========== TOKEN SELECTOR ========== */
 .token-selector {
   display: flex;
   align-items: center;
@@ -445,4 +567,19 @@
 .token-btn.selected:hover {
   transform: translateY(-1px);
   box-shadow: 0 0 30px rgba(20, 241, 149, 0.4);
+}
+
+/* ========== REDUCED MOTION ========== */
+@media (prefers-reduced-motion: reduce) {
+  .wager-menu-card,
+  .wager-preset,
+  .wager-match-card,
+  .wager-amount-display,
+  .wager-preset.selected,
+  .wager-waiting,
+  .wager-summary {
+    animation: none !important;
+    opacity: 1;
+    transform: none;
+  }
 }

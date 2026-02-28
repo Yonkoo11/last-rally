@@ -60,6 +60,7 @@ export function WagerLobby({ onBack, onMatchReady, onPlayFree }: WagerLobbyProps
   const [openMatches, setOpenMatches] = useState<OnChainMatch[]>([]);
   const [view, setView] = useState<'menu' | 'create' | 'browse'>('menu');
   const [polling, setPolling] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   // Update selected wager when token changes
   useEffect(() => {
@@ -201,8 +202,17 @@ export function WagerLobby({ onBack, onMatchReady, onPlayFree }: WagerLobbyProps
             </span>
           </div>
           <p className="wager-hint">Share your match ID with an opponent, or wait for someone to join.</p>
-          <div className="wager-match-id">
+          <div
+            className="wager-match-id copyable"
+            onClick={() => {
+              navigator.clipboard.writeText(currentMatch.matchPDA.toBase58());
+              setCopied(true);
+              setTimeout(() => setCopied(false), 1500);
+            }}
+            title="Click to copy full match ID"
+          >
             Match: {truncateAddress(currentMatch.matchPDA.toBase58(), 6)}
+            <span className="copy-hint">{copied ? 'Copied!' : 'Copy'}</span>
           </div>
           <button
             className="btn btn-secondary"
