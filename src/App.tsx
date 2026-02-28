@@ -37,7 +37,7 @@ function AppContent() {
   const settlingRef = useRef(false);
 
   const { showAchievement, showQuestComplete } = useToast();
-  const { settleMatch } = useWager();
+  const { settleMatch, delegateMatch, undelegateMatch } = useWager();
 
   // Quick Play handler - Direct to easy game
   const handleQuickPlay = useCallback(() => {
@@ -109,12 +109,14 @@ function AppContent() {
         settlingRef.current = true;
         setSettlementStatus('settling');
         const wager = gameConfig.wagerInfo;
+        const matchPDA = new PublicKey(wager.matchPDA);
         const winnerKey = result.winner === 'left'
           ? new PublicKey(wager.player1)
           : new PublicKey(wager.player2);
 
-        settleMatch(
-          new PublicKey(wager.matchPDA),
+        // Undelegate from ER first (commit state back to L1), then settle
+        const settle = () => settleMatch(
+          matchPDA,
           winnerKey,
           new PublicKey(wager.player1),
           new PublicKey(wager.player2),
@@ -124,15 +126,30 @@ function AppContent() {
           setSettlementStatus(success ? 'settled' : 'error');
           settlingRef.current = false;
         });
+
+        undelegateMatch(matchPDA)
+          .then(() => settle())
+          .catch(() => {
+            // If undelegation fails, try settling directly (may already be on L1)
+            console.warn('ER undelegation failed, settling directly on L1');
+            settle();
+          });
       }
     },
-    [showAchievement, showQuestComplete, gameConfig, settleMatch]
+    [showAchievement, showQuestComplete, gameConfig, settleMatch, undelegateMatch]
   );
 
-  // Wager match ready - both players deposited, start the game
-  const handleWagerMatchReady = useCallback((wagerInfo: WagerInfo) => {
+  // Wager match ready - both players deposited, delegate to ER and start
+  const handleWagerMatchReady = useCallback(async (wagerInfo: WagerInfo) => {
     const cosmetics = loadCosmetics();
     const playerName = loadPlayerName();
+
+    // Delegate match account to MagicBlock ER for low-latency gameplay
+    // Non-blocking: game starts even if delegation fails (graceful degradation)
+    delegateMatch(new PublicKey(wagerInfo.matchPDA)).catch(() => {
+      // Delegation is best-effort for hackathon demo
+      console.warn('ER delegation failed, continuing on L1');
+    });
 
     setGameConfig({
       mode: 'wager',
@@ -142,7 +159,7 @@ function AppContent() {
       wagerInfo,
     });
     setView('pong');
-  }, []);
+  }, [delegateMatch]);
 
   // Navigation handlers
   const handleQuit = useCallback(() => {
