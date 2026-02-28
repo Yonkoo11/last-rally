@@ -2,6 +2,8 @@
 
 **Graveyard Hackathon 2026 Submission** | Built for MagicBlock Gaming Track
 
+**[Play Now](https://yonkoo11.github.io/last-rally/)** | [Program on Devnet](https://explorer.solana.com/address/BUVQGteCL1j5mSrmpNXv5bpFqDrbVZ7fww12FXd7w4XG?cluster=devnet)
+
 > *Crypto gaming died because games were bad and financial mechanics felt forced. Last Rally proves a simple game can be genuinely fun. Now we financialize it properly on Solana.*
 
 ## 🎮 What Is This?
