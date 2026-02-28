@@ -607,6 +607,17 @@ function VictoryOverlay({
   const potDisplay = wagerInfo ? formatTokenAmount(wagerInfo.wagerAmount * 2, token) : '0';
   const lossDisplay = wagerInfo ? formatTokenAmount(wagerInfo.wagerAmount, token) : '0';
 
+  // Settlement timeout - show fallback after 30s
+  const [timedOut, setTimedOut] = useState(false);
+  useEffect(() => {
+    if (settlementStatus !== 'settling') {
+      setTimedOut(false);
+      return;
+    }
+    const timer = setTimeout(() => setTimedOut(true), 30_000);
+    return () => clearTimeout(timer);
+  }, [settlementStatus]);
+
   // Keyboard support for victory screen
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
@@ -638,8 +649,14 @@ function VictoryOverlay({
 
         {isWagerMatch && (
           <div className="victory-wager">
-            {settlementStatus === 'settling' && (
+            {settlementStatus === 'settling' && !timedOut && (
               <p className="wager-settling">Settling on Solana...</p>
+            )}
+            {settlementStatus === 'settling' && timedOut && (
+              <div className="wager-timeout">
+                <p className="wager-timeout-text">Settlement is taking longer than expected.</p>
+                <p className="wager-timeout-hint">The transaction may still confirm on-chain.</p>
+              </div>
             )}
             {settlementStatus === 'settled' && isPlayerWin && (
               <p className="wager-won">+{potDisplay} {token}</p>
@@ -648,7 +665,7 @@ function VictoryOverlay({
               <p className="wager-lost">-{lossDisplay} {token}</p>
             )}
             {settlementStatus === 'error' && (
-              <p className="wager-error">Settlement failed</p>
+              <p className="wager-error">Settlement failed. Funds remain in escrow.</p>
             )}
           </div>
         )}

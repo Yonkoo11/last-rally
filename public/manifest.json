@@ -1,0 +1,19 @@
+{
+  "name": "Last Rally - Financialized Pong on Solana",
+  "short_name": "Last Rally",
+  "description": "Arcade pong with real stakes. Wager SOL, USDC, or BONK on matches.",
+  "start_url": "/last-rally/",
+  "scope": "/last-rally/",
+  "display": "standalone",
+  "orientation": "landscape",
+  "background_color": "#050508",
+  "theme_color": "#F59E0B",
+  "icons": [
+    {
+      "src": "/last-rally/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

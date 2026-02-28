@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { useWallet, useAnchorWallet } from '@solana/wallet-adapter-react';
 import { PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
 import {
@@ -100,7 +100,14 @@ export function useWager() {
     };
 
     fetchBalances();
+    // Expose for manual refresh
+    fetchBalancesRef.current = fetchBalances;
   }, [publicKey]);
+
+  const fetchBalancesRef = useRef<(() => Promise<void>) | null>(null);
+  const refetchBalances = useCallback(() => {
+    fetchBalancesRef.current?.();
+  }, []);
 
   // Check if player profile exists
   useEffect(() => {
@@ -205,9 +212,7 @@ export function useWager() {
         setCurrentMatch(match);
         setStatus('idle');
 
-        // Refresh balance
-        const connection = new Connection(SOLANA_RPC_URL, 'confirmed');
-        setBalance(await connection.getBalance(publicKey));
+        refetchBalances();
 
         return match;
       } catch (err: unknown) {
@@ -285,8 +290,7 @@ export function useWager() {
 
         setStatus('idle');
 
-        const connection = new Connection(SOLANA_RPC_URL, 'confirmed');
-        setBalance(await connection.getBalance(publicKey));
+        refetchBalances();
 
         return true;
       } catch (err: unknown) {
@@ -358,8 +362,7 @@ export function useWager() {
         setCurrentMatch(null);
         setStatus('idle');
 
-        const connection = new Connection(SOLANA_RPC_URL, 'confirmed');
-        setBalance(await connection.getBalance(publicKey));
+        refetchBalances();
 
         return true;
       } catch (err: unknown) {
@@ -415,8 +418,7 @@ export function useWager() {
         setCurrentMatch(null);
         setStatus('idle');
 
-        const connection = new Connection(SOLANA_RPC_URL, 'confirmed');
-        setBalance(await connection.getBalance(publicKey));
+        refetchBalances();
 
         return true;
       } catch (err: unknown) {
@@ -557,6 +559,7 @@ export function useWager() {
     delegateMatch,
     undelegateMatch,
     fetchOpenMatches,
+    refetchBalances,
     clearError: () => setError(null),
   };
 }

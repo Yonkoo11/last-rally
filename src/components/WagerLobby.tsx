@@ -325,9 +325,10 @@ export function WagerLobby({ onBack, onMatchReady, onPlayFree }: WagerLobbyProps
                 className={`wager-preset ${selectedWager === preset.amount ? 'selected' : ''} ${!canAfford ? 'disabled' : ''}`}
                 onClick={() => canAfford && setSelectedWager(preset.amount)}
                 disabled={!canAfford}
+                title={!canAfford ? `Insufficient ${selectedToken} balance` : ''}
               >
                 <span className="preset-amount">{preset.label}</span>
-                <span className="preset-tier">{preset.tier}</span>
+                <span className="preset-tier">{!canAfford ? 'insufficient' : preset.tier}</span>
               </button>
             );
           })}
@@ -351,6 +352,12 @@ export function WagerLobby({ onBack, onMatchReady, onPlayFree }: WagerLobbyProps
         >
           {status === 'creating' ? 'Creating Match...' : 'Create Match'}
         </button>
+
+        {tokenBalances[selectedToken] < selectedWager && status !== 'creating' && (
+          <p className="wager-insufficient">
+            Insufficient balance: {formatTokenAmount(tokenBalances[selectedToken], selectedToken)} {selectedToken} available
+          </p>
+        )}
 
         {error && (
           <div className="wager-error" onClick={clearError}>

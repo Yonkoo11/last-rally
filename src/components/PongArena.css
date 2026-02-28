@@ -550,6 +550,23 @@
   margin: 0;
 }
 
+.wager-timeout {
+  text-align: center;
+}
+
+.wager-timeout-text {
+  color: var(--color-warning, #F59E0B);
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: var(--text-sm, 14px);
+  margin: 0 0 var(--space-1, 4px);
+}
+
+.wager-timeout-hint {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: var(--text-xs, 12px);
+  margin: 0;
+}
+
 @keyframes pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.5; }
