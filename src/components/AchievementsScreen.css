@@ -229,6 +229,13 @@
   font-family: var(--font-mono);
   font-size: var(--text-xs);
   color: var(--color-solana);
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.mint-success:hover {
+  opacity: 0.8;
+  text-decoration: underline;
 }
 
 .mint-error-row {

@@ -167,9 +167,14 @@ function AchievementCard({
         {unlocked && (
           <div className="achievement-card__mint">
             {isMinting && mintState === 'success' && mintResult?.mintAddress ? (
-              <span className="mint-success">
-                Minted as NFT
-              </span>
+              <a
+                className="mint-success"
+                href={`https://explorer.solana.com/address/${mintResult.mintAddress}?cluster=devnet`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Minted as NFT - View on Explorer
+              </a>
             ) : isMinting && mintState === 'error' ? (
               <div className="mint-error-row">
                 <span className="mint-error">{mintResult?.error || 'Failed'}</span>

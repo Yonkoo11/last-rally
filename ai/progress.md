@@ -35,10 +35,36 @@
 - Frontend build passing after all fixes
 - Added "Play Free" button to WagerLobby (for users without wallet)
 
+### ER LIFECYCLE WIRING (Feb 28, continued)
+- Wired `delegateMatch()` into `handleWagerMatchReady` in App.tsx (called after both players deposit)
+- Wired `undelegateMatch()` into `handleMatchEnd` in App.tsx (called before settlement)
+- Both are non-blocking with graceful degradation (game continues on L1 if ER ops fail)
+- Updated README with MagicBlock ER integration details, architecture diagram, match lifecycle
+- Corrected all outdated status claims (build, deployment, ER integration)
+- 3 commits pushed: PDA fixes, lifecycle wiring, README update
+- Deployed to GitHub Pages: https://yonkoo11.github.io/last-rally/
+
+### HACKATHON POLISH (Feb 28, continued)
+- Code splitting: solana-core/anchor/metaplex in separate chunks, main bundle ~830KB (was ~1.87MB)
+- Settlement timeout: victory overlay shows timeout message after 30s with graceful fallback
+- Balance refresh: refetchBalances() now updates ALL token balances (SOL/USDC/BONK) after every tx
+- Insufficient balance UX: disabled presets show "insufficient", create button shows available balance
+- Loading spinners: added to Create Match, Join, and Settlement overlay
+- PWA manifest: manifest.json + apple-mobile-web-app meta tags for "Add to Home Screen"
+- Multi-token display: wager bar and victory overlay use correct token name/format
+- Keyboard shortcuts: Enter/Esc on victory overlay
+- Player skill tiers: Newcomer/Rising/Contender/Veteran/Champion on stats screen
+- Wager card text: "Bet SOL, USDC, or BONK" instead of just "SOL"
+- Meta/OG tags: Solana/MagicBlock hackathon context
+- 404.html: GitHub Pages SPA routing
+- All deployed to: https://yonkoo11.github.io/last-rally/
+- 10 commits pushed to solana-v4 branch
+
 ### NOT DONE
 - Zero on-chain testing of delegate/undelegate flow
 - No testing on MagicBlock devnet ER validator
 - Rust `undelegate_match` instruction is deployed but unused (frontend uses Magic program directly)
+- No end-to-end wager flow tested on devnet
 
 ---
 
