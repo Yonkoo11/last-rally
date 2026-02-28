@@ -358,7 +358,7 @@ export function ModeSelect({ onBack, onStartGame, onWager }: ModeSelectProps) {
           <button
             className="mode-card mode-wager"
             onClick={onWager}
-            aria-label="Wager Match: Bet SOL on your game"
+            aria-label="Wager Match: Bet crypto on your game"
           >
             <div className="mode-icon" aria-hidden="true">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -368,7 +368,7 @@ export function ModeSelect({ onBack, onStartGame, onWager }: ModeSelectProps) {
               </svg>
             </div>
             <span className="mode-name">Wager Match</span>
-            <span className="mode-desc">Bet SOL on your game</span>
+            <span className="mode-desc">Bet SOL, USDC, or BONK</span>
           </button>
         )}
       </div>
