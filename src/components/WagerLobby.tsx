@@ -85,6 +85,7 @@ export function WagerLobby({ onBack, onMatchReady, onPlayFree }: WagerLobbyProps
           player1: currentMatch.player1.toBase58(),
           player2: publicKey!.toBase58(), // We are player1 here, but player2 joined
           wagerAmount: currentMatch.wagerAmount,
+          token: currentMatch.token,
         });
       }
     }, 3000);
@@ -121,6 +122,7 @@ export function WagerLobby({ onBack, onMatchReady, onPlayFree }: WagerLobbyProps
           player1: match.player1.toBase58(),
           player2: publicKey!.toBase58(),
           wagerAmount: match.wagerAmount,
+          token: match.token,
         });
       }
     },

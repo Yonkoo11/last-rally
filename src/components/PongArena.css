@@ -319,6 +319,13 @@
   transform: translateY(-1px) scale(0.98);
 }
 
+.victory-buttons .key-hint {
+  opacity: 0.4;
+  font-size: 0.8em;
+  font-weight: 400;
+  margin-left: 4px;
+}
+
 @media (hover: hover) {
   .victory-buttons .btn-primary:hover {
     background: linear-gradient(135deg, #FFE44D 0%, #FFAA00 100%);

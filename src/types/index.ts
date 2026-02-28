@@ -66,7 +66,8 @@ export interface WagerInfo {
   matchId: string;        // BN as string
   player1: string;        // Base58 encoded
   player2: string;        // Base58 encoded
-  wagerAmount: number;    // lamports
+  wagerAmount: number;    // smallest unit (lamports for SOL, 1e6 for USDC, etc.)
+  token?: string;         // 'SOL' | 'USDC' | 'BONK' - defaults to SOL
 }
 
 export interface GameConfig {

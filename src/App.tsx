@@ -131,7 +131,6 @@ function AppContent() {
           .then(() => settle())
           .catch(() => {
             // If undelegation fails, try settling directly (may already be on L1)
-            console.warn('ER undelegation failed, settling directly on L1');
             settle();
           });
       }
@@ -147,8 +146,7 @@ function AppContent() {
     // Delegate match account to MagicBlock ER for low-latency gameplay
     // Non-blocking: game starts even if delegation fails (graceful degradation)
     delegateMatch(new PublicKey(wagerInfo.matchPDA)).catch(() => {
-      // Delegation is best-effort for hackathon demo
-      console.warn('ER delegation failed, continuing on L1');
+      // Delegation is best-effort - game continues on L1
     });
 
     setGameConfig({

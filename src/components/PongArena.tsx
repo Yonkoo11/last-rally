@@ -49,6 +49,7 @@ import {
 import { loadCosmetics, loadSettings } from '../lib/storage';
 import { getRandomPitch, getPitchInfo } from '../data/pitches';
 import { getTouchController, isTouchDevice } from '../game/touch';
+import { formatTokenAmount } from '../lib/solana';
 import './PongArena.css';
 
 interface PongArenaProps {
@@ -462,13 +463,16 @@ export function PongArena({ config, onMatchEnd, onQuit, settlementStatus }: Pong
     <div className={`pong-arena ${touchEnabled ? 'touch-enabled' : ''}`}>
       <button className="quit-btn" onClick={onQuit}>QUIT</button>
 
-      {config.wagerInfo && (
-        <div className="wager-bar">
-          <span className="wager-bar-label">WAGER</span>
-          <span className="wager-bar-amount">{(config.wagerInfo.wagerAmount / 1e9).toFixed(2)} SOL</span>
-          <span className="wager-bar-pot">POT: {(config.wagerInfo.wagerAmount * 2 / 1e9).toFixed(2)} SOL</span>
-        </div>
-      )}
+      {config.wagerInfo && (() => {
+        const token = config.wagerInfo.token || 'SOL';
+        return (
+          <div className="wager-bar">
+            <span className="wager-bar-label">WAGER</span>
+            <span className="wager-bar-amount">{formatTokenAmount(config.wagerInfo.wagerAmount, token)} {token}</span>
+            <span className="wager-bar-pot">POT: {formatTokenAmount(config.wagerInfo.wagerAmount * 2, token)} {token}</span>
+          </div>
+        );
+      })()}
 
       <div className="game-layout">
         {/* Header */}
@@ -599,7 +603,27 @@ function VictoryOverlay({
 }: VictoryOverlayProps) {
   const winnerName = winner === 'left' ? player1Name : player2Name;
   const isWagerMatch = !!wagerInfo;
-  const potSOL = wagerInfo ? (wagerInfo.wagerAmount * 2 / 1e9).toFixed(2) : '0';
+  const token = wagerInfo?.token || 'SOL';
+  const potDisplay = wagerInfo ? formatTokenAmount(wagerInfo.wagerAmount * 2, token) : '0';
+  const lossDisplay = wagerInfo ? formatTokenAmount(wagerInfo.wagerAmount, token) : '0';
+
+  // Keyboard support for victory screen
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        if (isWagerMatch) {
+          onQuit();
+        } else {
+          onRematch();
+        }
+      } else if (e.key === 'Escape') {
+        onQuit();
+      }
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [isWagerMatch, onRematch, onQuit]);
 
   return (
     <div className="victory-overlay">
@@ -618,10 +642,10 @@ function VictoryOverlay({
               <p className="wager-settling">Settling on Solana...</p>
             )}
             {settlementStatus === 'settled' && isPlayerWin && (
-              <p className="wager-won">+{potSOL} SOL</p>
+              <p className="wager-won">+{potDisplay} {token}</p>
             )}
             {settlementStatus === 'settled' && !isPlayerWin && (
-              <p className="wager-lost">-{(wagerInfo!.wagerAmount / 1e9).toFixed(2)} SOL</p>
+              <p className="wager-lost">-{lossDisplay} {token}</p>
             )}
             {settlementStatus === 'error' && (
               <p className="wager-error">Settlement failed</p>
@@ -632,11 +656,11 @@ function VictoryOverlay({
         <div className="victory-buttons">
           {!isWagerMatch && (
             <button className="btn btn-primary" onClick={onRematch}>
-              Rematch
+              Rematch <span className="key-hint">[Enter]</span>
             </button>
           )}
           <button className={`btn ${isWagerMatch ? 'btn-primary' : 'btn-secondary'}`} onClick={onQuit}>
-            {isWagerMatch ? 'Back to Lobby' : 'Quit'}
+            {isWagerMatch ? 'Back to Lobby' : 'Quit'} <span className="key-hint">[{isWagerMatch ? 'Enter' : 'Esc'}]</span>
           </button>
         </div>
       </div>
