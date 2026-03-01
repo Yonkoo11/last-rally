@@ -59,6 +59,22 @@
   z-index: 1;
 }
 
+/* ========== GRADIENT PAGE HEADER ========== */
+@keyframes headerGradientGold {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.achievements-screen .screen__title {
+  background: linear-gradient(135deg, #FFD700 0%, #FFAA00 50%, #FF8C00 100%);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: headerGradientGold 4s ease-in-out infinite;
+  filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.3));
+}
+
 /* ========== HEADER ========== */
 .achievements-header {
   margin-bottom: var(--space-6);
@@ -383,6 +399,7 @@
 
 /* ========== REDUCED MOTION ========== */
 @media (prefers-reduced-motion: reduce) {
+  .achievements-screen .screen__title,
   .achievements-screen,
   .achievements-header,
   .achievement-card,

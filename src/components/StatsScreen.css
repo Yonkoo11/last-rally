@@ -59,6 +59,22 @@
   z-index: 1;
 }
 
+/* ========== GRADIENT PAGE HEADER ========== */
+@keyframes headerGradientBlue {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.stats-screen .screen__title {
+  background: linear-gradient(135deg, #00D4FF 0%, #00FFAA 50%, #3B82F6 100%);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: headerGradientBlue 4s ease-in-out infinite;
+  filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.3));
+}
+
 /* ========== HEADER ========== */
 .stats-header {
   margin-bottom: var(--space-8);
@@ -384,6 +400,7 @@
 
 /* ========== REDUCED MOTION ========== */
 @media (prefers-reduced-motion: reduce) {
+  .stats-screen .screen__title,
   .stat-box,
   .player-tier__badge,
   .current-streak,

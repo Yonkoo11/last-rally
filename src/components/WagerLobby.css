@@ -57,6 +57,22 @@
   animation: spin 0.6s linear infinite;
 }
 
+/* ========== GRADIENT PAGE HEADER ========== */
+@keyframes headerGradientSolana {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.wager-lobby .page-header {
+  background: linear-gradient(135deg, #14f195 0%, #00FFAA 50%, #00D4FF 100%);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: headerGradientSolana 4s ease-in-out infinite;
+  filter: drop-shadow(0 0 20px rgba(20, 241, 149, 0.3));
+}
+
 /* ========== PAGE CONTAINER ========== */
 .wager-lobby {
   display: flex;
@@ -571,6 +587,7 @@
 
 /* ========== REDUCED MOTION ========== */
 @media (prefers-reduced-motion: reduce) {
+  .wager-lobby .page-header,
   .wager-menu-card,
   .wager-preset,
   .wager-match-card,
