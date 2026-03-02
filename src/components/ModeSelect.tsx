@@ -12,6 +12,7 @@ interface ModeSelectProps {
   onBack: () => void;
   onStartGame: (player1Name: string, player2Name: string, mode: GameMode, difficulty?: Difficulty, quest?: Quest) => void;
   onWager?: () => void;
+  playfunMode?: boolean;
 }
 
 type SubView = 'main' | 'difficulty' | 'quest' | 'nameInput';
@@ -22,7 +23,7 @@ interface PendingGame {
   quest?: Quest;
 }
 
-export function ModeSelect({ onBack, onStartGame, onWager }: ModeSelectProps) {
+export function ModeSelect({ onBack, onStartGame, onWager, playfunMode = false }: ModeSelectProps) {
   const [subView, setSubView] = useState<SubView>('main');
   const [hoveredDifficulty, setHoveredDifficulty] = useState<Difficulty | null>(null);
   const [pendingGame, setPendingGame] = useState<PendingGame | null>(null);
@@ -78,9 +79,9 @@ export function ModeSelect({ onBack, onStartGame, onWager }: ModeSelectProps) {
     e.preventDefault();
     if (!pendingGame) return;
 
-    const name1 = player1Name.trim().toUpperCase() || 'PLAYER 1';
+    const name1 = player1Name.trim() || 'PLAYER 1';
     const name2 = pendingGame.mode === 'pvp'
-      ? player2Name.trim().toUpperCase() || 'PLAYER 2'
+      ? player2Name.trim() || 'PLAYER 2'
       : getOpponentName();
 
     savePlayerName(name1);
@@ -334,25 +335,27 @@ export function ModeSelect({ onBack, onStartGame, onWager }: ModeSelectProps) {
           <span className="mode-desc">Play with a friend</span>
         </button>
 
-        <button
-          className="mode-card mode-quest"
-          onClick={() => handleSubViewChange('quest')}
-          aria-label={`Quest Mode: ${questProgress.completedQuests.length} of ${QUESTS.length} completed`}
-        >
-          <div className="mode-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-              <polyline points="14 2 14 8 20 8" />
-              <line x1="16" y1="13" x2="8" y2="13" />
-              <line x1="16" y1="17" x2="8" y2="17" />
-              <polyline points="10 9 9 9 8 9" />
-            </svg>
-          </div>
-          <span className="mode-name">Quest Mode</span>
-          <span className="mode-desc">
-            {questProgress.completedQuests.length}/{QUESTS.length} completed
-          </span>
-        </button>
+        {!playfunMode && (
+          <button
+            className="mode-card mode-quest"
+            onClick={() => handleSubViewChange('quest')}
+            aria-label={`Quest Mode: ${questProgress.completedQuests.length} of ${QUESTS.length} completed`}
+          >
+            <div className="mode-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                <polyline points="14 2 14 8 20 8" />
+                <line x1="16" y1="13" x2="8" y2="13" />
+                <line x1="16" y1="17" x2="8" y2="17" />
+                <polyline points="10 9 9 9 8 9" />
+              </svg>
+            </div>
+            <span className="mode-name">Quest Mode</span>
+            <span className="mode-desc">
+              {questProgress.completedQuests.length}/{QUESTS.length} completed
+            </span>
+          </button>
+        )}
 
         {onWager && (
           <button

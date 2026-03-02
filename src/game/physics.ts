@@ -1,4 +1,4 @@
-import { Ball, Paddle, Vector2D, QuestModifiers, PitchType, BallWithPitch } from '../types';
+import { Ball, Paddle, Vector2D, QuestModifiers } from '../types';
 import {
   CANVAS_WIDTH,
   CANVAS_HEIGHT,
@@ -12,13 +12,12 @@ import {
   PADDLE_MARGIN,
   PADDLE_SPEED,
 } from './constants';
-import { PITCHES } from '../data/pitches';
 
 // ============================================
 // BALL PHYSICS
 // ============================================
 
-export function createBall(trail: Ball['trail'] = 'classic'): BallWithPitch {
+export function createBall(trail: Ball['trail'] = 'classic'): Ball {
   return {
     x: CANVAS_WIDTH / 2,
     y: CANVAS_HEIGHT / 2,
@@ -26,9 +25,6 @@ export function createBall(trail: Ball['trail'] = 'classic'): BallWithPitch {
     velocity: getRandomStartVelocity(),
     speed: BALL_INITIAL_SPEED,
     trail,
-    pitch: undefined,
-    curveProgress: 0,
-    wobbleOffset: 0,
   };
 }
 
@@ -43,67 +39,16 @@ function getRandomStartVelocity(): Vector2D {
 }
 
 export function updateBall(
-  ball: BallWithPitch,
+  ball: Ball,
   modifiers: QuestModifiers = {}
-): { ball: BallWithPitch; hitWall: boolean } {
+): { ball: Ball; hitWall: boolean } {
   const speedMod = modifiers.ballSpeed || 1;
   let hitWall = false;
 
-  // Get pitch config if ball has a pitch
-  const pitchConfig = ball.pitch ? PITCHES[ball.pitch] : null;
-
-  // Calculate curve effect
-  let curveEffect = 0;
-  let newCurveProgress = ball.curveProgress;
-  let newWobbleOffset = ball.wobbleOffset;
-
-  if (pitchConfig && ball.pitch) {
-    // Update curve progress (0 to 1 based on x position)
-    const totalDistance = CANVAS_WIDTH - PADDLE_MARGIN * 2;
-    const traveled = ball.velocity.x > 0
-      ? ball.x - PADDLE_MARGIN
-      : CANVAS_WIDTH - PADDLE_MARGIN - ball.x;
-    newCurveProgress = Math.min(1, Math.max(0, traveled / totalDistance));
-
-    // Calculate curve based on pitch type
-    const { curveMagnitude, curveDirection, wobble } = pitchConfig;
-
-    switch (curveDirection) {
-      case 'down':
-        curveEffect = curveMagnitude * Math.sin(newCurveProgress * Math.PI);
-        break;
-      case 'up':
-        curveEffect = -curveMagnitude * Math.sin(newCurveProgress * Math.PI);
-        break;
-      case 'late':
-        // Only curve in the last 30% of travel
-        if (newCurveProgress > 0.7) {
-          const lateProgress = (newCurveProgress - 0.7) / 0.3;
-          curveEffect = curveMagnitude * Math.pow(lateProgress, 2) * 2;
-        }
-        break;
-      case 'random':
-        // Change direction randomly
-        if (Math.random() < 0.05) {
-          curveEffect = (Math.random() - 0.5) * curveMagnitude * 2;
-        }
-        break;
-    }
-
-    // Add wobble for knuckleball
-    if (wobble) {
-      newWobbleOffset = Math.sin(Date.now() / 50) * 0.5 + (Math.random() - 0.5) * 0.3;
-      curveEffect += newWobbleOffset;
-    }
-  }
-
-  // Update position with curve
-  const newBall: BallWithPitch = {
+  const newBall: Ball = {
     ...ball,
-    x: ball.x + ball.velocity.x * speedMod * (pitchConfig?.speedMod || 1),
-    y: ball.y + ball.velocity.y * speedMod + curveEffect,
-    curveProgress: newCurveProgress,
-    wobbleOffset: newWobbleOffset,
+    x: ball.x + ball.velocity.x * speedMod,
+    y: ball.y + ball.velocity.y * speedMod,
   };
 
   // Top/bottom wall collision
@@ -121,14 +66,10 @@ export function updateBall(
 }
 
 export function resetBall(
-  ball: BallWithPitch,
+  ball: Ball,
   serveDirection: 'left' | 'right',
-  pitch?: PitchType
-): BallWithPitch {
-  const pitchConfig = pitch ? PITCHES[pitch] : null;
-  const speedMod = pitchConfig?.speedMod || 1;
-  const baseSpeed = BALL_INITIAL_SPEED * speedMod;
-
+): Ball {
+  const baseSpeed = BALL_INITIAL_SPEED;
   const angle = (Math.random() - 0.5) * (Math.PI / 4);
   const direction = serveDirection === 'right' ? 1 : -1;
 
@@ -141,9 +82,6 @@ export function resetBall(
       x: Math.cos(angle) * baseSpeed * direction,
       y: Math.sin(angle) * baseSpeed,
     },
-    pitch,
-    curveProgress: 0,
-    wobbleOffset: 0,
   };
 }
 
@@ -203,11 +141,11 @@ export function setPaddleY(
 export interface CollisionResult {
   hit: boolean;
   side: 'left' | 'right' | null;
-  newBall: BallWithPitch;
+  newBall: Ball;
 }
 
 export function checkPaddleCollision(
-  ball: BallWithPitch,
+  ball: Ball,
   leftPaddle: Paddle,
   rightPaddle: Paddle,
   modifiers: QuestModifiers = {}
@@ -236,7 +174,7 @@ export function checkPaddleCollision(
 }
 
 function checkSinglePaddleCollision(
-  ball: BallWithPitch,
+  ball: Ball,
   paddle: Paddle,
   side: 'left' | 'right',
   heightMod: number

@@ -35,7 +35,7 @@ export function loadPlayerName(): string {
 // Save player name to localStorage
 export function savePlayerName(name: string): void {
   try {
-    localStorage.setItem(STORAGE_KEY, name.trim().toUpperCase() || DEFAULT_PLAYER_NAME);
+    localStorage.setItem(STORAGE_KEY, name.trim() || DEFAULT_PLAYER_NAME);
   } catch {
     // localStorage not available
   }
@@ -43,7 +43,7 @@ export function savePlayerName(name: string): void {
 
 // Validate and format player name
 export function formatPlayerName(name: string): string {
-  const trimmed = name.trim().toUpperCase();
+  const trimmed = name.trim();
   // Max 12 characters
   const capped = trimmed.slice(0, 12);
   return capped || DEFAULT_PLAYER_NAME;

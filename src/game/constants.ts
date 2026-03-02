@@ -33,33 +33,9 @@ export const TRAIL_FADE_RATE = 0.9;
 export const PARTICLE_COUNT = 15;
 export const PARTICLE_LIFETIME = 500; // ms
 
-// AI configurations by difficulty
-export const AI_CONFIGS = {
-  easy: {
-    reactionDelay: 200,
-    errorMargin: 40,
-    predictionDepth: 0.3,
-    speedMultiplier: 0.6,
-  },
-  medium: {
-    reactionDelay: 100,
-    errorMargin: 25,
-    predictionDepth: 0.6,
-    speedMultiplier: 0.8,
-  },
-  hard: {
-    reactionDelay: 50,
-    errorMargin: 12,
-    predictionDepth: 0.85,
-    speedMultiplier: 0.95,
-  },
-  impossible: {
-    reactionDelay: 16,
-    errorMargin: 3,
-    predictionDepth: 1.0,
-    speedMultiplier: 1.0,
-  },
-} as const;
+// AI difficulty is now handled in ai.ts with a simple model:
+// All difficulties move at full speed. Only accuracy differs.
+// See src/game/ai.ts for config values.
 
 // Frame timing
 export const TARGET_FPS = 60;

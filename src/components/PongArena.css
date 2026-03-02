@@ -2,11 +2,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
+  height: 100vh;
+  max-height: 100vh;
+  overflow: hidden;
   background: linear-gradient(180deg, var(--bg-void, #050508) 0%, var(--bg-dark, #080810) 100%);
   position: relative;
-  padding: var(--space-5, 20px);
+  padding: var(--space-3, 12px);
   font-family: var(--font-ui, "Inter", sans-serif);
+  box-sizing: border-box;
 }
 
 /* Quit Button */
@@ -44,7 +47,11 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-4, 16px);
+  gap: var(--space-2, 8px);
+  height: 100%;
+  width: 100%;
+  max-width: 900px;
+  min-height: 0;
 }
 
 /* Header */
@@ -120,12 +127,11 @@
   font-weight: var(--font-medium, 500);
   letter-spacing: 0.05em;
   margin-bottom: var(--space-1, 4px);
-  text-transform: uppercase;
 }
 
 .score {
   font-family: var(--font-display, "Space Grotesk", sans-serif);
-  font-size: var(--text-5xl, 4rem);
+  font-size: var(--text-4xl, 3rem);
   font-weight: var(--font-bold, 700);
   line-height: 1;
   transition: transform 0.2s var(--ease-out-back);
@@ -145,6 +151,10 @@
 /* Canvas Wrapper */
 .game-canvas-wrapper {
   position: relative;
+  flex: 1 1 0;
+  min-height: 0;
+  max-width: 800px;
+  aspect-ratio: 8 / 5;
   border-radius: var(--radius-lg, 8px);
   overflow: hidden;
   box-shadow: var(--shadow-xl, 0 16px 32px rgba(0, 0, 0, 0.5));
@@ -154,37 +164,10 @@
 
 .game-canvas {
   display: block;
-  max-width: 100%;
-  height: auto;
-}
-
-/* Player Labels Below Pitch */
-.player-labels {
-  display: flex;
-  justify-content: space-between;
   width: 100%;
-  max-width: 800px;
-  padding: 0 var(--space-4, 16px);
-  margin-top: var(--space-3, 12px);
+  height: 100%;
 }
 
-.player-label {
-  font-family: var(--font-display, "Space Grotesk", sans-serif);
-  font-size: var(--text-xs, 12px);
-  font-weight: var(--font-medium, 500);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-
-.player-label-left {
-  color: var(--color-player1, #00D4FF);
-  text-shadow: 0 0 10px rgba(0, 212, 255, 0.4);
-}
-
-.player-label-right {
-  color: var(--color-player2, #FF3366);
-  text-shadow: 0 0 10px rgba(255, 51, 102, 0.4);
-}
 
 /* Game Footer */
 .game-footer {

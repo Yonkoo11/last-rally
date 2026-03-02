@@ -10,6 +10,7 @@ import './LandingPage.css';
 
 interface LandingPageProps {
   onEnter: () => void;
+  playfunMode?: boolean;
 }
 
 // Transition duration in ms
@@ -99,7 +100,7 @@ function SolanaLogo({ size = 18 }: { size?: number }) {
   );
 }
 
-export function LandingPage({ onEnter }: LandingPageProps) {
+export function LandingPage({ onEnter, playfunMode = false }: LandingPageProps) {
   const [isExiting, setIsExiting] = useState(false);
 
   // Handle enter with transition
@@ -155,16 +156,20 @@ export function LandingPage({ onEnter }: LandingPageProps) {
         <span className="landing-hint">Press Enter to start</span>
       </div>
 
-      {/* Wallet connect - top right */}
-      <div className="landing-wallet">
-        <WalletConnect />
-      </div>
+      {/* Wallet connect - top right (hidden in play.fun mode) */}
+      {!playfunMode && (
+        <div className="landing-wallet">
+          <WalletConnect />
+        </div>
+      )}
 
-      {/* Built on Solana badge - bottom center */}
-      <div className="landing-solana-badge">
-        <SolanaLogo size={16} />
-        <span>Built on Solana</span>
-      </div>
+      {/* Built on Solana badge - bottom center (hidden in play.fun mode) */}
+      {!playfunMode && (
+        <div className="landing-solana-badge">
+          <SolanaLogo size={16} />
+          <span>Built on Solana</span>
+        </div>
+      )}
     </div>
   );
 }

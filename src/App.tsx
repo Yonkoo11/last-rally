@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import {
   ViewState,
   GameConfig,
@@ -27,9 +27,12 @@ import { ErrorBoundary } from './components/ErrorBoundary';
 import { truncateAddress } from './lib/solana';
 import { useWager } from './hooks/useWager';
 import { PublicKey } from '@solana/web3.js';
+import { isPlayFunMode, initPlayFun, addGoalPoints, addWinPoints, addRallyBonus, savePoints } from './lib/playfun';
 import './App.css';
 
 function AppContent() {
+  const playfunMode = isPlayFunMode();
+
   const [view, setView] = useState<ViewState>('landing');
   const [gameConfig, setGameConfig] = useState<GameConfig | null>(null);
   const [showSettings, setShowSettings] = useState(false);
@@ -38,6 +41,13 @@ function AppContent() {
 
   const { showAchievement, showQuestComplete } = useToast();
   const { settleMatch, delegateMatch, undelegateMatch } = useWager();
+
+  // Play.fun: init SDK on mount
+  useEffect(() => {
+    if (playfunMode) {
+      initPlayFun();
+    }
+  }, [playfunMode]);
 
   // Quick Play handler - Direct to easy game
   const handleQuickPlay = useCallback(() => {
@@ -89,6 +99,23 @@ function AppContent() {
         playDefeat();
       }
 
+      // Play.fun: award points for goals scored + win bonus
+      if (playfunMode) {
+        // Points for each goal the player scored
+        for (let i = 0; i < result.leftScore; i++) {
+          addGoalPoints();
+        }
+        // Win bonus
+        if (result.winner === 'left') {
+          addWinPoints();
+        }
+        // Rally bonus
+        if (result.bestRally >= 10) {
+          addRallyBonus();
+        }
+        savePoints();
+      }
+
       // Show achievement toasts
       newAchievements.forEach(achievement => {
         playAchievement();
@@ -135,7 +162,7 @@ function AppContent() {
           });
       }
     },
-    [showAchievement, showQuestComplete, gameConfig, settleMatch, undelegateMatch]
+    [showAchievement, showQuestComplete, gameConfig, settleMatch, undelegateMatch, playfunMode]
   );
 
   // Wager match ready - both players deposited, delegate to ER and start
@@ -161,9 +188,10 @@ function AppContent() {
 
   // Navigation handlers
   const handleQuit = useCallback(() => {
-    setGameConfig(null);
     setSettlementStatus(undefined);
     settlingRef.current = false;
+
+    setGameConfig(null);
     setView('modeSelect');
   }, []);
 
@@ -175,7 +203,12 @@ function AppContent() {
   const renderView = () => {
     switch (view) {
       case 'landing':
-        return <LandingPage onEnter={() => setView('title')} />;
+        return (
+          <LandingPage
+            onEnter={() => setView(playfunMode ? 'modeSelect' : 'title')}
+            playfunMode={playfunMode}
+          />
+        );
 
       case 'title':
         return (
@@ -192,9 +225,10 @@ function AppContent() {
         return (
           <ModeSelect
             onSelectMode={() => {}}
-            onBack={handleBackToTitle}
+            onBack={playfunMode ? () => setView('landing') : handleBackToTitle}
             onStartGame={handleStartGame}
-            onWager={() => setView('wagerLobby')}
+            onWager={playfunMode ? undefined : () => setView('wagerLobby')}
+            playfunMode={playfunMode}
           />
         );
 
@@ -215,6 +249,7 @@ function AppContent() {
             onMatchEnd={handleMatchEnd}
             onQuit={handleQuit}
             settlementStatus={settlementStatus}
+            playfunMode={playfunMode}
           />
         );
 

@@ -275,8 +275,11 @@ export interface Toast {
 export interface AIConfig {
   reactionDelay: number;   // ms before AI reacts
   errorMargin: number;     // pixels of inaccuracy
-  predictionDepth: number; // how far ahead AI predicts
-  speedMultiplier: number; // paddle speed modifier
+  predictionDepth: number; // how far ahead AI predicts (0-1)
+  speedMultiplier: number; // paddle speed modifier (0-1)
+  awayCenterBias: number;  // 0=track ball when away, 1=drift to center
+  deadZone: number;        // pixels of movement precision
+  driftToCenterDuringDelay: boolean; // if true, AI drifts to center during reaction delay
 }
 
 // ---- Pitch Types ----

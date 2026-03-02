@@ -168,7 +168,7 @@ export function loadPlayerName(): string {
 }
 
 export function savePlayerName(name: string): void {
-  safeStorageSet(KEYS.PLAYER_NAME, name.toUpperCase().slice(0, 12));
+  safeStorageSet(KEYS.PLAYER_NAME, name.slice(0, 12));
 }
 
 // ============================================

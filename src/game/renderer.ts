@@ -701,12 +701,12 @@ export function renderNames(
   // Left player (cyan)
   ctx.textAlign = 'left';
   ctx.fillStyle = PLAYER_COLORS.player1;
-  ctx.fillText(leftName.toUpperCase(), 20, CANVAS_HEIGHT - 15);
+  ctx.fillText(leftName, 20, CANVAS_HEIGHT - 15);
 
   // Right player (red)
   ctx.textAlign = 'right';
   ctx.fillStyle = PLAYER_COLORS.player2;
-  ctx.fillText(rightName.toUpperCase(), CANVAS_WIDTH - 20, CANVAS_HEIGHT - 15);
+  ctx.fillText(rightName, CANVAS_WIDTH - 20, CANVAS_HEIGHT - 15);
 
   ctx.globalAlpha = 1;
 }

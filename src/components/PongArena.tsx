@@ -5,8 +5,6 @@ import {
   Paddle,
   MatchResult,
   QuestModifiers,
-  BallWithPitch,
-  PitchType,
   WagerInfo,
 } from '../types';
 import {
@@ -23,7 +21,6 @@ import {
   renderGame,
   renderCountdown,
   renderPausedOverlay,
-  renderNames,
   updateTrail,
   clearTrail,
   spawnScoreParticles,
@@ -47,7 +44,6 @@ import {
   resumeAudio,
 } from '../audio/sounds';
 import { loadCosmetics, loadSettings } from '../lib/storage';
-import { getRandomPitch, getPitchInfo } from '../data/pitches';
 import { getTouchController, isTouchDevice } from '../game/touch';
 import { formatTokenAmount } from '../lib/solana';
 import './PongArena.css';
@@ -57,6 +53,7 @@ interface PongArenaProps {
   onMatchEnd: (result: MatchResult) => void;
   onQuit: () => void;
   settlementStatus?: 'settling' | 'settled' | 'error';
+  playfunMode?: boolean;
 }
 
 interface KeyState {
@@ -68,7 +65,7 @@ interface KeyState {
   arrowdown: boolean;
 }
 
-export function PongArena({ config, onMatchEnd, onQuit, settlementStatus }: PongArenaProps) {
+export function PongArena({ config, onMatchEnd, onQuit, settlementStatus, playfunMode }: PongArenaProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const gameLoopRef = useRef<number | undefined>(undefined);
   const lastTimeRef = useRef<number>(0);
@@ -82,11 +79,10 @@ export function PongArena({ config, onMatchEnd, onQuit, settlementStatus }: Pong
   const [bestRally, setBestRally] = useState(0);
   const [matchStartTime, setMatchStartTime] = useState(0);
   const [winner, setWinner] = useState<'left' | 'right' | null>(null);
-  const [currentPitch, setCurrentPitch] = useState<PitchType | null>(null);
   const [justScored, setJustScored] = useState<'left' | 'right' | null>(null);
 
   // Game state refs (mutable for game loop)
-  const ballRef = useRef<BallWithPitch>(createBall(config.modifiers?.ballSpeed ? 'classic' : loadCosmetics().selectedBallTrail));
+  const ballRef = useRef(createBall(config.modifiers?.ballSpeed ? 'classic' : loadCosmetics().selectedBallTrail));
   const leftPaddleRef = useRef<Paddle>(createPaddle('left', loadCosmetics().selectedPaddleSkin));
   const rightPaddleRef = useRef<Paddle>(createPaddle('right', config.mode === 'pvp' ? loadCosmetics().selectedPaddleSkin : 'default'));
   const rallyCountRef = useRef(0);
@@ -220,11 +216,7 @@ export function PongArena({ config, onMatchEnd, onQuit, settlementStatus }: Pong
   // Reset game state
   const resetForNewPoint = useCallback(
     (serveDirection: 'left' | 'right') => {
-      // Select pitch based on who is serving (AI serves with pitch, player serves straight)
-      const isAIServing = config.mode !== 'pvp' && serveDirection === 'left';
-      const pitch = isAIServing ? getRandomPitch(config.difficulty) : undefined;
-      setCurrentPitch(pitch || null);
-      ballRef.current = resetBall(ballRef.current, serveDirection, pitch);
+      ballRef.current = resetBall(ballRef.current, serveDirection);
       clearTrail();
       rallyCountRef.current = 0;
       setRallyCount(0);
@@ -410,7 +402,7 @@ export function PongArena({ config, onMatchEnd, onQuit, settlementStatus }: Pong
         modifiers.paddleSize
       );
 
-      renderNames(ctx, config.player1Name, config.player2Name, config.arenaTheme);
+      // Names rendered in HUD, not on canvas
 
       if (phaseRef.current === 'countdown') {
         renderCountdown(ctx, countdown, config.arenaTheme);
@@ -475,11 +467,13 @@ export function PongArena({ config, onMatchEnd, onQuit, settlementStatus }: Pong
       })()}
 
       <div className="game-layout">
-        {/* Header */}
-        <div className="game-header">
-          <h1 className="game-title">LAST RALLY</h1>
-          <div className="game-subtitle">VS {config.player2Name}</div>
-        </div>
+        {/* Header - hidden in play.fun (play.fun shows game name in its own chrome) */}
+        {!playfunMode && (
+          <div className="game-header">
+            <h1 className="game-title">LAST RALLY</h1>
+            <div className="game-subtitle">VS {config.player2Name}</div>
+          </div>
+        )}
 
         {/* Scoreboard */}
         <div className="scoreboard" role="status" aria-live="polite" aria-label="Game score">
@@ -542,7 +536,6 @@ export function PongArena({ config, onMatchEnd, onQuit, settlementStatus }: Pong
                 rallyCountRef.current = 0;
                 bestRallyRef.current = 0;
                 setWinner(null);
-                setCurrentPitch(null);
                 ballRef.current = createBall(loadCosmetics().selectedBallTrail);
                 leftPaddleRef.current = createPaddle('left', loadCosmetics().selectedPaddleSkin);
                 rightPaddleRef.current = createPaddle('right', config.mode === 'pvp' ? loadCosmetics().selectedPaddleSkin : 'default');
@@ -555,20 +548,9 @@ export function PongArena({ config, onMatchEnd, onQuit, settlementStatus }: Pong
           )}
         </div>
 
-        {/* Player name labels below pitch */}
-        <div className="player-labels">
-          <span className="player-label player-label-left">{config.player1Name}</span>
-          <span className="player-label player-label-right">{config.player2Name}</span>
-        </div>
-
-        {/* Rally Counter & Pitch Indicator */}
+        {/* Rally Counter */}
         <div className="game-footer">
           <div className="rally-counter">RALLY: {rallyCount}</div>
-          {currentPitch && phase === 'playing' && (
-            <div className="pitch-indicator">
-              {getPitchInfo(currentPitch).emoji} {getPitchInfo(currentPitch).name}
-            </div>
-          )}
         </div>
       </div>
     </div>

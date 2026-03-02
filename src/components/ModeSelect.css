@@ -6,12 +6,14 @@
 .mode-select {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  height: 100vh;
+  max-height: 100vh;
   background: var(--bg-base);
-  padding: var(--space-10);
+  padding: var(--space-6) var(--space-10);
   animation: pageEnter 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   position: relative;
   overflow: hidden;
+  box-sizing: border-box;
 }
 
 /* Atmospheric background glow */
@@ -144,18 +146,19 @@
 
 .mode-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: var(--space-5);
   max-width: 800px;
-  margin: 0 auto;
+  margin: auto;
+  justify-content: center;
 }
 
 .mode-card {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-4);
-  padding: var(--space-10) var(--space-6);
+  gap: var(--space-3);
+  padding: var(--space-6) var(--space-6);
   background: linear-gradient(135deg, var(--bg-elevated) 0%, var(--bg-surface) 100%);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-2xl);
@@ -313,18 +316,21 @@
 .difficulty-grid {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: var(--space-3);
   max-width: 480px;
   margin: 0 auto;
   width: 100%;
+  flex: 1;
+  justify-content: center;
+  min-height: 0;
 }
 
 .difficulty-card {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: var(--space-2);
-  padding: var(--space-6) var(--space-8);
+  gap: var(--space-1);
+  padding: var(--space-4) var(--space-6);
   background: linear-gradient(135deg, var(--bg-elevated) 0%, var(--bg-surface) 100%);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-xl);
@@ -596,10 +602,10 @@
 .name-form {
   display: flex;
   flex-direction: column;
-  gap: var(--space-6);
+  gap: var(--space-4);
   width: 100%;
   max-width: 400px;
-  margin: 0 auto;
+  margin: auto;
   animation: formEnter 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
 }
 
@@ -638,8 +644,7 @@
   font-size: var(--text-lg);
   font-weight: var(--font-semibold);
   color: var(--text-primary);
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
   transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
