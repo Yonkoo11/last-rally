@@ -218,10 +218,12 @@ export function PongArena({ config, onMatchEnd, onQuit, settlementStatus, playfu
   const resetForNewPoint = useCallback(
     (serveDirection: 'left' | 'right') => {
       ballRef.current = resetBall(ballRef.current, serveDirection);
-      // Reset both paddles to center so neither player is caught out of position
+      // Reset human paddle to center; AI paddle keeps its position (holds advantage earned from previous rally)
       const centerY = CANVAS_HEIGHT / 2 - PADDLE_HEIGHT / 2;
       leftPaddleRef.current = { ...leftPaddleRef.current, y: centerY };
-      rightPaddleRef.current = { ...rightPaddleRef.current, y: centerY };
+      if (config.mode === 'pvp') {
+        rightPaddleRef.current = { ...rightPaddleRef.current, y: centerY };
+      }
       resetAIState();
       clearTrail();
       rallyCountRef.current = 0;
