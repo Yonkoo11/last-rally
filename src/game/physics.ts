@@ -117,8 +117,8 @@ export function movePaddle(
   const moveAmount = direction === 'up' ? -paddle.speed : paddle.speed;
   const newY = paddle.y + moveAmount * speedMod;
 
-  // Clamp to canvas bounds
-  const clampedY = Math.max(0, Math.min(CANVAS_HEIGHT - actualHeight, newY));
+  // Clamp to canvas bounds (matches touch controller bounds)
+  const clampedY = Math.max(PADDLE_MARGIN, Math.min(CANVAS_HEIGHT - actualHeight - PADDLE_MARGIN, newY));
 
   return { ...paddle, y: clampedY };
 }

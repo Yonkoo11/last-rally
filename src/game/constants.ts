@@ -10,13 +10,13 @@ export const CANVAS_HEIGHT = 500;
 export const PADDLE_WIDTH = 12;
 export const PADDLE_HEIGHT = 80;
 export const PADDLE_MARGIN = 20;
-export const PADDLE_SPEED = 8;
+export const PADDLE_SPEED = 9;
 
 // Ball settings
 export const BALL_RADIUS = 8;
-export const BALL_INITIAL_SPEED = 6;
-export const BALL_MAX_SPEED = 15;
-export const BALL_SPEED_INCREMENT = 0.2;
+export const BALL_INITIAL_SPEED = 8;
+export const BALL_MAX_SPEED = 18;
+export const BALL_SPEED_INCREMENT = 0.3;
 
 // Score settings
 export const WIN_SCORE = 5;

@@ -31,6 +31,7 @@ import {
 import {
   CANVAS_WIDTH,
   CANVAS_HEIGHT,
+  PADDLE_HEIGHT,
   WIN_SCORE,
   COUNTDOWN_SECONDS,
   FRAME_TIME,
@@ -217,6 +218,11 @@ export function PongArena({ config, onMatchEnd, onQuit, settlementStatus, playfu
   const resetForNewPoint = useCallback(
     (serveDirection: 'left' | 'right') => {
       ballRef.current = resetBall(ballRef.current, serveDirection);
+      // Reset both paddles to center so neither player is caught out of position
+      const centerY = CANVAS_HEIGHT / 2 - PADDLE_HEIGHT / 2;
+      leftPaddleRef.current = { ...leftPaddleRef.current, y: centerY };
+      rightPaddleRef.current = { ...rightPaddleRef.current, y: centerY };
+      resetAIState();
       clearTrail();
       rallyCountRef.current = 0;
       setRallyCount(0);
@@ -265,8 +271,8 @@ export function PongArena({ config, onMatchEnd, onQuit, settlementStatus, playfu
         }
       }
 
-      // Serve to the scorer
-      resetForNewPoint(scorer);
+      // Serve toward the player who just lost (they receive the ball)
+      resetForNewPoint(scorer === 'left' ? 'right' : 'left');
     },
     [winScore, resetForNewPoint]
   );
