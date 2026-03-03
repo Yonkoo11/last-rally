@@ -117,8 +117,8 @@ export function movePaddle(
   const moveAmount = direction === 'up' ? -paddle.speed : paddle.speed;
   const newY = paddle.y + moveAmount * speedMod;
 
-  // Clamp to canvas bounds (matches touch controller bounds)
-  const clampedY = Math.max(PADDLE_MARGIN, Math.min(CANVAS_HEIGHT - actualHeight - PADDLE_MARGIN, newY));
+  // Clamp to canvas bounds
+  const clampedY = Math.max(0, Math.min(CANVAS_HEIGHT - actualHeight, newY));
 
   return { ...paddle, y: clampedY };
 }
@@ -204,8 +204,10 @@ function checkSinglePaddleCollision(
   }
 
   // Calculate bounce angle based on where ball hit paddle
+  // Clamp hitOffset to [-1, 1] so corner clips never exceed MAX_BOUNCE_ANGLE
   const paddleCenter = paddleTop + paddleHeight / 2;
-  const hitOffset = (ball.y - paddleCenter) / (paddleHeight / 2);
+  const rawOffset = (ball.y - paddleCenter) / (paddleHeight / 2);
+  const hitOffset = Math.max(-1, Math.min(1, rawOffset));
   const bounceAngle = hitOffset * MAX_BOUNCE_ANGLE;
 
   // Increase ball speed (with cap)

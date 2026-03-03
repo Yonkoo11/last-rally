@@ -19,8 +19,8 @@ function touchToPaddleY(touchY: number, canvasRect: DOMRect): number {
   const relativeY = (touchY - canvasRect.top) / canvasRect.height * CANVAS_HEIGHT;
 
   // Clamp paddle to stay within bounds
-  const minY = PADDLE_MARGIN;
-  const maxY = CANVAS_HEIGHT - PADDLE_HEIGHT - PADDLE_MARGIN;
+  const minY = 0;
+  const maxY = CANVAS_HEIGHT - PADDLE_HEIGHT;
 
   // Center paddle on touch position
   const paddleY = relativeY - PADDLE_HEIGHT / 2;
