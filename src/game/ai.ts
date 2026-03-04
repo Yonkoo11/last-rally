@@ -23,6 +23,7 @@ import {
 interface SimpleAIConfig {
   errorMargin: number;       // pixels of inaccuracy (the ONLY difficulty lever)
   predictionBounces: number; // how many bounces the AI can predict (affects multi-bounce shots)
+  maxSpeed?: number;         // optional speed override (uses PADDLE_SPEED if not set)
 }
 
 const AI_CONFIGS: Record<Difficulty, SimpleAIConfig> = {
@@ -41,6 +42,7 @@ const AI_CONFIGS: Record<Difficulty, SimpleAIConfig> = {
   impossible: {
     errorMargin: 2,         // near-perfect
     predictionBounces: 100, // full prediction
+    maxSpeed: 20,           // faster than BALL_MAX_SPEED (18) - always reaches
   },
 };
 
@@ -113,7 +115,8 @@ export function updateAI(
   }
 
   const direction = diff < 0 ? 'up' : 'down';
-  const clampedSpeed = Math.min(paddle.speed, Math.abs(diff));
+  const effectiveSpeed = config.maxSpeed ?? paddle.speed;
+  const clampedSpeed = Math.min(effectiveSpeed, Math.abs(diff));
 
   return movePaddle({ ...paddle, speed: clampedSpeed }, direction, modifiers);
 }
