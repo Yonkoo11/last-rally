@@ -12,6 +12,7 @@ interface ModeSelectProps {
   onBack: () => void;
   onStartGame: (player1Name: string, player2Name: string, mode: GameMode, difficulty?: Difficulty, quest?: Quest) => void;
   onWager?: () => void;
+  onOnlinePlay?: () => void;
   playfunMode?: boolean;
 }
 
@@ -23,7 +24,7 @@ interface PendingGame {
   quest?: Quest;
 }
 
-export function ModeSelect({ onBack, onStartGame, onWager, playfunMode = false }: ModeSelectProps) {
+export function ModeSelect({ onBack, onStartGame, onWager, onOnlinePlay, playfunMode = false }: ModeSelectProps) {
   const [subView, setSubView] = useState<SubView>('main');
   const [hoveredDifficulty, setHoveredDifficulty] = useState<Difficulty | null>(null);
   const [pendingGame, setPendingGame] = useState<PendingGame | null>(null);
@@ -170,7 +171,7 @@ export function ModeSelect({ onBack, onStartGame, onWager, playfunMode = false }
                 maxLength={12}
                 autoComplete="off"
               />
-              <span className="input-hint">Controls: I / K keys (or W/S)</span>
+              <span className="input-hint">Controls: I (up) / K (down) — right side</span>
             </div>
           )}
 
@@ -322,7 +323,20 @@ export function ModeSelect({ onBack, onStartGame, onWager, playfunMode = false }
           <span className="mode-desc">Test your skills</span>
         </button>
 
-        <button className="mode-card mode-pvp" onClick={handlePvP} aria-label="Local Multiplayer: Play with a friend">
+        {!playfunMode && onOnlinePlay && (
+          <button className="mode-card mode-online" onClick={onOnlinePlay} aria-label="Online Play: Play with a friend via room code">
+            <div className="mode-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="12" cy="12" r="10" />
+                <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+              </svg>
+            </div>
+            <span className="mode-name">Online Play</span>
+            <span className="mode-desc">Share a code with a friend</span>
+          </button>
+        )}
+
+        <button className="mode-card mode-pvp" onClick={handlePvP} aria-label="Same Device: Play on the same keyboard">
           <div className="mode-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <rect x="2" y="4" width="4" height="16" rx="1" />
@@ -331,8 +345,8 @@ export function ModeSelect({ onBack, onStartGame, onWager, playfunMode = false }
               <path d="M12 6v2M12 16v2" />
             </svg>
           </div>
-          <span className="mode-name">Local Multiplayer</span>
-          <span className="mode-desc">Play with a friend</span>
+          <span className="mode-name">Pass & Play</span>
+          <span className="mode-desc">Same keyboard, two players</span>
         </button>
 
         {!playfunMode && (

@@ -73,6 +73,7 @@ export interface WagerInfo {
 export interface GameConfig {
   mode: GameMode;
   difficulty?: Difficulty;
+  playerId?: 1 | 2;       // Online mode: which player you are (1=left/host, 2=right/client)
   player1Name: string;
   player2Name: string;
   questId?: number;
@@ -255,6 +256,7 @@ export interface MatchResult {
   mode: GameMode;
   difficulty?: Difficulty;
   questId?: number;
+  isPlayerWin?: boolean;  // Online mode: explicit win/loss for the local player
 }
 
 // ---- Toast Types ----

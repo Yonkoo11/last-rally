@@ -186,6 +186,30 @@
   letter-spacing: 0.1em;
 }
 
+.pvp-controls-hint {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4, 16px);
+  width: 100%;
+  justify-content: center;
+}
+
+.pvp-ctrl {
+  font-family: var(--font-ui, "Inter", sans-serif);
+  font-size: var(--text-xs, 12px);
+  color: var(--text-tertiary, #71717A);
+  letter-spacing: 0.08em;
+  font-weight: var(--font-medium, 500);
+}
+
+.pvp-ctrl.left {
+  color: #38BDF8;
+}
+
+.pvp-ctrl.right {
+  color: #F472B6;
+}
+
 .pitch-indicator {
   font-family: var(--font-ui, "Inter", sans-serif);
   font-size: var(--text-sm, 14px);

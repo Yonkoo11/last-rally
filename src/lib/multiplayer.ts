@@ -1,14 +1,18 @@
 // ============================================
 // LAST RALLY - MULTIPLAYER CLIENT
-// WebSocket client for online play
+// WebSocket client for online play.
+// Architecture: P1 is host (runs physics locally).
+// P1 sends gameState to P2 every frame.
+// P2 sends input (paddle Y) to P1 every frame.
+// Server relays all messages between room players.
 // ============================================
 
 export type ConnectionState = 'disconnected' | 'connecting' | 'connected' | 'matchmaking' | 'inRoom' | 'playing';
 
-export interface GameState {
+// Network game state sent from P1 to P2 every frame
+export interface NetworkGameState {
   ball: { x: number; y: number; vx: number; vy: number };
   paddle1Y: number;
-  paddle2Y: number;
   score1: number;
   score2: number;
 }
@@ -21,12 +25,13 @@ export interface MultiplayerCallbacks {
   onOpponentDisconnected?: () => void;
   onMatchFound?: (roomCode: string, playerId: 1 | 2) => void;
   onGameStart?: () => void;
-  onGameState?: (state: GameState) => void;
-  onGameOver?: (winner: 1 | 2, score1: number, score2: number) => void;
+  onGameState?: (state: NetworkGameState) => void;    // P2: receive ball/paddle1 from P1
+  onOpponentInput?: (paddleY: number) => void;        // P1: receive P2 paddle position
+  onGameOver?: (winner: 1 | 2) => void;
   onError?: (message: string) => void;
 }
 
-const SERVER_URL = import.meta.env.VITE_WS_URL || 'ws://localhost:3001';
+const SERVER_URL = import.meta.env.VITE_WS_URL || 'wss://last-rally-ws.onrender.com';
 
 class MultiplayerClient {
   private ws: WebSocket | null = null;
@@ -34,22 +39,12 @@ class MultiplayerClient {
   private _connectionState: ConnectionState = 'disconnected';
   private _roomCode: string | null = null;
   private _playerId: 1 | 2 | null = null;
-  private reconnectTimeout: number | null = null;
 
-  get connectionState() {
-    return this._connectionState;
-  }
-
-  get roomCode() {
-    return this._roomCode;
-  }
-
-  get playerId() {
-    return this._playerId;
-  }
+  get connectionState() { return this._connectionState; }
+  get roomCode() { return this._roomCode; }
+  get playerId() { return this._playerId; }
 
   setCallbacks(callbacks: MultiplayerCallbacks) {
-    // Merge callbacks instead of replacing to preserve handlers from other components
     this.callbacks = { ...this.callbacks, ...callbacks };
   }
 
@@ -71,14 +66,10 @@ class MultiplayerClient {
 
       this.setConnectionState('connecting');
 
-      // Timeout after 5 seconds
       const timeout = setTimeout(() => {
-        if (this.ws) {
-          this.ws.close();
-          this.ws = null;
-        }
+        if (this.ws) { this.ws.close(); this.ws = null; }
         this.setConnectionState('disconnected');
-        this.callbacks.onError?.('Server unavailable. Online play requires a running game server.');
+        this.callbacks.onError?.('Server unavailable. Check that the game server is running.');
         reject(new Error('Connection timeout'));
       }, 5000);
 
@@ -110,7 +101,7 @@ class MultiplayerClient {
             const msg = JSON.parse(event.data);
             this.handleMessage(msg);
           } catch {
-            // Silently ignore malformed messages
+            // ignore malformed messages
           }
         };
       } catch (error) {
@@ -122,16 +113,7 @@ class MultiplayerClient {
   }
 
   disconnect() {
-    if (this.reconnectTimeout) {
-      clearTimeout(this.reconnectTimeout);
-      this.reconnectTimeout = null;
-    }
-
-    if (this.ws) {
-      this.ws.close();
-      this.ws = null;
-    }
-
+    if (this.ws) { this.ws.close(); this.ws = null; }
     this._roomCode = null;
     this._playerId = null;
     this.setConnectionState('disconnected');
@@ -188,17 +170,25 @@ class MultiplayerClient {
         this.callbacks.onGameStart?.();
         break;
 
+      // Relayed from P1 to P2: game state (ball position, scores)
       case 'gameState':
-        this.callbacks.onGameState?.(msg as unknown as GameState);
+        this.callbacks.onGameState?.({
+          ball: msg.ball as NetworkGameState['ball'],
+          paddle1Y: msg.paddle1Y as number,
+          score1: msg.score1 as number,
+          score2: msg.score2 as number,
+        });
         break;
 
+      // Relayed from P2 to P1: paddle position
+      case 'input':
+        this.callbacks.onOpponentInput?.(msg.paddleY as number);
+        break;
+
+      // Relayed from P1 to P2: game over
       case 'gameOver':
         this.setConnectionState('inRoom');
-        this.callbacks.onGameOver?.(
-          msg.winner as 1 | 2,
-          msg.score1 as number,
-          msg.score2 as number
-        );
+        this.callbacks.onGameOver?.(msg.winner as 1 | 2);
         break;
 
       case 'error':
@@ -207,38 +197,33 @@ class MultiplayerClient {
     }
   }
 
-  // Actions
-  createRoom() {
-    this.send({ type: 'createRoom' });
-  }
-
-  joinRoom(roomCode: string) {
-    this.send({ type: 'joinRoom', roomCode: roomCode.toUpperCase() });
-  }
-
-  quickMatch() {
-    this.send({ type: 'quickMatch' });
-  }
-
-  cancelMatchmaking() {
-    this.send({ type: 'cancelMatchmaking' });
-  }
-
-  ready() {
-    this.send({ type: 'ready' });
-  }
-
-  sendInput(paddleY: number) {
-    this.send({ type: 'input', paddleY });
-  }
-
+  // Room management
+  createRoom() { this.send({ type: 'createRoom' }); }
+  joinRoom(roomCode: string) { this.send({ type: 'joinRoom', roomCode: roomCode.toUpperCase() }); }
+  quickMatch() { this.send({ type: 'quickMatch' }); }
+  cancelMatchmaking() { this.send({ type: 'cancelMatchmaking' }); }
+  ready() { this.send({ type: 'ready' }); }
   leaveRoom() {
     this.send({ type: 'leaveRoom' });
     this._roomCode = null;
     this._playerId = null;
     this.setConnectionState('connected');
   }
+
+  // Gameplay - P2 sends their paddle Y to P1 every frame
+  sendInput(paddleY: number) {
+    this.send({ type: 'input', paddleY });
+  }
+
+  // Gameplay - P1 sends game state to P2 every frame
+  sendGameState(state: NetworkGameState) {
+    this.send({ type: 'gameState', ...state });
+  }
+
+  // Gameplay - P1 sends game over when match ends
+  sendGameOver(winner: 1 | 2) {
+    this.send({ type: 'gameOver', winner });
+  }
 }
 
-// Singleton instance
 export const multiplayer = new MultiplayerClient();

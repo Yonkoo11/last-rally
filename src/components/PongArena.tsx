@@ -17,6 +17,7 @@ import {
   resetBall,
 } from '../game/physics';
 import { updateAI, resetAIState } from '../game/ai';
+import { multiplayer, NetworkGameState } from '../lib/multiplayer';
 import {
   renderGame,
   renderCountdown,
@@ -92,6 +93,10 @@ export function PongArena({ config, onMatchEnd, onQuit, settlementStatus, playfu
   const leftScoreRef = useRef(0);
   const rightScoreRef = useRef(0);
 
+  // Online mode state refs (updated by multiplayer callbacks, read in game loop)
+  const onlineStateRef = useRef<NetworkGameState | null>(null);
+  const opponentInputRef = useRef<number | null>(null);
+
   const modifiers = useMemo<QuestModifiers>(() => config.modifiers || {}, [config.modifiers]);
   const winScore = modifiers.winScore || WIN_SCORE;
 
@@ -150,6 +155,35 @@ export function PongArena({ config, onMatchEnd, onQuit, settlementStatus, playfu
       window.removeEventListener('keyup', handleKeyUp);
     };
   }, []);
+
+  // Online multiplayer callbacks
+  useEffect(() => {
+    if (config.mode !== 'online') return;
+    multiplayer.setCallbacks({
+      onGameState: (state) => { onlineStateRef.current = state; },
+      onOpponentInput: (paddleY) => { opponentInputRef.current = paddleY; },
+      onOpponentDisconnected: () => {
+        // Pause game if opponent disconnects mid-match
+        setPhase('paused');
+      },
+      onGameOver: (winner) => {
+        // P2 receives game over from P1
+        if (config.playerId === 2) {
+          const winningSide = winner === 2 ? 'right' : 'left';
+          setWinner(winningSide);
+          setPhase('victory');
+        }
+      },
+    });
+    return () => multiplayer.clearCallbacks();
+  }, [config.mode, config.playerId]);
+
+  // Online P1: notify P2 when match ends
+  useEffect(() => {
+    if (config.mode === 'online' && config.playerId === 1 && phase === 'victory' && winner) {
+      multiplayer.sendGameOver(winner === 'left' ? 1 : 2);
+    }
+  }, [phase, winner, config.mode, config.playerId]);
 
   // Touch input handling
   useEffect(() => {
@@ -300,54 +334,52 @@ export function PongArena({ config, onMatchEnd, onQuit, settlementStatus, playfu
       updateParticles(deltaTime);
 
       if (phaseRef.current === 'playing') {
-        // Update left paddle (player 1) - Touch, W/S, or Arrow keys
         const touchController = touchControllerRef.current;
-        const leftTouchY = touchEnabled ? touchController.getPaddleY('left') : null;
+        const isOnline = config.mode === 'online';
+        const isP2 = isOnline && config.playerId === 2;
 
-        if (leftTouchY !== null) {
-          // Direct touch control - set paddle Y position directly
-          leftPaddleRef.current = {
-            ...leftPaddleRef.current,
-            y: leftTouchY,
-          };
-        } else {
-          // Keyboard control
-          const leftDir = (keysRef.current.w || keysRef.current.arrowup)
-            ? 'up'
-            : (keysRef.current.s || keysRef.current.arrowdown)
-            ? 'down'
-            : 'none';
-          leftPaddleRef.current = movePaddle(
-            leftPaddleRef.current,
-            leftDir,
-            modifiers
-          );
+        // ── LEFT PADDLE ──────────────────────────────────────
+        // P2 online: left paddle comes from server (no local control)
+        if (!isP2) {
+          const leftTouchY = touchEnabled ? touchController.getPaddleY('left') : null;
+          if (leftTouchY !== null) {
+            leftPaddleRef.current = { ...leftPaddleRef.current, y: leftTouchY };
+          } else {
+            const leftDir = (keysRef.current.w || keysRef.current.arrowup) ? 'up'
+              : (keysRef.current.s || keysRef.current.arrowdown) ? 'down' : 'none';
+            leftPaddleRef.current = movePaddle(leftPaddleRef.current, leftDir, modifiers);
+          }
         }
 
-        // Update right paddle (player 2 or AI)
+        // ── RIGHT PADDLE ─────────────────────────────────────
         if (config.mode === 'pvp') {
+          // Pass & Play: I/K or right-side touch
           const rightTouchY = touchEnabled ? touchController.getPaddleY('right') : null;
-
           if (rightTouchY !== null) {
-            // Direct touch control
-            rightPaddleRef.current = {
-              ...rightPaddleRef.current,
-              y: rightTouchY,
-            };
+            rightPaddleRef.current = { ...rightPaddleRef.current, y: rightTouchY };
           } else {
-            // Keyboard control
-            const rightDir = keysRef.current.i
-              ? 'up'
-              : keysRef.current.k
-              ? 'down'
-              : 'none';
-            rightPaddleRef.current = movePaddle(
-              rightPaddleRef.current,
-              rightDir,
-              modifiers
-            );
+            const rightDir = keysRef.current.i ? 'up' : keysRef.current.k ? 'down' : 'none';
+            rightPaddleRef.current = movePaddle(rightPaddleRef.current, rightDir, modifiers);
           }
+        } else if (isOnline && config.playerId === 1) {
+          // P1 online: right paddle = P2's input relayed from server
+          if (opponentInputRef.current !== null) {
+            rightPaddleRef.current = { ...rightPaddleRef.current, y: opponentInputRef.current };
+          }
+        } else if (isP2) {
+          // P2 online: right paddle = local player control (W/S or Arrow, since they're on their own machine)
+          const rightTouchY = touchEnabled ? touchController.getPaddleY('left') : null;
+          if (rightTouchY !== null) {
+            rightPaddleRef.current = { ...rightPaddleRef.current, y: rightTouchY };
+          } else {
+            const dir = (keysRef.current.w || keysRef.current.arrowup) ? 'up'
+              : (keysRef.current.s || keysRef.current.arrowdown) ? 'down' : 'none';
+            rightPaddleRef.current = movePaddle(rightPaddleRef.current, dir, modifiers);
+          }
+          // Send P2 paddle to P1 every frame
+          multiplayer.sendInput(rightPaddleRef.current.y);
         } else {
+          // AI
           rightPaddleRef.current = updateAI(
             rightPaddleRef.current,
             ballRef.current,
@@ -357,41 +389,64 @@ export function PongArena({ config, onMatchEnd, onQuit, settlementStatus, playfu
           );
         }
 
-        // Update ball
-        const { ball: updatedBall, hitWall } = updateBall(
-          ballRef.current,
-          modifiers
-        );
-        ballRef.current = updatedBall;
+        // ── BALL PHYSICS ─────────────────────────────────────
+        if (isP2) {
+          // P2: apply server game state (ball + left paddle + scores)
+          const serverState = onlineStateRef.current;
+          if (serverState) {
+            ballRef.current = {
+              ...ballRef.current,
+              x: serverState.ball.x,
+              y: serverState.ball.y,
+              velocity: { x: serverState.ball.vx, y: serverState.ball.vy },
+            };
+            leftPaddleRef.current = { ...leftPaddleRef.current, y: serverState.paddle1Y };
+            if (serverState.score1 !== leftScoreRef.current) {
+              leftScoreRef.current = serverState.score1;
+              setLeftScore(serverState.score1);
+            }
+            if (serverState.score2 !== rightScoreRef.current) {
+              rightScoreRef.current = serverState.score2;
+              setRightScore(serverState.score2);
+            }
+          }
+        } else {
+          // P1 or local modes: run physics locally
+          const { ball: updatedBall, hitWall } = updateBall(ballRef.current, modifiers);
+          ballRef.current = updatedBall;
+          if (hitWall) playWallHit();
 
-        if (hitWall) {
-          playWallHit();
-        }
-
-        // Check paddle collisions
-        const collision = checkPaddleCollision(
-          ballRef.current,
-          leftPaddleRef.current,
-          rightPaddleRef.current,
-          modifiers
-        );
-
-        if (collision.hit) {
-          ballRef.current = collision.newBall;
-          rallyCountRef.current++;
-          setRallyCount(rallyCountRef.current);
-          playPaddleHit();
-          spawnHitParticles(
-            collision.newBall.x,
-            collision.newBall.y,
-            collision.side!
+          const collision = checkPaddleCollision(
+            ballRef.current,
+            leftPaddleRef.current,
+            rightPaddleRef.current,
+            modifiers
           );
-        }
+          if (collision.hit) {
+            ballRef.current = collision.newBall;
+            rallyCountRef.current++;
+            setRallyCount(rallyCountRef.current);
+            playPaddleHit();
+            spawnHitParticles(collision.newBall.x, collision.newBall.y, collision.side!);
+          }
 
-        // Check scoring
-        const scorer = checkScore(ballRef.current);
-        if (scorer) {
-          handleScore(scorer);
+          const scorer = checkScore(ballRef.current);
+          if (scorer) handleScore(scorer);
+
+          // P1 online: send game state to P2 after physics
+          if (isOnline && config.playerId === 1) {
+            multiplayer.sendGameState({
+              ball: {
+                x: ballRef.current.x,
+                y: ballRef.current.y,
+                vx: ballRef.current.velocity.x,
+                vy: ballRef.current.velocity.y,
+              },
+              paddle1Y: leftPaddleRef.current.y,
+              score1: leftScoreRef.current,
+              score2: rightScoreRef.current,
+            });
+          }
         }
 
         // Update trail
@@ -445,6 +500,10 @@ export function PongArena({ config, onMatchEnd, onQuit, settlementStatus, playfu
   useEffect(() => {
     if (phase === 'victory' && winner) {
       const duration = performance.now() - matchStartTime;
+      // For online P2, isPlayerWin is winner === 'right' (they're the right paddle)
+      const isPlayerWin = config.mode === 'online' && config.playerId === 2
+        ? winner === 'right'
+        : winner === 'left';
       const result: MatchResult = {
         winner,
         leftScore: leftScoreRef.current,
@@ -454,6 +513,7 @@ export function PongArena({ config, onMatchEnd, onQuit, settlementStatus, playfu
         mode: config.mode,
         difficulty: config.difficulty,
         questId: config.questId,
+        isPlayerWin,
       };
       onMatchEnd(result);
     }
@@ -529,7 +589,7 @@ export function PongArena({ config, onMatchEnd, onQuit, settlementStatus, playfu
               rightScore={rightScore}
               player1Name={config.player1Name}
               player2Name={config.player2Name}
-              isPlayerWin={winner === 'left'}
+              isPlayerWin={config.mode === 'online' && config.playerId === 2 ? winner === 'right' : winner === 'left'}
               wagerInfo={config.wagerInfo}
               settlementStatus={settlementStatus}
               onRematch={() => {
@@ -556,9 +616,16 @@ export function PongArena({ config, onMatchEnd, onQuit, settlementStatus, playfu
           )}
         </div>
 
-        {/* Rally Counter */}
+        {/* Rally Counter + PvP Controls */}
         <div className="game-footer">
-          <div className="rally-counter">RALLY: {rallyCount}</div>
+          {config.mode === 'pvp' && !touchEnabled && (
+            <div className="pvp-controls-hint">
+              <span className="pvp-ctrl left">W/S or ↑↓</span>
+              <div className="rally-counter">RALLY: {rallyCount}</div>
+              <span className="pvp-ctrl right">I/K</span>
+            </div>
+          )}
+          {config.mode !== 'pvp' && <div className="rally-counter">RALLY: {rallyCount}</div>}
         </div>
       </div>
     </div>

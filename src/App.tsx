@@ -18,6 +18,7 @@ import { CosmeticSelect } from './components/CosmeticSelect';
 import { StatsScreen } from './components/StatsScreen';
 import { AchievementsScreen } from './components/AchievementsScreen';
 import { WagerLobby } from './components/WagerLobby';
+import { OnlineLobby } from './components/OnlineLobby';
 import { processMatchResult } from './lib/stats';
 import { loadCosmetics, loadPlayerName } from './lib/storage';
 import { getQuestById } from './data/quests';
@@ -93,7 +94,8 @@ function AppContent() {
       const { newAchievements, questCompleted } = processMatchResult(result);
 
       // Play appropriate sound
-      if (result.winner === 'left') {
+      const playerWon = result.isPlayerWin !== undefined ? result.isPlayerWin : result.winner === 'left';
+      if (playerWon) {
         playVictory();
       } else {
         playDefeat();
@@ -102,11 +104,14 @@ function AppContent() {
       // Play.fun: award points for goals scored + win bonus
       if (playfunMode) {
         // Points for each goal the player scored
-        for (let i = 0; i < result.leftScore; i++) {
+        const playerScore = result.isPlayerWin !== undefined
+          ? (playerWon ? Math.max(result.leftScore, result.rightScore) : Math.min(result.leftScore, result.rightScore))
+          : result.leftScore;
+        for (let i = 0; i < playerScore; i++) {
           addGoalPoints();
         }
         // Win bonus
-        if (result.winner === 'left') {
+        if (playerWon) {
           addWinPoints();
         }
         // Rally bonus
@@ -164,6 +169,20 @@ function AppContent() {
     },
     [showAchievement, showQuestComplete, gameConfig, settleMatch, undelegateMatch, playfunMode]
   );
+
+  // Online game start - called by OnlineLobby once both players are ready
+  const handleOnlineGameStart = useCallback((playerId: 1 | 2) => {
+    const cosmetics = loadCosmetics();
+    const playerName = loadPlayerName();
+    setGameConfig({
+      mode: 'online',
+      playerId,
+      player1Name: playerId === 1 ? (playerName || 'PLAYER 1') : 'OPPONENT',
+      player2Name: playerId === 2 ? (playerName || 'PLAYER 2') : 'OPPONENT',
+      arenaTheme: cosmetics.selectedArenaTheme,
+    });
+    setView('pong');
+  }, []);
 
   // Wager match ready - both players deposited, delegate to ER and start
   const handleWagerMatchReady = useCallback(async (wagerInfo: WagerInfo) => {
@@ -228,7 +247,16 @@ function AppContent() {
             onBack={playfunMode ? () => setView('landing') : handleBackToTitle}
             onStartGame={handleStartGame}
             onWager={playfunMode ? undefined : () => setView('wagerLobby')}
+            onOnlinePlay={() => setView('onlineLobby')}
             playfunMode={playfunMode}
+          />
+        );
+
+      case 'onlineLobby':
+        return (
+          <OnlineLobby
+            onGameStart={handleOnlineGameStart}
+            onBack={() => setView('modeSelect')}
           />
         );
 
