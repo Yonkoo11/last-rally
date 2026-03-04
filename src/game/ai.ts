@@ -1,5 +1,5 @@
 import { Ball, Paddle, Difficulty, QuestModifiers } from '../types';
-import { predictBallY, movePaddle } from './physics';
+import { predictBallY } from './physics';
 import {
   CANVAS_WIDTH,
   CANVAS_HEIGHT,
@@ -11,38 +11,52 @@ import {
 // ============================================
 // AI DESIGN PHILOSOPHY
 // ============================================
-// All difficulties move at full speed. The AI always looks active.
-// Difficulty = accuracy of prediction. Easy AI confidently moves
-// to the WRONG spot. Hard AI moves to nearly the RIGHT spot.
-// Error is locked once per ball approach (no re-rolls).
+// Movement is lerp-based: proportional to distance remaining.
+// This gives natural acceleration when far and deceleration when close.
+// Difficulty controls accuracy (errorMargin) and responsiveness (lerpFactor).
+// When ball is away, AI drifts smoothly back to center - like a real player
+// holding a ready position, not chasing the ball across the court.
 
 // ============================================
-// AI CONFIG - Only accuracy matters
+// AI CONFIG
 // ============================================
 
-interface SimpleAIConfig {
-  errorMargin: number;       // pixels of inaccuracy (the ONLY difficulty lever)
-  predictionBounces: number; // how many bounces the AI can predict (affects multi-bounce shots)
-  maxSpeed?: number;         // optional speed override (uses PADDLE_SPEED if not set)
+interface AIConfig {
+  errorMargin: number;      // ±px of prediction inaccuracy (main difficulty lever)
+  predictionBounces: number;// how many wall bounces AI can predict ahead
+  lerpFactor: number;       // 0-1: how much of remaining distance to close per frame
+  idleLerpFactor: number;   // lerp factor when returning to center (ball moving away)
+  maxSpeed: number;         // hard cap on px/frame movement
 }
 
-const AI_CONFIGS: Record<Difficulty, SimpleAIConfig> = {
+const AI_CONFIGS: Record<Difficulty, AIConfig> = {
   easy: {
-    errorMargin: 100,       // ±100px off - goes to the wrong area entirely
-    predictionBounces: 20,  // poor bounce prediction
+    errorMargin: 100,        // wildly off - goes to the wrong area
+    predictionBounces: 20,
+    lerpFactor: 0.06,        // slow and lazy
+    idleLerpFactor: 0.02,    // barely drifts back
+    maxSpeed: 7,
   },
   medium: {
-    errorMargin: 50,        // ±50px off - close but often not close enough
-    predictionBounces: 40,  // decent prediction
+    errorMargin: 50,         // close but misses corners often
+    predictionBounces: 40,
+    lerpFactor: 0.09,
+    idleLerpFactor: 0.04,
+    maxSpeed: 9,
   },
   hard: {
-    errorMargin: 18,        // ±18px off - occasionally misses corners
-    predictionBounces: 70,  // good prediction
+    errorMargin: 18,         // mostly correct, edge cases beat it
+    predictionBounces: 70,
+    lerpFactor: 0.12,
+    idleLerpFactor: 0.06,
+    maxSpeed: 11,
   },
   impossible: {
-    errorMargin: 2,         // near-perfect
-    predictionBounces: 100, // full prediction
-    maxSpeed: 20,           // faster than BALL_MAX_SPEED (18) - always reaches
+    errorMargin: 2,          // near-perfect aim
+    predictionBounces: 100,
+    lerpFactor: 0.15,        // converges quickly but smoothly
+    idleLerpFactor: 0.08,    // returns to center with purpose
+    maxSpeed: 14,            // hard cap keeps movement looking natural
   },
 };
 
@@ -53,7 +67,7 @@ const AI_CONFIGS: Record<Difficulty, SimpleAIConfig> = {
 interface AIState {
   targetY: number;
   errorOffset: number;
-  approachLocked: boolean;   // true while ball is coming toward AI
+  approachLocked: boolean;
   lastBallDirection: number;
 }
 
@@ -78,47 +92,43 @@ export function updateAI(
   const config = AI_CONFIGS[difficulty];
   const paddleHeight = PADDLE_HEIGHT * (modifiers.paddleSize || 1);
   const isBallApproaching = ball.velocity.x > 0;
+  const aiPaddleX = CANVAS_WIDTH - PADDLE_MARGIN - PADDLE_WIDTH;
 
-  // Apply AI handicap from quest modifiers
+  // Apply handicap modifier
   const handicapMod = modifiers.aiHandicap || 0;
   const adjustedErrorMargin = Math.max(2, config.errorMargin * (1 - handicapMod));
 
-  // Detect direction change: ball just started coming toward AI
+  // Lock in error once per approach (no re-rolls mid-rally)
   if (isBallApproaching && aiState.lastBallDirection <= 0) {
-    // Lock in error for this entire approach
     aiState.errorOffset = (Math.random() - 0.5) * 2 * adjustedErrorMargin;
     aiState.approachLocked = true;
   }
   aiState.lastBallDirection = ball.velocity.x;
 
   if (isBallApproaching) {
-    // Predict where ball will arrive at AI paddle
-    const aiPaddleX = CANVAS_WIDTH - PADDLE_MARGIN - PADDLE_WIDTH;
+    // Predict where ball will land at our paddle, offset by locked error
     const predictedY = predictBallY(ball, aiPaddleX, config.predictionBounces);
-
-    // Target = prediction + locked error, centered on paddle
     aiState.targetY = predictedY + aiState.errorOffset - paddleHeight / 2;
   } else {
-    // Ball moving away - loosely track ball position (stay active, don't freeze)
-    aiState.targetY = ball.y - paddleHeight / 2;
+    // Ball heading away - drift back to center like a real player
+    aiState.targetY = CANVAS_HEIGHT / 2 - paddleHeight / 2;
     aiState.approachLocked = false;
   }
 
-  // Move toward target at full speed, clamped to avoid overshoot
-  const currentCenter = paddle.y + paddleHeight / 2;
-  const targetCenter = aiState.targetY + paddleHeight / 2;
-  const diff = targetCenter - currentCenter;
+  // Clamp target to valid bounds
+  const clampedTarget = Math.max(0, Math.min(CANVAS_HEIGHT - paddleHeight, aiState.targetY));
+  const diff = clampedTarget - paddle.y;
 
-  // Small dead zone to prevent micro-jitter
-  if (Math.abs(diff) < 2) {
-    return paddle;
-  }
+  // Dead zone - stop micro-jitter when already on target
+  if (Math.abs(diff) < 1) return paddle;
 
-  const direction = diff < 0 ? 'up' : 'down';
-  const effectiveSpeed = config.maxSpeed ?? paddle.speed;
-  const clampedSpeed = Math.min(effectiveSpeed, Math.abs(diff));
+  // Lerp movement: proportional to distance remaining, capped at maxSpeed.
+  // This gives natural deceleration as AI closes in on target.
+  const lerpFactor = isBallApproaching ? config.lerpFactor : config.idleLerpFactor;
+  const move = Math.sign(diff) * Math.min(Math.abs(diff * lerpFactor), config.maxSpeed);
 
-  return movePaddle({ ...paddle, speed: clampedSpeed }, direction, modifiers);
+  const newY = Math.max(0, Math.min(CANVAS_HEIGHT - paddleHeight, paddle.y + move));
+  return { ...paddle, y: newY };
 }
 
 export function resetAIState(): void {
