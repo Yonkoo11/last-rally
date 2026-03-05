@@ -5,10 +5,18 @@
 // No game logic on server.
 // ============================================
 
+const http = require('http');
 const { WebSocketServer } = require('ws');
 
 const PORT = process.env.PORT || 3001;
-const wss = new WebSocketServer({ port: PORT });
+
+const server = http.createServer((req, res) => {
+  res.writeHead(200);
+  res.end('OK');
+});
+
+const wss = new WebSocketServer({ server });
+server.listen(PORT);
 
 // rooms: code -> { players: [ws, ws?] }
 const rooms = new Map();
@@ -149,4 +157,4 @@ wss.on('connection', (ws) => {
   });
 });
 
-console.log(`Last Rally WS server on port ${PORT}`);
+server.on('listening', () => console.log(`Last Rally WS server on port ${PORT}`));
